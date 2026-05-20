@@ -295,7 +295,7 @@ Descrição breve do módulo.
 CREATE TABLE example (
     id INT PRIMARY KEY
 );
-````
+```
 
 ---
 
@@ -347,7 +347,6 @@ FROM example;
 # Screenshots
 
 Inserir screenshots do MySQL Workbench abaixo.
-
 ````
 
 ---
@@ -368,14 +367,14 @@ Clique no botão "Fork" no GitHub para criar uma cópia do repositório em sua c
 
 Após realizar o Fork:
 
-- abra a pasta `/teams`;
-- localize o arquivo correspondente à sua equipe.
+* abra a pasta `/teams`;
+* localize o arquivo correspondente à sua equipe.
 
 Exemplo:
 
 ```bash
 team-05.md
-````
+```
 
 ---
 
@@ -417,15 +416,48 @@ Team 05 - atualização do módulo de matrículas
 
 ---
 
-## Passo 6 — Abrir Pull Request
+## Passo 6 — Criar Nova Branch
 
-Após realizar o commit:
+Ao realizar o commit:
 
-* clique em "Contribute";
-* depois em "Open Pull Request";
-* envie o Pull Request para o repositório principal.
+NÃO utilizar:
 
-O professor irá revisar a contribuição antes da aprovação.
+```text
+Commit directly to the main branch
+```
+
+Selecionar SEMPRE:
+
+```text
+Create a new branch for this commit and start a pull request
+```
+
+Isso garante:
+
+* organização do projeto;
+* validação automática;
+* revisão do professor;
+* funcionamento correto do Pull Request.
+
+---
+
+## Passo 7 — Abrir Pull Request
+
+Após criar a nova branch:
+
+* clique em "Propose changes";
+* revise as alterações;
+* clique em "Create Pull Request".
+
+O professor irá revisar:
+
+* organização;
+* estrutura;
+* SQL;
+* documentação;
+* funcionamento do projeto.
+
+Somente Pull Requests aprovados serão integrados ao repositório principal.
 
 ---
 
@@ -446,6 +478,7 @@ Cada equipe deverá entregar:
 
 * NÃO modificar arquivos de outras equipes.
 * Trabalhar apenas no arquivo correspondente à sua equipe.
+* NÃO realizar commits diretamente na branch `main`.
 * Utilizar mensagens de commit claras.
 * Manter o repositório organizado.
 * Todos os scripts SQL devem funcionar corretamente.
