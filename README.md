@@ -203,7 +203,6 @@ Responsável por:
 /docs
 /sql
 /teams
-/screenshots
 ```
 
 ---
@@ -230,26 +229,126 @@ Contém:
 * consultas SELECT
 * consultas JOIN
 
+Esses arquivos serão organizados e integrados pelo professor ao longo do projeto.
+
 ---
 
 ## /teams
 
 Contém:
 
-* progresso das equipes
-* responsabilidades
-* observações
+* arquivos individuais de cada equipe;
+* progresso do desenvolvimento;
+* scripts SQL;
+* consultas;
+* documentação;
+* screenshots.
+
+Cada equipe deverá trabalhar SOMENTE no seu arquivo:
+
+```bash
+team-01.md
+team-02.md
+team-03.md
+...
+team-16.md
+```
 
 ---
 
-## /screenshots
+# Como Cada Equipe Deve Preencher o Arquivo
 
-Contém:
+Cada equipe deverá adicionar dentro do seu arquivo:
 
-* prints do MySQL Workbench
-* resultados das consultas
-* tabelas criadas
-* operações JOIN
+* nome dos integrantes;
+* descrição do módulo;
+* CREATE TABLE;
+* INSERT INTO;
+* consultas SELECT;
+* consultas JOIN;
+* screenshots do MySQL Workbench;
+* observações do projeto.
+
+---
+
+# Modelo Esperado Dentro do team-XX.md
+
+````markdown
+# Team XX — Nome do Módulo
+
+## Integrantes
+
+- Nome 1
+- Nome 2
+
+---
+
+# Descrição
+
+Descrição breve do módulo.
+
+---
+
+# CREATE TABLE
+
+```sql
+CREATE TABLE example (
+    id INT PRIMARY KEY
+);
+````
+
+---
+
+# INSERT INTO
+
+```sql
+INSERT INTO example VALUES (1);
+```
+
+---
+
+# CONSULTAS SQL
+
+## SELECT *
+
+```sql
+SELECT * FROM example;
+```
+
+---
+
+## SELECT COM WHERE
+
+```sql
+SELECT * FROM example
+WHERE id = 1;
+```
+
+---
+
+## SELECT COM ORDER BY
+
+```sql
+SELECT * FROM example
+ORDER BY id;
+```
+
+---
+
+# JOIN
+
+```sql
+SELECT *
+FROM example;
+```
+
+---
+
+# Screenshots
+
+Inserir screenshots do MySQL Workbench abaixo.
+
+````
 
 ---
 
@@ -257,25 +356,53 @@ Contém:
 
 Cada equipe DEVE seguir o fluxo abaixo:
 
+---
+
 ## Passo 1 — Fazer Fork do Repositório
 
 Clique no botão "Fork" no GitHub para criar uma cópia do repositório em sua conta.
 
 ---
 
-## Passo 2 — Editar os Arquivos no GitHub
+## Passo 2 — Abrir a Pasta /teams
 
 Após realizar o Fork:
 
-* abra os arquivos correspondentes ao seu módulo;
-* clique no ícone de lápis (✏️);
-* realize as alterações necessárias diretamente no navegador.
+- abra a pasta `/teams`;
+- localize o arquivo correspondente à sua equipe.
 
-Cada equipe deve trabalhar SOMENTE no módulo que lhe foi atribuído.
+Exemplo:
+
+```bash
+team-05.md
+````
 
 ---
 
-## Passo 3 — Fazer Commit das Alterações
+## Passo 3 — Editar o Arquivo da Equipe
+
+Clique no ícone de lápis (✏️) para editar o arquivo diretamente no GitHub.
+
+Cada equipe deve modificar SOMENTE o seu arquivo.
+
+---
+
+## Passo 4 — Inserir o Conteúdo do Projeto
+
+Adicionar:
+
+* SQL;
+* INSERTs;
+* consultas;
+* JOINs;
+* screenshots;
+* documentação.
+
+Tudo deve ficar dentro do arquivo `team-XX.md`.
+
+---
+
+## Passo 5 — Fazer Commit das Alterações
 
 Após finalizar as alterações:
 
@@ -285,12 +412,12 @@ Após finalizar as alterações:
 Exemplo:
 
 ```bash
-Team 05 - atualização da tabela de matrículas
+Team 05 - atualização do módulo de matrículas
 ```
 
 ---
 
-## Passo 4 — Abrir Pull Request
+## Passo 6 — Abrir Pull Request
 
 Após realizar o commit:
 
@@ -306,18 +433,19 @@ O professor irá revisar a contribuição antes da aprovação.
 
 Cada equipe deverá entregar:
 
-* scripts SQL
-* comandos INSERT
-* consultas SELECT
-* consultas JOIN
-* screenshots
-* documentação
+* scripts SQL;
+* comandos INSERT;
+* consultas SELECT;
+* consultas JOIN;
+* screenshots;
+* documentação do módulo.
 
 ---
 
 # Regras Importantes
 
 * NÃO modificar arquivos de outras equipes.
+* Trabalhar apenas no arquivo correspondente à sua equipe.
 * Utilizar mensagens de commit claras.
 * Manter o repositório organizado.
 * Todos os scripts SQL devem funcionar corretamente.
