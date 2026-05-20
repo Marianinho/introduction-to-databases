@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log
+
+# MySQL Workbench
+*.mwb.bak
+
+# VSCode
+.vscode/
+
+# IntelliJ
+.idea/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
