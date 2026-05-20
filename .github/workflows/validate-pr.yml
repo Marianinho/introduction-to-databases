@@ -12,12 +12,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Validate changed files
         run: |
           echo "Checking changed files..."
 
-          CHANGED_FILES=$(git diff --name-only origin/main...HEAD)
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
 
           echo "$CHANGED_FILES"
 
@@ -31,22 +33,22 @@ jobs:
           done
 
           if [[ $INVALID_FILES -eq 1 ]]; then
-            echo "Students can only edit files inside /teams/"
+            echo "Error: Students can only edit files inside /teams/team-XX.md"
             exit 1
           fi
 
       - name: Validate required sections
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/main...HEAD | grep '^teams/team-.*\.md$' || true)
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | grep '^teams/team-.*\.md$' || true)
 
           for file in $CHANGED_FILES; do
             echo "Validating $file"
 
-            grep -q "## Integrantes" "$file" || (echo "Missing: ## Integrantes" && exit 1)
-            grep -q "# Descrição" "$file" || (echo "Missing: # Descrição" && exit 1)
-            grep -q "# CREATE TABLE" "$file" || (echo "Missing: # CREATE TABLE" && exit 1)
-            grep -q "# INSERT INTO" "$file" || (echo "Missing: # INSERT INTO" && exit 1)
-            grep -q "# CONSULTAS SQL" "$file" || (echo "Missing: # CONSULTAS SQL" && exit 1)
-            grep -q "# JOIN" "$file" || (echo "Missing: # JOIN" && exit 1)
-            grep -q "# Screenshots" "$file" || (echo "Missing: # Screenshots" && exit 1)
+            grep -q "## Integrantes" "$file" || (echo "Missing: ## Integrantes in $file" && exit 1)
+            grep -q "# Descrição" "$file" || (echo "Missing: # Descrição in $file" && exit 1)
+            grep -q "# CREATE TABLE" "$file" || (echo "Missing: # CREATE TABLE in $file" && exit 1)
+            grep -q "# INSERT INTO" "$file" || (echo "Missing: # INSERT INTO in $file" && exit 1)
+            grep -q "# CONSULTAS SQL" "$file" || (echo "Missing: # CONSULTAS SQL in $file" && exit 1)
+            grep -q "# JOIN" "$file" || (echo "Missing: # JOIN in $file" && exit 1)
+            grep -q "# Screenshots" "$file" || (echo "Missing: # Screenshots in $file" && exit 1)
           done
