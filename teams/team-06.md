@@ -37,6 +37,11 @@ INSERT INTO disciplinas (nome_disciplina) VALUES
 ('Algoritmos e Lógica de Programação'),
 ('Engenharia de Software');
 
+
+```
+## CREATE TABLE notas
+
+```sql
 CREATE TABLE notas (
     id_nota INT AUTO_INCREMENT PRIMARY KEY,
     id_aluno INT NOT NULL,
@@ -45,13 +50,21 @@ CREATE TABLE notas (
     FOREIGN KEY (id_aluno) REFERENCES alunos(id_aluno),
     FOREIGN KEY (id_disciplina) REFERENCES disciplinas(id_disciplina)
 );
+```
+### INSET INTO: notas
 
+```sql
 INSERT INTO notas (id_aluno, id_disciplina, valor_nota) VALUES 
 (1, 1, 9.50),
 (1, 2, 8.00),
 (2, 1, 7.50),
 (3, 3, 10.00);
 
+```
+
+### SELECT * FROM notas
+
+```sql
 SELECT * FROM notas;
 
 SELECT id_aluno, valor_nota FROM notas WHERE valor_nota >= 8.00;
@@ -65,4 +78,5 @@ JOIN alunos a ON n.id_aluno = a.id_aluno
 JOIN disciplinas d ON n.id_disciplina = d.id_disciplina
 ORDER BY n.valor_nota DESC;
 ```
-##
+## Link do MYSQL Screenshot
+https://drive.google.com/file/d/1YyfT6dinuxjAIlLmvyp0_r-hl12R0aAS/view?usp=drive_link
