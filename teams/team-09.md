@@ -8,9 +8,15 @@
 
 # Descrição
 
-Descrição breve do módulo.
+O módulo de Frequência é responsável pelo controle de presença dos alunos nas disciplinas do sistema acadêmico.
 
----
+Esse módulo permite:
+
+- registrar presença e faltas;
+- consultar frequência dos alunos;
+- realizar consultas utilizando JOIN;
+- organizar os dados de forma relacional utilizando chaves primárias e estrangeiras.
+
 
 ---
 
