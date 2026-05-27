@@ -78,5 +78,10 @@ JOIN alunos a ON n.id_aluno = a.id_aluno
 JOIN disciplinas d ON n.id_disciplina = d.id_disciplina
 ORDER BY n.valor_nota DESC;
 ```
-## Link do MYSQL Screenshot
-https://drive.google.com/file/d/1YyfT6dinuxjAIlLmvyp0_r-hl12R0aAS/view?usp=drive_link
+## Links do MYSQL Screenshot
+[CODIGO
+](https://drive.google.com/file/d/1Z-9T4SCzs2sK-s8Rp1N-EXEXa7Jdw7ZZ/view?usp=sharing)
+
+---
+[TABELA
+](https://drive.google.com/file/d/1lGgXNpXADB1tzQv2pYHzaUg6HWsCCel_/view?usp=sharing)
