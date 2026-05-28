@@ -1,5 +1,5 @@
 # Team 06 — Módulo de Notas
-## Integrantes
+## Team 06
 ## Nome dos Integrantes
 Celia Hiromi Watanabe
 ## Descrição do Módulo
