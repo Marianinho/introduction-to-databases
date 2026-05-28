@@ -23,7 +23,6 @@ CREATE TABLE departamentos (
   sigla VARCHAR(10) NOT NULL,
   campus VARCHAR(50) NOT NULL
   );
-# INSERT INTO
   INSERT INTO departamentos (nome, sigla, campus) VALUES
   ('Computação', 'COMP', 'Rondonopolis'),
   ('Matematica', 'MAT', 'Rondonopolis'),
@@ -39,19 +38,17 @@ CREATE TABLE departamentos (
   ('Sistemas de Informação', 1),
   ('Ciencia da Computação', 1),
   ('Licenciatura em Matemática', 2);
-# CONSULTAS SQL
   SELECT * FROM departamentos;
-## SELECT COM WHERE
   SELECT nome, campus FROM departamentos WHERE sigla = 'COMP';
 
   SELECT sigla, nome, campus FROM departamentos ORDER BY nome ASC;
-## SELECT COM ORDER BY
   SELECT d.sigla AS Departamento, d.nome, c.nome_curso AS Curso
   FROM departamentos d
-  # JOIN
   JOIN cursos c ON d.id_departamento = c.id_departamento;
 ---
-
+# INSERT INTO
+ # JOIN
+# CONSULTAS SQL
 # Screenshots
 <img width="1920" height="1013" alt="Breno" src="https://github.com/user-attachments/assets/dc2e8dd7-3a42-4e42-89cf-1a2bbb796f17" />
 <img width="1920" height="874" alt="Captura de tela de 2026-05-22 00-48-42" src="https://github.com/user-attachments/assets/6cb25b3c-424c-4d15-95e7-69cd34c7052f" />
