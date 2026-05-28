@@ -48,6 +48,7 @@ CREATE TABLE departamentos (
 ## SELECT COM ORDER BY
   SELECT d.sigla AS Departamento, d.nome, c.nome_curso AS Curso
   FROM departamentos d
+  # JOIN
   JOIN cursos c ON d.id_departamento = c.id_departamento;
 ---
 
