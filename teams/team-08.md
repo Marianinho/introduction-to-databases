@@ -13,6 +13,7 @@ Responsável por:
     registros de departamentos
     consultas de departamentos
 ---
+# CREATE TABLE
 CREATE DATABASE IF NOT EXISTS SIGAA;
 USE SIGAA;
 
@@ -22,7 +23,7 @@ CREATE TABLE departamentos (
   sigla VARCHAR(10) NOT NULL,
   campus VARCHAR(50) NOT NULL
   );
-
+# INSERT INTO
   INSERT INTO departamentos (nome, sigla, campus) VALUES
   ('Computação', 'COMP', 'Rondonopolis'),
   ('Matematica', 'MAT', 'Rondonopolis'),
@@ -38,13 +39,13 @@ CREATE TABLE departamentos (
   ('Sistemas de Informação', 1),
   ('Ciencia da Computação', 1),
   ('Licenciatura em Matemática', 2);
-
+# CONSULTAS SQL
   SELECT * FROM departamentos;
-
+## SELECT COM WHERE
   SELECT nome, campus FROM departamentos WHERE sigla = 'COMP';
 
   SELECT sigla, nome, campus FROM departamentos ORDER BY nome ASC;
-
+## SELECT COM ORDER BY
   SELECT d.sigla AS Departamento, d.nome, c.nome_curso AS Curso
   FROM departamentos d
   JOIN cursos c ON d.id_departamento = c.id_departamento;
