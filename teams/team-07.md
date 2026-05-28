@@ -1,7 +1,19 @@
-CREATE DATABASE IF NOT EXISTS SigaaSalas;
-USE SigaaSalas;
+# Team 07 — Módulo de salas
 
+## Integrantes
 
+- Marcos Stanguerlin
+
+---
+
+# Descrição
+Tabela MySQL criada para identificação de salas e seus materiais principais
+
+---
+
+# CREATE TABLE
+
+```sql
 CREATE TABLE SigaaID (
     IdSala INT AUTO_INCREMENT PRIMARY KEY NOT NULL
 );
@@ -12,22 +24,12 @@ CREATE TABLE SigaaTipoSala (
     TipoSala VARCHAR(25)
 );
 
-INSERT INTO SigaaTipoSala (TipoSala)
-VALUES
-('Banheiro'),
-('Sala de estudo'),
-('Sala de computadores'),
-('Sala de Reunião'),
-('Sala da limpeza'),
-('Sala RH');
-
 CREATE TABLE SigaaHorario (
     HorarioDeUso INT AUTO_INCREMENT PRIMARY KEY,
     
     FOREIGN KEY (TipoSalaID)
         REFERENCES SigaaTipoSala(TipoSalaID)
 );
-
 
 CREATE TABLE SigaaMateriais (
     MaterialID INT AUTO_INCREMENT PRIMARY KEY,
@@ -39,14 +41,6 @@ CREATE TABLE SigaaMateriais (
     FOREIGN KEY (IdSala)
         REFERENCES SigaaID(IdSala)
 );
-
-INSERT INTO SigaaMateriais (Materiais)
-VALUES
-('Cadeira'),
-('Mesas'),
-('Projetores'),
-('Canetão'),
-('Computadores');
 
 CREATE TABLE SigaaSalas (
     IdSala INT PRIMARY KEY AUTO_INCREMENT,
@@ -64,7 +58,38 @@ CREATE TABLE SigaaSalas (
 	FOREIGN KEY (MateriaisID)
 		REFERENCES SigaaMateriais(MaterialID)
 );
+```
 
+---
+
+# INSERT INTO
+
+```sql
+INSERT INTO SigaaMateriais (Materiais)
+VALUES
+('Cadeira'),
+('Mesas'),
+('Projetores'),
+('Canetão'),
+('Computadores');
+
+INSERT INTO SigaaTipoSala (TipoSala)
+VALUES
+('Banheiro'),
+('Sala de estudo'),
+('Sala de computadores'),
+('Sala de Reunião'),
+('Sala da limpeza'),
+('Sala RH');
+```
+
+---
+
+# CONSULTAS SQL
+
+## SELECT *
+
+```sql
 SELECT
     s.IdSala,
     ts.TipoSala AS TipoSalas,
@@ -84,3 +109,20 @@ JOIN SigaaMateriais m
     ON s.MateriaisID = m.MaterialID
 
 WHERE m.MatPrincipal = TRUE;
+```
+---
+
+# JOIN
+
+```sql
+SELECT *
+FROM example;
+```
+
+---
+
+# Screenshots
+
+```
+Devido ao MySQL não estar funcionando servidores nos computadores da unemat, não consigo realizar screenshots do código em prática
+```
