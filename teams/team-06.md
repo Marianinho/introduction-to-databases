@@ -1,7 +1,8 @@
 # Team 06 — Módulo de Notas
 
 ## Nome dos Integrantes
-- Célia Hiromi Watanabe
+## Integrantes
+Celia Hiromi Watanabe
 ## Descrição do Módulo
 Este módulo é responsável pela tabela de notas, registros de notas e consultas de notas.
 
