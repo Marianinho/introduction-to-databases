@@ -1,6 +1,6 @@
 # Team 06 — Módulo de Notas
-## Team 06
-## Nome dos Integrantes
+
+## Integrantes
 Celia Hiromi Watanabe
 ## Descrição do Módulo
 Este módulo é responsável pela tabela de notas, registros de notas e consultas de notas.
@@ -78,7 +78,7 @@ JOIN alunos a ON n.id_aluno = a.id_aluno
 JOIN disciplinas d ON n.id_disciplina = d.id_disciplina
 ORDER BY n.valor_nota DESC;
 ```
-## Links do MYSQL Screenshot
+## Links do MYSQL Screenshots
 [CODIGO
 ](https://drive.google.com/file/d/1Z-9T4SCzs2sK-s8Rp1N-EXEXa7Jdw7ZZ/view?usp=sharing)
 
