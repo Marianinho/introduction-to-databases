@@ -2,12 +2,12 @@
 
 ## Integrantes
 Celia Hiromi Watanabe
-## Descrição do Módulo
+# Descrição do Módulo
 Este módulo é responsável pela tabela de notas, registros de notas e consultas de notas.
 
-## Scripts SQL
+# Scripts SQL
 
-### CREATE TABLE: alunos e disciplinas
+# CREATE TABLE: alunos e disciplinas
 ```sql
 CREATE DATABASE IF NOT EXISTS sistema_escolar;
 USE sistema_escolar;
@@ -23,7 +23,7 @@ CREATE TABLE disciplinas (
 );
 
 ```
-### INSET INTO: alunos e disciplinas
+# INSERT INTO: alunos e disciplinas
 
 ```sql
 
@@ -39,7 +39,7 @@ INSERT INTO disciplinas (nome_disciplina) VALUES
 
 
 ```
-## CREATE TABLE notas
+# CREATE TABLE notas
 
 ```sql
 CREATE TABLE notas (
@@ -51,7 +51,7 @@ CREATE TABLE notas (
     FOREIGN KEY (id_disciplina) REFERENCES disciplinas(id_disciplina)
 );
 ```
-### INSET INTO: notas
+# INSERT INTO: notas
 
 ```sql
 INSERT INTO notas (id_aluno, id_disciplina, valor_nota) VALUES 
@@ -62,13 +62,18 @@ INSERT INTO notas (id_aluno, id_disciplina, valor_nota) VALUES
 
 ```
 
-### SELECT * FROM notas
+# CONSULTAS SQL 
 
 ```sql
 SELECT * FROM notas;
 
 SELECT id_aluno, valor_nota FROM notas WHERE valor_nota >= 8.00;
 
+```
+
+# JOIN
+
+```sql
 SELECT 
     a.nome_aluno AS Aluno, 
     d.nome_disciplina AS Disciplina, 
@@ -78,10 +83,14 @@ JOIN alunos a ON n.id_aluno = a.id_aluno
 JOIN disciplinas d ON n.id_disciplina = d.id_disciplina
 ORDER BY n.valor_nota DESC;
 ```
-## Links do MYSQL Screenshots
+
+# Screenshots
+
+```sql
 [CODIGO
 ](https://drive.google.com/file/d/1Z-9T4SCzs2sK-s8Rp1N-EXEXa7Jdw7ZZ/view?usp=sharing)
 
 ---
 [TABELA
 ](https://drive.google.com/file/d/1lGgXNpXADB1tzQv2pYHzaUg6HWsCCel_/view?usp=sharing)
+```
