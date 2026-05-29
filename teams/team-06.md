@@ -86,11 +86,10 @@ ORDER BY n.valor_nota DESC;
 
 # Screenshots
 
-```sql
 [CODIGO
 ](https://drive.google.com/file/d/1Z-9T4SCzs2sK-s8Rp1N-EXEXa7Jdw7ZZ/view?usp=sharing)
 
 ---
 [TABELA
 ](https://drive.google.com/file/d/1lGgXNpXADB1tzQv2pYHzaUg6HWsCCel_/view?usp=sharing)
-```
+
