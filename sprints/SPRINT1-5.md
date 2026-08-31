@@ -192,7 +192,157 @@ Antes de finalizar a atividade de hoje, verifique se a equipe completou:
 
 ---
 
-## 10. Entrega da Sprint 1/5
+## 10. Regras de versionamento e entrega no GitHub
+
+A equipe deverá utilizar o fluxo de trabalho com **branch, commit e Pull Request (PR)** durante toda a semana.
+
+A Sprint 1/5 é apenas a primeira etapa. Os arquivos `SPRINT2-5.md`, `SPRINT3-5.md`, `SPRINT4-5.md` e `SPRINT5-5.md` serão adicionados progressivamente à **mesma branch de trabalho da equipe**, e o Pull Request final será aberto na sexta-feira.
+
+### 10.1 Branch
+
+A equipe **não deverá desenvolver diretamente na branch `main`**.
+
+Crie uma branch específica para o trabalho da equipe durante a semana.
+
+Para o Team 01, utilize:
+
+```text
+team-01-sprints-1-5
+```
+
+O fluxo esperado é:
+
+```text
+main
+  └── team-01-sprints-1-5
+        ├── SPRINT1-5.md
+        ├── SPRINT2-5.md
+        ├── SPRINT3-5.md
+        ├── SPRINT4-5.md
+        └── SPRINT5-5.md
+```
+
+A branch deverá ser mantida até a conclusão da Sprint 5/5.
+
+> O workflow de validação do repositório é executado quando um Pull Request é aberto tendo a branch `main` como destino. Portanto, o PR final da equipe deverá apontar para `main`.
+
+---
+
+### 10.2 Commit
+
+Cada Sprint deverá gerar pelo menos **um commit próprio**, permitindo acompanhar a evolução do trabalho durante a semana.
+
+Para hoje, após concluir o arquivo `SPRINT1-5.md`, utilize uma mensagem clara e objetiva.
+
+Mensagem sugerida:
+
+```text
+Team 01 - conclui Sprint 1 de 5
+```
+
+Nas próximas etapas, utilize o mesmo padrão:
+
+```text
+Team 01 - conclui Sprint 2 de 5
+Team 01 - conclui Sprint 3 de 5
+Team 01 - conclui Sprint 4 de 5
+Team 01 - conclui Sprint 5 de 5
+```
+
+Antes do commit, confira se o arquivo está na pasta correta:
+
+```text
+teams/Teams-UNEMAT/team-01/
+```
+
+Fluxo esperado:
+
+```text
+editar arquivo
+      ↓
+revisar conteúdo
+      ↓
+salvar
+      ↓
+commit
+      ↓
+push para a branch da equipe
+```
+
+> O arquivo não deve ser enviado diretamente para `main`.
+
+---
+
+### 10.3 Pull Request — PR
+
+**Não abrir o Pull Request final hoje.**
+
+O PR deverá ser aberto somente na **Sprint 5/5, na sexta-feira**, depois que todos os arquivos da semana estiverem concluídos.
+
+Ao final da semana, a branch deverá conter:
+
+```text
+teams/Teams-UNEMAT/team-01/
+├── SPRINT1-5.md
+├── SPRINT2-5.md
+├── SPRINT3-5.md
+├── SPRINT4-5.md
+└── SPRINT5-5.md
+```
+
+O Pull Request deverá utilizar:
+
+**Branch de origem:**
+
+```text
+team-01-sprints-1-5
+```
+
+**Branch de destino:**
+
+```text
+main
+```
+
+Título sugerido para o PR:
+
+```text
+[N1][Team 01] Sprints 1-5 - Módulo de Alunos
+```
+
+Na descrição do Pull Request, a equipe deverá informar:
+
+- integrantes;
+- módulo desenvolvido;
+- resumo do trabalho realizado durante as cinco Sprints;
+- confirmação de que os arquivos foram revisados;
+- confirmação de que os códigos SQL desenvolvidos nas etapas seguintes foram testados;
+- eventuais dificuldades ou limitações encontradas.
+
+---
+
+### 10.4 Regras importantes do Pull Request
+
+O workflow de validação do repositório é executado sobre Pull Requests direcionados à branch:
+
+```text
+main
+```
+
+Por isso:
+
+- o PR final deverá ter `main` como destino;
+- a equipe deverá alterar somente os arquivos autorizados para sua entrega;
+- não deverão ser modificados arquivos de outras equipes;
+- não deverão ser modificados arquivos administrativos do repositório;
+- alterações indevidas poderão fazer a validação automática do PR falhar;
+- o PR somente será considerado entrega quando estiver aberto no repositório oficial da disciplina.
+
+> **Atenção:** o arquivo de workflow atualmente presente no repositório ainda utiliza o padrão antigo `teams/team-*.md`. A estrutura adotada nesta atividade é `teams/Teams-UNEMAT/team-01/SPRINT1-5.md`; portanto, o professor atualizará o workflow para reconhecer a nova organização das Sprints antes da entrega final.
+
+---
+
+## 11. Entrega da Sprint 1/5
 
 O arquivo desta etapa deverá ser salvo com o nome:
 
@@ -206,13 +356,26 @@ e permanecer dentro da pasta da equipe:
 teams/Teams-UNEMAT/team-01/SPRINT1-5.md
 ```
 
-A equipe deverá realizar um commit ao final da atividade.
+Ao finalizar a atividade de hoje:
 
-### Sugestão de mensagem de commit
+1. revise todas as respostas;
+2. confirme que o arquivo está na pasta correta;
+3. confirme que está trabalhando na branch `team-01-sprints-1-5`;
+4. faça o commit da Sprint 1/5;
+5. envie a atualização para a branch da equipe;
+6. **não abra ainda o PR final**.
 
-```text
-Team 01 - conclui Sprint 1 de 5
-```
+### Checklist Git/GitHub de hoje
+
+- [ ] Estou trabalhando na branch `team-01-sprints-1-5`;
+- [ ] não alterei diretamente a `main`;
+- [ ] editei apenas os arquivos da minha equipe;
+- [ ] o arquivo se chama `SPRINT1-5.md`;
+- [ ] o arquivo está em `teams/Teams-UNEMAT/team-01/`;
+- [ ] revisei o conteúdo antes de salvar;
+- [ ] realizei o commit da Sprint 1/5;
+- [ ] enviei o commit para a branch da equipe;
+- [ ] não abri o PR final antes da Sprint 5/5.
 
 ---
 
