@@ -2,8 +2,8 @@
 
 **Disciplina:** Laboratório de Banco de Dados  
 **Data:** 31/08/2026  
-**Equipe:** Team 01  
-**Módulo:** Alunos  
+**Equipe:** Team 06  
+**Módulo:** Produtos (Loja de Conveniência)  
 
 ---
 
@@ -29,16 +29,12 @@ O objetivo de hoje é definir claramente:
 
 Preencha com os integrantes da equipe.
 
-- Nome completo:
-- Nome completo:
-- Nome completo:
-- Nome completo:
-
+- Nome completo: Mariano Lino da Silva Neto
 ---
 
 ## 2. Descrição do módulo
 
-Escreva uma breve descrição explicando o papel do **Módulo de Alunos** dentro do sistema.
+Escreva uma breve descrição explicando o papel do **Módulo de Produtos (Loja de Conveniência)** dentro do sistema.
 
 A descrição deve responder:
 
@@ -56,7 +52,7 @@ A descrição deve responder:
 ### Descrição da equipe
 
 > Escreva aqui.
-
+O Módulo de Produtos atua como o catalogo central da loja de conveniência. Ele vai ser responsável por armazenar todas as informações dos itens que a loja vende, desde a identificação e a categorização até o preço de venda e a quantidade disponível. 
 ---
 
 ## 3. Planejamento da tabela principal
@@ -67,12 +63,12 @@ Preencha a tabela abaixo.
 
 | Atributo | Tipo de dado previsto | Obrigatório? | Restrição prevista | Justificativa |
 |---|---|---|---|---|
-| `id_aluno` | `INT` | Sim | `PRIMARY KEY` | Identificador único do aluno |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| `id_produto` | `INT` | Sim | `PRIMARY KEY` | Identificador único do produto |
+|codigo_barras | VARCHAR | Sim | UNIQUE, Not NULL | Codigo fisco do produto |
+| nome_produto | VARCHAR | Sim | Not NULL | descrição do item para o Cliente |
+| preco_venda | DECIMAL(10,2) | Sim | Not NULL | O Valor que será cobrado na venda |
+| quantidade_estoque | INT | Sim | Not NULL | quantidade atual do item nas prateleiras |
+| categoria | VARCHAR | Não | nenhuma | Agrupamento do Produto |
 
 A equipe deverá propor **pelo menos 5 atributos além do identificador principal**.
 
@@ -95,14 +91,14 @@ Informe qual atributo será utilizado como chave primária da tabela.
 
 **Atributo escolhido:**
 
-`________________________________________`
+`id_produto`
 
 ### Justificativa
 
 Explique por que esse atributo é adequado para identificar cada registro de forma única.
 
 > Escreva aqui.
-
+Com um numero próprio que vai ser gerado pelo sistema acaba sendo melhor do que o codigo_barras que também poderia ser uma boa opção, mas como o codigo de barras pode talvez ser alterado pelo fornecedor e isso poderia quebrar o histórico de vendas passadas desse produto com o seu codigo_barras anterior, então por essas eu prefiro ficar com o id_produto
 ---
 
 ## 5. Restrições de integridade
@@ -111,9 +107,9 @@ Identifique quais restrições poderão ser necessárias.
 
 | Atributo | Restrição prevista | Justificativa |
 |---|---|---|
-|  | `NOT NULL`, `UNIQUE`, etc. |  |
-|  |  |  |
-|  |  |  |
+| codigo_barras | `NOT NULL`, `UNIQUE`, etc. | Sistema não deve permitir que dois produtos diferentes tenham o mesmo Codigo de barras |
+| preco_venda | CHECK (preco >=0) | Só pra garantir que não tenha um produto com valor negativo |
+| nome_produto | NOT NULL | um produto sem nome não vai poder ser exibido na tela do caixa |
 |  |  |  |
 
 Durante a discussão, considere perguntas como:
@@ -130,12 +126,11 @@ Durante a discussão, considere perguntas como:
 
 Liste os módulos que poderão utilizar ou se relacionar com os dados de alunos.
 
-| Módulo relacionado | Como poderá se relacionar com Alunos? |
+| Módulo relacionado | Como poderá se relacionar com Produtos? |
 |---|---|
-| Matrículas | |
-| Notas | |
-| Frequência | |
-| Biblioteca | |
+| Vendas | Venda vai buscar preco_venda e o nome_produto se baseando no id_produto |
+| Controle de Estoque | toda vez que um produto for vendido ele vai ser subtraido do quantidade_estoque |
+| Fornecedores | vai vincular o id_produto a empresa que distribui a mercadoria |
 | Outro, se necessário | |
 
 > Nesta Sprint, não é necessário implementar `FOREIGN KEY`. O objetivo é apenas identificar possíveis relacionamentos.
@@ -155,9 +150,9 @@ Exemplos de perguntas que podem ajudar:
 
 ### Regras da equipe
 
-1. 
-2. 
-3. 
+1. Não é permito cadastrar um produto sem um preço de venda e sem o codigo de barras valido  
+2. O sistema não pode aceitar o preco_venda com um valor negativo
+3. se a quantidade_estoque de um produto tiver em zero ele não pode ser adicionado ao carrinho no modulo de vendas
 
 ---
 
@@ -179,16 +174,16 @@ Caso não existam dúvidas, escreva:
 
 Antes de finalizar a atividade de hoje, verifique se a equipe completou:
 
-- [ ] identificação dos integrantes;
-- [ ] descrição do módulo;
-- [ ] definição da tabela principal;
-- [ ] pelo menos 5 atributos além da chave primária;
-- [ ] escolha e justificativa da chave primária;
-- [ ] identificação das principais restrições;
-- [ ] identificação dos relacionamentos com outros módulos;
-- [ ] definição de pelo menos 3 regras de negócio;
-- [ ] registro de dúvidas ou decisões pendentes;
-- [ ] revisão do arquivo antes do commit.
+- [X] identificação dos integrantes;
+- [X] descrição do módulo;
+- [X] definição da tabela principal;
+- [X] pelo menos 5 atributos além da chave primária;
+- [X] escolha e justificativa da chave primária;
+- [X] identificação das principais restrições;
+- [X] identificação dos relacionamentos com outros módulos;
+- [X] definição de pelo menos 3 regras de negócio;
+- [X] registro de dúvidas ou decisões pendentes;
+- [X] revisão do arquivo antes do commit.
 
 ---
 
