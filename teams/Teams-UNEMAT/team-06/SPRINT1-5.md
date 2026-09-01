@@ -160,7 +160,7 @@ Exemplos de perguntas que podem ajudar:
 
 Registre aqui pontos que ainda precisam ser discutidos com o professor ou com outras equipes.
 
-- 
+- Nenhuma dúvida pendente nesta Sprint
 - 
 - 
 
@@ -362,15 +362,15 @@ Ao finalizar a atividade de hoje:
 
 ### Checklist Git/GitHub de hoje
 
-- [ ] Estou trabalhando na branch `team-01-sprints-1-5`;
-- [ ] não alterei diretamente a `main`;
-- [ ] editei apenas os arquivos da minha equipe;
-- [ ] o arquivo se chama `SPRINT1-5.md`;
-- [ ] o arquivo está em `teams/Teams-UNEMAT/team-01/`;
-- [ ] revisei o conteúdo antes de salvar;
-- [ ] realizei o commit da Sprint 1/5;
-- [ ] enviei o commit para a branch da equipe;
-- [ ] não abri o PR final antes da Sprint 5/5.
+- [X] Estou trabalhando na branch `team-01-sprints-1-5`;
+- [X] não alterei diretamente a `main`;
+- [X] editei apenas os arquivos da minha equipe;
+- [X] o arquivo se chama `SPRINT1-5.md`;
+- [X] o arquivo está em `teams/Teams-UNEMAT/team-01/`;
+- [X] revisei o conteúdo antes de salvar;
+- [X] realizei o commit da Sprint 1/5;
+- [X] enviei o commit para a branch da equipe;
+- [X] não abri o PR final antes da Sprint 5/5.
 
 ---
 
