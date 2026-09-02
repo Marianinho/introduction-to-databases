@@ -241,10 +241,10 @@ Cada tabela deverá possuir uma forma de identificar unicamente seus registros.
 
 | Entidade/Tabela | Chave primária prevista | Justificativa |
 |---|---|---|
-| Categoria |  | id_categoria | | valor unico inteiro e imutavel que vai ser gerenciado pelo sistema |
-| Produto |  | id_produto | | vamos usar ele pra não precisar usar o codigo de barras visto que ele não pode ser afetado pelo fabricante |
-| Venda |  | id_venda | | identifica unicamente cada cupom gerado no caixa |
-| Item_Venda |  | id_venda, id_produto | | Chave composta. Garante que o mesmo produto não se repita em linhas separadas no mesmo cupom |
+| Categoria | id_categoria | valor unico inteiro e imutavel que vai ser gerenciado pelo sistema | 
+| Produto | id_produto | vamos usar ele pra não precisar usar o codigo de barras visto que ele não pode ser afetado pelo fabricante | 
+| Venda | id_venda | identifica unicamente cada cupom gerado no caixa | 
+| Item_Venda | id_venda, id_produto | Chave composta. Garante que o mesmo produto não se repita em linhas separadas no mesmo cupom | 
 
 Considere:
 
