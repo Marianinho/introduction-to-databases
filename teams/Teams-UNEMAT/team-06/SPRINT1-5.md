@@ -33,9 +33,9 @@ Nesta Sprint 1/5, o foco é exclusivamente o **planejamento do banco de dados**.
 
 # 1. Identificação do aluno
 
-**Nome completo:Mariano Lino da Silva Neto**
+**Nome completo:**
 
-> Preencha aqui.
+> Mariano Lino da Silva Neto.
 
 **Nome escolhido para o banco de dados: BD_Conveniencia**
 
@@ -72,8 +72,7 @@ Alguns exemplos:
 
 ### Tema escolhido
 
-> Escreva aqui.
-Vendas e Produtos (Loja de Conveniência)
+> Vendas e Produtos (Loja de Conveniência).
 ---
 
 # 3. Descrição do sistema
@@ -89,17 +88,14 @@ A descrição deve responder:
 
 ### Descrição
 
-> Escreva aqui.
-O Módulo de Produtos atua como o catalogo central da loja de conveniência. Ele vai ser responsável por armazenar todas as informações dos itens que a loja vende, desde a identificação e a categorização até o preço de venda e a quantidade disponível. 
+> O Módulo de Produtos atua como o catalogo central da loja de conveniência. Ele vai ser responsável por armazenar todas as informações dos itens que a loja vende, desde a identificação e a categorização até o preço de venda e a quantidade disponível. 
 ---
 
 # 4. Objetivo do banco de dados
 
 ### Objetivo
 
-> Escreva aqui.
-
-Recriar num banco de dados como funciona o controle de estoque de uma pequena loja de conveniência, pensei nessa ideia vendo os vídeos de Simulador de mercado do Roblox
+> Recriar num banco de dados como funciona o controle de estoque de uma pequena loja de conveniência, pensei nessa ideia vendo os vídeos de Simulador de mercado do Roblox.
 ---
 
 # 5. Escopo inicial
