@@ -35,11 +35,11 @@ Nesta Sprint 1/5, o foco é exclusivamente o **planejamento do banco de dados**.
 
 **Nome completo:**
 
-> Preencha aqui.
+> Vinícius Eduardo Lima de Assis.
 
 **Nome escolhido para o banco de dados:**
 
-```text
+```Pacote de Viagens
 
 ```
 
@@ -73,7 +73,7 @@ Alguns exemplos:
 
 ### Tema escolhido
 
-> Escreva aqui.
+> Viagens.
 
 ---
 
@@ -90,7 +90,7 @@ A descrição deve responder:
 
 ### Descrição
 
-> Escreva aqui.
+> O sistema de banco de dados de pacotes de viagens representa o contexto de organização e gestão de ofertas turísticas, solucionando o problema de centralizar informações sobre destinos, preços e serviços. Ele será utilizado por agências de turismo, que cadastrarão e administrarão os pacotes, e por clientes interessados em consultar e reservar viagens. As principais informações armazenadas serão destinos, datas, preços, hospedagens, transportes e dados de clientes cadastrados. O sistema permitirá operações como cadastro de pacotes, consulta de opções, reservas, atualização de informações e emissão de relatórios, garantindo eficiência e praticidade tanto para quem oferece quanto para quem consome os serviços.
 
 ---
 
@@ -100,7 +100,7 @@ Explique qual é o principal objetivo do banco de dados proposto.
 
 ### Objetivo
 
-> Escreva aqui.
+>  O objetivo é centralizar e organizar todas as informações relacionadas às ofertas turísticas, garantindo que agências possam gerenciar seus pacotes de forma eficiente e que clientes tenham acesso rápido e confiável para consultar e reservar opções.
 
 ---
 
@@ -112,11 +112,12 @@ Liste as principais funcionalidades ou informações que deverão ser contemplad
 
 ### O banco deverá permitir:
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Cadastro de pacotes
+2. Hospedagens
+3. Destinos
+4. Transportes
+5. Reservas
+6. Dados do Cliente
 
 ---
 
@@ -150,12 +151,12 @@ Pagamento
 
 | Nº | Entidade | O que representa? |
 |---:|---|---|
-| 1 |  |  |
-| 2 |  |  |
-| 3 |  |  |
-| 4 |  |  |
-| 5 |  |  |
-| 6 |  |  |
+| 1 | Pacote de viagem  | mescla todas as informações da entidade abaixo |
+| 2 | Destino  | dados do local |
+| 3 | Hospedagem | dados das acomodações |
+| 4 | Transporte | meio de deslocamento |
+| 5 | Cliente | dados pessoais do usuário |
+| 6 | Agência | dados da empresa que está prestando o serviço  |
 
 > Como referência para esta atividade, planeje **pelo menos 4 tabelas relacionadas**.
 
