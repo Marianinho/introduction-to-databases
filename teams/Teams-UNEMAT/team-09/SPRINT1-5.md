@@ -151,12 +151,11 @@ Pagamento
 
 | Nº | Entidade | O que representa? |
 |---:|---|---|
-| 1 | Pacote de viagem  | mescla todas as informações da entidade abaixo |
+| 1 | Cliente | dados pessoais do usuário |
 | 2 | Destino  | dados do local |
 | 3 | Hospedagem | dados das acomodações |
 | 4 | Transporte | meio de deslocamento |
-| 5 | Cliente | dados pessoais do usuário |
-| 6 | Agência | dados da empresa que está prestando o serviço  |
+
 
 > Como referência para esta atividade, planeje **pelo menos 4 tabelas relacionadas**.
 
@@ -171,32 +170,32 @@ Para cada entidade, identifique os principais atributos que deverão ser armazen
 **Nome da entidade:**
 
 ```text
-
+Cliente
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_cliente | Identificação única do cliente | INT | Sim |
+| nome | Nome completo do cliente | VARCHAR(100) | Sim |
+| cpf | CPF do cliente | VARCHAR(14) | Sim |
+| email | E-mail do cliente | VARCHAR(100) | Sim |
+| telefone | Número de telefone do cliente | VARCHAR(20) | Não |
 
 ## Entidade 2
 
 **Nome da entidade:**
 
 ```text
-
+Destino
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_destino | Identificação única do destino | INT | Sim |
+| nome | Nome da cidade ou local | VARCHAR(100) | Sim |
+| pais | País onde o destino está localizado | VARCHAR(60) | Sim |
+| estado | Estado ou região do destino | VARCHAR(60) | Não |
+| descricao | Descrição do destino | TEXT | Não |
 
 ## Entidade 3
 
@@ -229,6 +228,8 @@ Para cada entidade, identifique os principais atributos que deverão ser armazen
 |  |  |  |  |
 |  |  |  |  |
 |  |  |  |  |
+
+
 
 ## Outras entidades
 
