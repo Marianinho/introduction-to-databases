@@ -293,7 +293,7 @@ N:N  → muitos para muitos
 |---|---|---|
 | Categoria/Produto | 1:N | uma categoria pode ter varios produtos mas um produto só pertence a uma categoria |
 | Venda/Item_venda | 1:N | Na mesma venda podemos ter diferentes itens no carrinho |
-| Produto/item_venda | o mesmo produto pode estar sendo vendido em diferentes carrinhos |  |
+| Produto/item_venda | 1:N | o mesmo produto pode estar sendo vendido em diferentes carrinhos |
 |  |  |  |
 
 ---
