@@ -202,32 +202,32 @@ Destino
 **Nome da entidade:**
 
 ```text
-
+Hospedagem
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_hospedagem |Identificação única da hospedagem  | INT | Sim |
+| nome | Nome do hotel ou acomodação | VARCHAR(100) | Sim |
+| endereco | Endereço da hospedagem | VARCHAR(200) | Sim |
+| tipo | Tipo de acomodação | VARCHAR(50) | Sim |
+| valor_diaria | Valor da diária | DECIMAL(10,2) | Sim |
 
 ## Entidade 4
 
 **Nome da entidade:**
 
 ```text
-
+Transporte
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_transporte | Identificação única do transporte | INT | Sim |
+| tipo | Tipo de transporte utilizado | VARCHAR(50) | Sim |
+| empresa | Nome da empresa de transporte | VARCHAR(100) | Sim |
+| origem | Local de partida | VARCHAR(100) | Sim |
+| destino | Local de chegada | VARCHAR(100) | Sim |
 
 
 
@@ -249,10 +249,10 @@ Cada tabela deverá possuir uma forma de identificar unicamente seus registros.
 
 | Entidade/Tabela | Chave primária prevista | Justificativa |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Cliente | id_cliente | Identifica cada cliente de forma única, não poderá se repetir e será um identificador numérico com AUTO_INCREMENT |
+| Destino | id_destino | Identifica cada destino de forma única, não poderá se repetir e será um identificador numérico com AUTO_INCREMENT |
+| Hospedagem | id_hospedagem | Identifica cada hospedagem de forma única, não poderá se repetir e será um identificador numérico com AUTO_INCREMENT |
+| Transporte | id_transporte | Identifica cada transporte de forma única, não poderá se repetir e será um identificador numérico com AUTO_INCREMENT |
 
 Considere:
 
