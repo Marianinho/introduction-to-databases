@@ -40,7 +40,7 @@ Nesta Sprint 1/5, o foco é exclusivamente o **planejamento do banco de dados**.
 **Nome escolhido para o banco de dados:**
 
 ```text
-Pacote de Viagens
+pacote_viagens
 ```
 
 ---
@@ -90,7 +90,7 @@ A descrição deve responder:
 
 ### Descrição
 
-> O sistema de banco de dados de pacotes de viagens representa o contexto de organização e gestão de ofertas turísticas, solucionando o problema de centralizar informações sobre destinos, preços e serviços. Ele será utilizado por agências de turismo, que cadastrarão e administrarão os pacotes, e por clientes interessados em consultar e reservar viagens. As principais informações armazenadas serão destinos, datas, preços, hospedagens, transportes e dados de clientes cadastrados. O sistema permitirá operações como cadastro de pacotes, consulta de opções, reservas, atualização de informações e emissão de relatórios, garantindo eficiência e praticidade tanto para quem oferece quanto para quem consome os serviços.
+> O sistema de banco de dados de pacotes de viagens representa o contexto de organização e gestão de ofertas turísticas, solucionando o problema de centralizar informações sobre destinos, preços e serviços. Ele será utilizado por agências de turismo, que cadastrarão e administrarão os pacotes, e por clientes interessados em consultar e reservar viagens. As principais informações armazenadas serão destinos, preços, hospedagens, transportes e dados de clientes cadastrados. O sistema permitirá operações como cadastro de pacotes, consulta, reservas, atualização de informações e emissão de relatórios.
 
 ---
 
@@ -100,7 +100,7 @@ Explique qual é o principal objetivo do banco de dados proposto.
 
 ### Objetivo
 
->  O objetivo é centralizar e organizar todas as informações relacionadas às ofertas turísticas, garantindo que agências possam gerenciar seus pacotes de forma eficiente e que clientes tenham acesso rápido e confiável para consultar e reservar opções.
+>  O objetivo é centralizar e organizar todas as informações relacionadas às ofertas turísticas, garantindo que agências possam gerenciar seus pacotes de forma eficiente e que clientes tenham acesso rápido e confiável para consultar e reservar viagens e/ou hospedagens.
 
 ---
 
@@ -300,9 +300,9 @@ N:N  → muitos para muitos
 | Relacionamento | Cardinalidade prevista | Justificativa |
 |---|---|---|
 | Cliente escolhe Destino | N:N | Um cliente pode escolher vários destinos, e um mesmo destino pode ser escolhido por vários clientes |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Cliente reserva Hospedagem | N:N | Um cliente pode reservar várias hospedagens, e uma hospedagem pode receber reservas de vários clientes |
+| Cliente utiliza Transporte | N:N | Um cliente pode utilizar diferentes transportes, e um transporte pode ser utilizado por vários clientes |
+| Destino possui Hospedagem | 1:N | Um destino pode possuir várias hospedagens, mas cada hospedagem está localizada em um único destino |
 
 ---
 
@@ -310,10 +310,10 @@ N:N  → muitos para muitos
 
 | Tabela | Atributo previsto como FK | Referencia qual tabela? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Hospedagem | id_destino | Destino |
+| Cliente | id_destino | Destino |
+| Cliente | id_hospedagem | Hospedagem |
+| Cliente | id_transporte | Transporte |
 
 > As `FOREIGN KEY` serão implementadas posteriormente. Nesta Sprint, apenas planeje os relacionamentos.
 
@@ -334,11 +334,15 @@ AUTO_INCREMENT
 
 | Tabela | Atributo | Restrição prevista | Motivo |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Cliente | id_cliente | PRIMARY KEY, AUTO_INCREMENT | Identificar cada cliente de forma única e gerar o código automaticamente |
+| Cliente | cpf | NOT NULL, UNIQUE | O CPF é obrigatório e não pode pertencer a mais de um cliente |
+| Cliente | email | NOT NULL, UNIQUE | O e-mail é obrigatório e deve ser único para cada cliente |
+| Destino | id_destino | PRIMARY KEY, AUTO_INCREMENT | Identificar cada destino de forma única e gerar o código automaticamente |
+| Destino | nome | NOT NULL | O nome do destino é uma informação obrigatória |
+| Hospedagem | id_hospedagem | PRIMARY KEY, AUTO_INCREMENT | Identificar cada hospedagem de forma única e gerar o código automaticamente |
+| Hospedagem | valor_diaria | NOT NULL | O valor da diária é necessário para registrar o preço da hospedagem |
+| Transporte | id_transporte | PRIMARY KEY, AUTO_INCREMENT | Identificar cada transporte de forma única e gerar o código automaticamente |
+| Transporte | tipo | NOT NULL | O tipo de transporte é necessário para identificar o serviço utilizado |
 
 ---
 
@@ -358,11 +362,11 @@ Um empréstimo deve possuir uma data de realização.
 
 ### Regras do seu banco
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Um cliente não pode possuir dois cadastros com o mesmo CPF.
+2. Um cliente não pode possuir dois cadastros com o mesmo e-mail.
+3. Uma hospedagem deve estar associada a um destino existente.
+4. O valor da diária de uma hospedagem deve ser maior que zero.
+5. Todo transporte cadastrado deve possuir uma empresa, uma origem e um destino informados.
 
 ---
 
@@ -389,7 +393,40 @@ CLIENTE 1 ───── N PEDIDO
 ### Esboço do seu banco
 
 ```text
-Escreva aqui a estrutura planejada.
+CLIENTE
+├── id_cliente (PK)
+├── nome
+├── cpf (UNIQUE)
+├── email (UNIQUE)
+└── telefone
+
+DESTINO
+├── id_destino (PK)
+├── nome
+├── pais
+├── estado
+└── descricao
+
+HOSPEDAGEM
+├── id_hospedagem (PK)
+├── nome
+├── endereco
+├── tipo
+├── valor_diaria
+└── id_destino (FK)
+
+TRANSPORTE
+├── id_transporte (PK)
+├── tipo
+├── empresa
+├── origem
+└── destino
+
+
+CLIENTE N ───── N DESTINO
+CLIENTE N ───── N HOSPEDAGEM
+CLIENTE N ───── N TRANSPORTE
+DESTINO 1 ───── N HOSPEDAGEM
 ```
 
 ---
@@ -398,10 +435,10 @@ Escreva aqui a estrutura planejada.
 
 Descreva que tipos de registros deverão existir no banco quando ele for populado.
 
-1. 
-2. 
-3. 
-4. 
+1. Dados de clientes, como nome, CPF, e-mail e telefone.
+2. Dados de destinos turísticos, como cidade, país, estado e descrição.
+3. Dados de hospedagens, como nome do hotel ou acomodação, endereço, tipo e valor da diária.
+4. Dados de transportes, como tipo de transporte, empresa, origem e destino.
 
 ---
 
@@ -421,19 +458,19 @@ Quais categorias possuem mais de 5 produtos?
 
 ### Perguntas do seu projeto
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Quais clientes estão cadastrados no sistema?
+2. Quais destinos turísticos estão cadastrados e em quais países estão localizados?
+3. Quais hospedagens estão disponíveis em cada destino?
+4. Quais são os valores das diárias das hospedagens cadastradas?
+5. Quais empresas e tipos de transporte estão cadastrados?
 
 ---
 
 # 17. Decisões e dúvidas pendentes
 
-- 
-- 
-- 
+- Nenhuma dúvida pendente nesta Sprint.
+- Nenhuma dúvida pendente nesta Sprint.
+- Nenhuma dúvida pendente nesta Sprint.
 
 Caso não existam dúvidas:
 
