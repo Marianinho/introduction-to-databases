@@ -10,297 +10,179 @@
 
 Nesta primeira etapa, cada aluno deverá **planejar individualmente um banco de dados completo**, que será desenvolvido de forma incremental ao longo das cinco Sprints.
 
-O banco escolhido nesta Sprint será o mesmo utilizado nas próximas etapas da atividade.
-
-Ao final da semana, cada aluno deverá possuir um banco de dados funcional contendo:
-
-- estrutura de tabelas;
-- chaves primárias;
-- chaves estrangeiras;
-- restrições de integridade;
-- dados cadastrados;
-- operações de inserção, alteração e exclusão;
-- consultas SQL;
-- funções de agregação;
-- agrupamentos;
-- validação e documentação final.
-
-Nesta Sprint 1/5, o foco é exclusivamente o **planejamento do banco de dados**.
-
-> **Importante:** ainda não é necessário implementar o banco em SQL. A implementação começará na Sprint 2/5.
-
 ---
 
 # 1. Identificação do aluno
 
 **Nome completo:**
 
-> Preencha aqui.
+> NICOLAS LINO OLIVEIRA
 
 **Nome escolhido para o banco de dados:**
-
-```text
-
-```
+Banco_de_Imobiliária
 
 ---
 
 # 2. Tema do banco de dados
 
-Escolha um domínio para o banco de dados que será desenvolvido durante toda a atividade.
-
-O tema é livre, desde que permita a criação de um banco relacional com múltiplas tabelas e relacionamentos coerentes.
-
-Alguns exemplos:
-
-- sistema acadêmico;
-- biblioteca;
-- clínica;
-- loja;
-- restaurante;
-- academia;
-- hotel;
-- oficina;
-- locadora;
-- e-commerce;
-- sistema de eventos;
-- sistema de transporte;
-- imobiliária;
-- pet shop;
-- escola;
-- campeonato esportivo;
-- outro domínio de interesse do aluno.
-
 ### Tema escolhido
 
-> Escreva aqui.
+> Gestão de Imobiliária (Corretores de Imóveis)
 
 ---
 
 # 3. Descrição do sistema
 
-Explique brevemente o sistema que será representado pelo banco de dados.
-
-A descrição deve responder:
-
-1. Qual problema ou contexto o sistema representa?
-2. Quem utilizaria esse sistema?
-3. Quais informações principais precisarão ser armazenadas?
-4. Quais operações o sistema deverá permitir?
-
 ### Descrição
 
-> Escreva aqui.
+> 1. O contexto é a gestão de uma imobiliária. Normalmente isso é feito de forma manual, com planilhas ou WhatsApp. Com o sistema, o objetivo é deixar esse processo mais automático e organizado.
+> 2. Gestores e corretores de uma imobiliária.
+> 3. Imóveis, Clientes, Corretores, Visitas, Propostas, Contratos e Gestões (histórico de qual corretor gerencia cada imóvel).
+> 4. O sistema deverá permitir:
+> - Cadastrar, editar e remover imóveis, clientes e corretores;
+> - Agendar, remarcar e cancelar visitas;
+> - Registrar propostas e atualizar seu status;
+> - Fechar contratos vinculando cliente + imóvel + corretor;
+> - Consultar imóveis por filtros (preço, bairro, tipo, status);
+> - Gerar relatórios: histórico de visitas por cliente, comissões por corretor, imóveis vendidos vs. disponíveis.
 
 ---
 
 # 4. Objetivo do banco de dados
 
-Explique qual é o principal objetivo do banco de dados proposto.
-
 ### Objetivo
 
-> Escreva aqui.
+> Organizar a gestão de uma imobiliária de forma digital, moderna e automatizada, substituindo o controle manual feito em planilhas ou WhatsApp.
 
 ---
 
 # 5. Escopo inicial
 
-Defina o que fará parte do banco de dados.
-
-Liste as principais funcionalidades ou informações que deverão ser contempladas.
-
 ### O banco deverá permitir:
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Cadastro de imóveis, clientes e corretores
+2. Agendamento e controle de visitas
+3. Registro e acompanhamento de propostas
+4. Fechamento de contratos (venda/aluguel)
+5. Consultas e relatórios (imóveis por filtro, comissões, histórico de visitas)
 
 ---
 
 # 6. Identificação das entidades
 
-Identifique as principais entidades necessárias para representar o sistema.
-
-Uma entidade representa algo sobre o qual o banco precisa armazenar informações.
-
-Exemplos:
-
-```text
-Aluno
-Curso
-Matrícula
-Professor
-Disciplina
-```
-
-ou:
-
-```text
-Cliente
-Produto
-Pedido
-Item_Pedido
-Pagamento
-```
-
-### Entidades do seu banco
-
 | Nº | Entidade | O que representa? |
 |---:|---|---|
-| 1 |  |  |
-| 2 |  |  |
-| 3 |  |  |
-| 4 |  |  |
-| 5 |  |  |
-| 6 |  |  |
-
-> Como referência para esta atividade, planeje **pelo menos 4 tabelas relacionadas**.
+| 1 | Imoveis | Cada imóvel disponível para venda ou aluguel |
+| 2 | Clientes | Pessoas interessadas em comprar ou alugar |
+| 3 | Corretores | Profissionais responsáveis pelos imóveis |
+| 4 | Visitas | Agendamentos de visita a um imóvel por um cliente |
+| 5 | Propostas | Ofertas de valor feitas por clientes a um imóvel |
+| 6 | Contratos | Registro do fechamento de venda/aluguel |
+| 7 | Gestoes | Histórico de qual corretor gerencia cada imóvel ao longo do tempo |
 
 ---
 
 # 7. Planejamento dos atributos
 
-Para cada entidade, identifique os principais atributos que deverão ser armazenados.
-
 ## Entidade 1
 
 **Nome da entidade:**
-
-```text
-
-```
+Imóveis
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_imovel | identificador único | INT | Sim |
+| endereco | endereço do imóvel | VARCHAR | Sim |
+| tipo | casa/apto/terreno | VARCHAR | Sim |
+| preco | valor do imóvel | DECIMAL | Sim |
+| status | disponível/vendido/alugado | VARCHAR | Sim |
 
 ## Entidade 2
 
 **Nome da entidade:**
-
-```text
-
-```
+Clientes
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_cliente | identificador único | INT | Sim |
+| nome | nome completo | VARCHAR | Sim |
+| contato | telefone/e-mail | VARCHAR | Sim |
+| tipo_interesse | compra/aluguel | VARCHAR | Não |
+| orcamento | valor disponível | DECIMAL | Não |
 
 ## Entidade 3
 
 **Nome da entidade:**
-
-```text
-
-```
-
+Corretores
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_corretor | identificador único | INT | Sim |
+| nome | nome completo | VARCHAR | Sim |
+| creci | registro profissional | VARCHAR | Sim |
+| comissao_percentual | % de comissão | DECIMAL | Sim |
 
 ## Entidade 4
 
 **Nome da entidade:**
-
-```text
-
-```
+VIsitas
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_visita | identificador único | INT | Sim |
+| id_cliente | referência ao cliente | INT (FK) | Sim |
+| id_imovel | referência ao imóvel | INT (FK) | Sim |
+| data_visita | data agendada | DATE | Sim |
+| status | confirmada/cancelada/realizada | VARCHAR | Sim |
 
 ## Outras entidades
 
-Caso o projeto possua mais de quatro entidades, registre-as abaixo.
-
 | Entidade | Principais atributos |
 |---|---|
-|  |  |
-|  |  |
-|  |  |
+| Propostas | id_proposta (PK), id_cliente (FK), id_imovel (FK), valor_proposto, data, status |
+| Contratos | id_contrato (PK), id_imovel (FK), id_cliente (FK), id_corretor (FK), valor_final, tipo, data_fechamento |
+| Gestoes | id_gestao (PK), id_imovel (FK), id_corretor (FK), data_inicio, data_fim |
 
 ---
 
 # 8. Chaves primárias
 
-Cada tabela deverá possuir uma forma de identificar unicamente seus registros.
-
 | Entidade/Tabela | Chave primária prevista | Justificativa |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-
-Considere:
-
-- o valor identifica cada registro de forma única?
-- o valor poderá se repetir?
-- será utilizado um identificador numérico?
-- será necessário `AUTO_INCREMENT`?
+| Imoveis | id_imovel | Identificador numérico único, AUTO_INCREMENT |
+| Clientes | id_cliente | Identificador numérico único, AUTO_INCREMENT |
+| Corretores | id_corretor | Identificador numérico único, AUTO_INCREMENT |
+| Visitas | id_visita | Identificador numérico único, AUTO_INCREMENT |
+| Propostas | id_proposta | Identificador numérico único, AUTO_INCREMENT |
+| Contratos | id_contrato | Identificador numérico único, AUTO_INCREMENT |
+| Gestoes | id_gestao | Identificador numérico único, AUTO_INCREMENT |
 
 ---
 
 # 9. Relacionamentos entre as entidades
 
-Identifique como as entidades se relacionam.
-
-### Exemplo
-
-```text
-Cliente realiza Pedido
-Pedido possui Item_Pedido
-Produto aparece em Item_Pedido
-```
-
-### Relacionamentos planejados
-
 | Entidade A | Relacionamento | Entidade B |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Corretores | gerencia | Imoveis |
+| Clientes | realiza | Visitas |
+| Imoveis | recebe | Visitas |
+| Clientes | faz | Propostas |
+| Imoveis | recebe | Propostas |
+| Contratos | vincula | Imoveis, Clientes, Corretores |
+| Corretores | possui histórico em | Gestoes |
+| Imoveis | possui histórico em | Gestoes |
 
 ---
 
 # 10. Cardinalidade inicial
 
-Utilize:
-
-```text
-1:1  → um para um
-1:N  → um para muitos
-N:N  → muitos para muitos
-```
-
 | Relacionamento | Cardinalidade prevista | Justificativa |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Corretor → Imóvel | 1:N | Um corretor pode gerenciar vários imóveis atualmente |
+| Cliente → Visita | 1:N | Um cliente pode agendar várias visitas |
+| Imóvel → Visita | 1:N | Um imóvel pode receber várias visitas |
+| Cliente → Proposta | 1:N | Um cliente pode fazer várias propostas |
+| Corretor → Gestão | 1:N | Um corretor pode ter gerenciado vários imóveis ao longo do tempo |
+| Imóvel → Gestão | 1:N | Um imóvel pode ter tido vários corretores ao longo do tempo, mas só um por vez |
 
 ---
 
@@ -308,283 +190,152 @@ N:N  → muitos para muitos
 
 | Tabela | Atributo previsto como FK | Referencia qual tabela? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-
-> As `FOREIGN KEY` serão implementadas posteriormente. Nesta Sprint, apenas planeje os relacionamentos.
+| Imoveis | id_corretor | Corretores |
+| Visitas | id_cliente | Clientes |
+| Visitas | id_imovel | Imoveis |
+| Propostas | id_cliente | Clientes |
+| Propostas | id_imovel | Imoveis |
+| Contratos | id_imovel | Imoveis |
+| Contratos | id_cliente | Clientes |
+| Contratos | id_corretor | Corretores |
+| Gestoes | id_imovel | Imoveis |
+| Gestoes | id_corretor | Corretores |
 
 ---
 
 # 12. Restrições de integridade previstas
 
-Podem ser consideradas:
-
-```sql
-PRIMARY KEY
-FOREIGN KEY
-NOT NULL
-UNIQUE
-DEFAULT
-AUTO_INCREMENT
-```
-
 | Tabela | Atributo | Restrição prevista | Motivo |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Corretores | creci | UNIQUE | Não pode haver dois corretores com o mesmo registro |
+| Imoveis | preco | NOT NULL | Todo imóvel precisa ter valor definido |
+| Imoveis | status | DEFAULT 'disponível' | Todo imóvel nasce disponível |
+| Visitas | id_cliente, id_imovel | NOT NULL, FOREIGN KEY | Visita só existe ligada a cliente e imóvel reais |
+| Contratos | valor_final | NOT NULL | Contrato precisa ter valor fechado |
+| Gestoes | data_fim | DEFAULT NULL | Gestão ativa não possui data de encerramento |
 
 ---
 
 # 13. Regras de negócio
 
-Defina pelo menos **5 regras de negócio** para o sistema.
-
-### Exemplos
-
-```text
-Um cliente não pode possuir dois cadastros com o mesmo CPF.
-Um pedido deve estar associado a um cliente existente.
-Um produto não pode possuir preço negativo.
-Uma matrícula deve estar associada a um aluno e a uma disciplina.
-Um empréstimo deve possuir uma data de realização.
-```
-
-### Regras do seu banco
-
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Um imóvel não pode ter status "vendido" sem um contrato associado.
+2. Um corretor não pode ter dois cadastros com o mesmo CRECI.
+3. Uma visita deve estar associada a um cliente e um imóvel existentes.
+4. Uma proposta não pode ter valor menor ou igual a zero.
+5. Um contrato só pode ser criado a partir de uma proposta com status "aceita".
+6. Um imóvel só pode ter um corretor com gestão ativa (data_fim = NULL) por vez.
 
 ---
 
 # 14. Esboço da estrutura do banco
 
-Faça uma representação textual inicial das tabelas e relacionamentos.
-
-### Exemplo
-
 ```text
-CLIENTE
+CORRETORES
+├── id_corretor (PK)
+├── nome
+├── creci
+└── comissao_percentual
+
+IMOVEIS
+├── id_imovel (PK)
+├── endereco
+├── tipo
+├── preco
+├── status
+└── id_corretor (FK)
+
+CLIENTES
 ├── id_cliente (PK)
 ├── nome
-└── email
+├── contato
+├── tipo_interesse
+└── orcamento
 
-PEDIDO
-├── id_pedido (PK)
+VISITAS
+├── id_visita (PK)
 ├── id_cliente (FK)
-└── data_pedido
+├── id_imovel (FK)
+├── data_visita
+└── status
 
-CLIENTE 1 ───── N PEDIDO
-```
+PROPOSTAS
+├── id_proposta (PK)
+├── id_cliente (FK)
+├── id_imovel (FK)
+├── valor_proposto
+├── data
+└── status
 
-### Esboço do seu banco
+CONTRATOS
+├── id_contrato (PK)
+├── id_imovel (FK)
+├── id_cliente (FK)
+├── id_corretor (FK)
+├── valor_final
+├── tipo
+└── data_fechamento
 
-```text
-Escreva aqui a estrutura planejada.
+GESTOES
+├── id_gestao (PK)
+├── id_imovel (FK)
+├── id_corretor (FK)
+├── data_inicio
+└── data_fim
+
+CORRETORES 1───N IMOVEIS
+CLIENTES   1───N VISITAS
+IMOVEIS    1───N VISITAS
+CLIENTES   1───N PROPOSTAS
+IMOVEIS    1───N PROPOSTAS
+CORRETORES 1───N GESTOES
+IMOVEIS    1───N GESTOES
 ```
 
 ---
 
 # 15. Dados que futuramente serão inseridos
 
-Descreva que tipos de registros deverão existir no banco quando ele for populado.
-
-1. 
-2. 
-3. 
-4. 
+1. Imóveis com endereço, preço e status reais (ex: apartamento no Centro, R$ 250.000, disponível)
+2. Clientes interessados em compra ou aluguel
+3. Corretores com CRECI e comissão
+4. Visitas e propostas de exemplo, ligando clientes a imóveis
 
 ---
 
 # 16. Perguntas que o banco deverá ser capaz de responder
 
-Defina pelo menos **5 perguntas** que futuramente deverão ser respondidas por consultas SQL.
-
-### Exemplos
-
-```text
-Quais clientes estão cadastrados?
-Quais produtos custam mais de R$ 100?
-Quantos pedidos foram realizados por cliente?
-Qual é o valor médio dos produtos?
-Quais categorias possuem mais de 5 produtos?
-```
-
-### Perguntas do seu projeto
-
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Quais imóveis estão disponíveis abaixo de determinado preço?
+2. Quantas visitas cada cliente já realizou?
+3. Qual corretor tem mais contratos fechados?
+4. Qual o valor médio dos imóveis vendidos?
+5. Quantas propostas foram aceitas versus recusadas?
 
 ---
 
 # 17. Decisões e dúvidas pendentes
 
-- 
-- 
-- 
-
-Caso não existam dúvidas:
-
-> Nenhuma dúvida pendente nesta Sprint.
+- Decidido: a entidade Gestões será mantida, para registrar o histórico de qual corretor já gerenciou cada imóvel.
+- Decidido: apenas um corretor pode ter gestão ativa sobre um imóvel por vez.
 
 ---
 
 # 18. Checklist da Sprint 1/5
 
-- [ ] identifiquei o aluno responsável;
-- [ ] defini o tema do banco de dados;
-- [ ] descrevi o sistema;
-- [ ] defini o objetivo do banco;
-- [ ] defini o escopo inicial;
-- [ ] identifiquei pelo menos 4 entidades;
-- [ ] planejei os principais atributos;
-- [ ] defini as chaves primárias previstas;
-- [ ] identifiquei os relacionamentos;
-- [ ] defini as cardinalidades iniciais;
-- [ ] identifiquei possíveis chaves estrangeiras;
-- [ ] planejei restrições de integridade;
-- [ ] defini pelo menos 5 regras de negócio;
-- [ ] fiz um esboço da estrutura do banco;
-- [ ] defini os tipos de dados que futuramente serão cadastrados;
-- [ ] defini pelo menos 5 perguntas que o banco deverá responder;
-- [ ] registrei dúvidas ou decisões pendentes;
-- [ ] revisei o arquivo antes de finalizar.
-
----
-
-# Entrega da Sprint 1/5
-
-O arquivo desta etapa deverá ser salvo com o nome:
-
-```text
-SPRINT1-5.md
-```
-
-O aluno deverá manter este arquivo, pois ele será utilizado como referência para as próximas Sprints.
-
-A evolução será:
-
-```text
-SPRINT1-5.md
-    ↓
-Planejamento do banco
-    ↓
-SPRINT2-5.md
-    ↓
-Criação da estrutura com DDL
-    ↓
-SPRINT3-5.md
-    ↓
-Inserção e manipulação de dados
-    ↓
-SPRINT4-5.md
-    ↓
-Consultas SQL
-    ↓
-SPRINT5-5.md
-    ↓
-Validação e entrega do banco completo
-```
-
----
-
-# Regras de Git/GitHub
-
-A atividade é **individual**.
-
-Cada aluno deverá manter seu próprio histórico de desenvolvimento durante as cinco Sprints.
-
-## Branch
-
-O aluno deverá trabalhar em uma branch própria durante toda a atividade.
-
-A branch não deverá ser recriada a cada Sprint.
-
-Utilize a convenção definida pelo professor para identificação individual.
-
-> A convenção definitiva do nome da branch deverá ser compatível com a validação automática do repositório.
-
-## Commit
-
-Cada Sprint deverá gerar pelo menos um commit próprio.
-
-Mensagem sugerida para hoje:
-
-```text
-Conclui Sprint 1 de 5 - planejamento do banco
-```
-
-Nas próximas etapas:
-
-```text
-Conclui Sprint 2 de 5 - estrutura DDL
-Conclui Sprint 3 de 5 - operações DML
-Conclui Sprint 4 de 5 - consultas SQL
-Conclui Sprint 5 de 5 - validação final
-```
-
-## Pull Request
-
-**Não abrir o Pull Request final nesta Sprint.**
-
-O Pull Request será realizado somente após a conclusão da Sprint 5/5.
-
-```text
-SPRINT1-5.md → commit
-SPRINT2-5.md → commit
-SPRINT3-5.md → commit
-SPRINT4-5.md → commit
-SPRINT5-5.md → commit
-                         ↓
-                  Pull Request final
-                         ↓
-                        main
-```
-
----
-
-# Critério de conclusão da Sprint 1/5
-
-A Sprint será considerada concluída quando o aluno apresentar um planejamento suficientemente detalhado para permitir que, na próxima etapa, consiga transformar sua proposta em um banco de dados relacional utilizando SQL.
-
-Não basta informar apenas o tema.
-
-O planejamento deverá demonstrar:
-
-- quais tabelas existirão;
-- quais informações serão armazenadas;
-- como as tabelas se relacionarão;
-- quais regras deverão ser respeitadas;
-- quais consultas o banco deverá permitir ao final da atividade.
-
----
-
-# Próxima etapa
-
-Na **Sprint 2/5**, o planejamento será transformado em uma implementação utilizando comandos DDL.
-
-Serão trabalhados:
-
-```sql
-CREATE DATABASE
-CREATE TABLE
-ALTER TABLE
-DROP TABLE
-PRIMARY KEY
-FOREIGN KEY
-NOT NULL
-UNIQUE
-DEFAULT
-```
-
-> **Não implemente a Sprint 2/5 neste arquivo.**
+- [x] identifiquei o aluno responsável;
+- [x] defini o tema do banco de dados;
+- [x] descrevi o sistema;
+- [x] defini o objetivo do banco;
+- [x] defini o escopo inicial;
+- [x] identifiquei pelo menos 4 entidades;
+- [x] planejei os principais atributos;
+- [x] defini as chaves primárias previstas;
+- [x] identifiquei os relacionamentos;
+- [x] defini as cardinalidades iniciais;
+- [x] identifiquei possíveis chaves estrangeiras;
+- [x] planejei restrições de integridade;
+- [x] defini pelo menos 5 regras de negócio;
+- [x] fiz um esboço da estrutura do banco;
+- [x] defini os tipos de dados que futuramente serão cadastrados;
+- [x] defini pelo menos 5 perguntas que o banco deverá responder;
+- [x] registrei dúvidas ou decisões pendentes;
+- [x] revisei o arquivo antes de finalizar.
