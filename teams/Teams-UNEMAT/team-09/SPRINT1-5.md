@@ -279,11 +279,11 @@ Produto aparece em Item_Pedido
 
 | Entidade A | Relacionamento | Entidade B |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Cliente | escolhe | Destino |
+| Cliente | reserva | Hospedagem |
+| Cliente | utiliza | Transporte |
+| Destino | possui | Hospedagem |
+| Destino | utiliza | Transporte |
 
 ---
 
@@ -299,7 +299,7 @@ N:N  → muitos para muitos
 
 | Relacionamento | Cardinalidade prevista | Justificativa |
 |---|---|---|
-|  |  |  |
+| Cliente escolhe Destino | N:N | Um cliente pode escolher vários destinos, e um mesmo destino pode ser escolhido por vários clientes |
 |  |  |  |
 |  |  |  |
 |  |  |  |
