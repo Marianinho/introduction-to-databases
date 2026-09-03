@@ -35,11 +35,11 @@ Nesta Sprint 1/5, o foco é exclusivamente o **planejamento do banco de dados**.
 
 **Nome completo:**
 
-> Preencha aqui.
+> Gabriel Sakaizawa Campos
 
 **Nome escolhido para o banco de dados:**
 
-```text
+```db_restaurante_sabor
 
 ```
 
@@ -47,260 +47,170 @@ Nesta Sprint 1/5, o foco é exclusivamente o **planejamento do banco de dados**.
 
 # 2. Tema do banco de dados
 
-Escolha um domínio para o banco de dados que será desenvolvido durante toda a atividade.
-
-O tema é livre, desde que permita a criação de um banco relacional com múltiplas tabelas e relacionamentos coerentes.
-
-Alguns exemplos:
-
-- sistema acadêmico;
-- biblioteca;
-- clínica;
-- loja;
-- restaurante;
-- academia;
-- hotel;
-- oficina;
-- locadora;
-- e-commerce;
-- sistema de eventos;
-- sistema de transporte;
-- imobiliária;
-- pet shop;
-- escola;
-- campeonato esportivo;
-- outro domínio de interesse do aluno.
-
 ### Tema escolhido
 
-> Escreva aqui.
+> Sistema de gerenciamento de restaurante.
 
 ---
 
 # 3. Descrição do sistema
 
-Explique brevemente o sistema que será representado pelo banco de dados.
-
-A descrição deve responder:
-
-1. Qual problema ou contexto o sistema representa?
-2. Quem utilizaria esse sistema?
-3. Quais informações principais precisarão ser armazenadas?
-4. Quais operações o sistema deverá permitir?
-
 ### Descrição
 
-> Escreva aqui.
+O sistema representa a gestão do atendimento de um restaurante: controle de clientes, mesas, funcionários, produtos do cardápio e os pedidos realizados. Ele seria utilizado por garçons, atendentes e pela gerência do restaurante para registrar e acompanhar o fluxo de pedidos do início ao fim.
+
+As informações principais a serem armazenadas são: dados dos clientes, dados dos funcionários, as mesas disponíveis, os produtos do cardápio (com preço) e os pedidos feitos, incluindo quais produtos e quantidades compõem cada pedido.
+
+O sistema deverá permitir: cadastrar clientes, funcionários, mesas e produtos; registrar pedidos vinculados a um cliente, uma mesa e um funcionário responsável; registrar os itens de cada pedido; atualizar o status dos pedidos; e consultar informações como faturamento, produtos mais vendidos e desempenho dos funcionários.
 
 ---
 
 # 4. Objetivo do banco de dados
 
-Explique qual é o principal objetivo do banco de dados proposto.
-
 ### Objetivo
 
-> Escreva aqui.
+Organizar de forma estruturada o atendimento do restaurante, garantindo integridade nos dados de clientes, funcionários, mesas e pedidos, e possibilitando consultas gerenciais sobre vendas, produtos e atendimento.
 
 ---
 
 # 5. Escopo inicial
 
-Defina o que fará parte do banco de dados.
-
-Liste as principais funcionalidades ou informações que deverão ser contempladas.
-
 ### O banco deverá permitir:
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Cadastro de clientes.
+2. Cadastro de funcionários.
+3. Cadastro de mesas do salão.
+4. Cadastro de produtos do cardápio.
+5. Registro de pedidos e dos itens que compõem cada pedido.
 
 ---
 
 # 6. Identificação das entidades
 
-Identifique as principais entidades necessárias para representar o sistema.
-
-Uma entidade representa algo sobre o qual o banco precisa armazenar informações.
-
-Exemplos:
-
-```text
-Aluno
-Curso
-Matrícula
-Professor
-Disciplina
-```
-
-ou:
-
-```text
-Cliente
-Produto
-Pedido
-Item_Pedido
-Pagamento
-```
-
 ### Entidades do seu banco
 
 | Nº | Entidade | O que representa? |
 |---:|---|---|
-| 1 |  |  |
-| 2 |  |  |
-| 3 |  |  |
-| 4 |  |  |
-| 5 |  |  |
-| 6 |  |  |
+| 1 | Cliente | Pessoa que realiza o pedido no restaurante |
+| 2 | Funcionário | Garçom/atendente responsável por atender o pedido |
+| 3 | Mesa | Mesa do salão onde o cliente está sentado |
+| 4 | Produto | Item do cardápio (prato, bebida etc.) |
+| 5 | Pedido | Pedido feito por um cliente, em uma mesa, atendido por um funcionário |
+| 6 | Item_Pedido | Cada produto (e quantidade) que compõe um pedido |
 
-> Como referência para esta atividade, planeje **pelo menos 4 tabelas relacionadas**.
+> Total: 6 entidades — acima do mínimo de 4 pedido na atividade.
 
 ---
 
 # 7. Planejamento dos atributos
-
-Para cada entidade, identifique os principais atributos que deverão ser armazenados.
 
 ## Entidade 1
 
 **Nome da entidade:**
 
 ```text
-
+Cliente
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_cliente | Identificador único do cliente | INT (AUTO_INCREMENT) | Sim |
+| nome | Nome do cliente | VARCHAR(100) | Sim |
+| cpf | CPF do cliente | VARCHAR(11) | Sim |
+| telefone | Telefone de contato | VARCHAR(15) | Não |
+| data_cadastro | Data em que o cliente foi cadastrado | DATE | Sim |
 
 ## Entidade 2
 
 **Nome da entidade:**
 
 ```text
-
+Funcionário
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_funcionario | Identificador único do funcionário | INT (AUTO_INCREMENT) | Sim |
+| nome | Nome do funcionário | VARCHAR(100) | Sim |
+| cargo | Função (garçom, gerente etc.) | VARCHAR(50) | Sim |
+| email | E-mail do funcionário | VARCHAR(100) | Sim |
+| ativo | Se o funcionário está ativo no sistema | BOOLEAN | Sim |
 
 ## Entidade 3
 
 **Nome da entidade:**
 
 ```text
-
+Mesa
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_mesa | Identificador único da mesa | INT (AUTO_INCREMENT) | Sim |
+| numero | Número da mesa no salão | INT | Sim |
+| capacidade | Quantidade de pessoas que a mesa comporta | INT | Sim |
+| status | Situação da mesa (livre/ocupada) | VARCHAR(20) | Sim |
 
 ## Entidade 4
 
 **Nome da entidade:**
 
 ```text
-
+Produto
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_produto | Identificador único do produto | INT (AUTO_INCREMENT) | Sim |
+| nome | Nome do produto (prato/bebida) | VARCHAR(100) | Sim |
+| categoria | Categoria do produto (entrada, prato principal, bebida etc.) | VARCHAR(50) | Sim |
+| preco | Preço unitário do produto | DECIMAL(10,2) | Sim |
 
 ## Outras entidades
 
-Caso o projeto possua mais de quatro entidades, registre-as abaixo.
-
 | Entidade | Principais atributos |
 |---|---|
-|  |  |
-|  |  |
-|  |  |
+| Pedido | id_pedido (PK), id_cliente (FK), id_mesa (FK), id_funcionario (FK), data_pedido, status |
+| Item_Pedido | id_item_pedido (PK), id_pedido (FK), id_produto (FK), quantidade, preco_unitario |
 
 ---
 
 # 8. Chaves primárias
 
-Cada tabela deverá possuir uma forma de identificar unicamente seus registros.
-
 | Entidade/Tabela | Chave primária prevista | Justificativa |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-
-Considere:
-
-- o valor identifica cada registro de forma única?
-- o valor poderá se repetir?
-- será utilizado um identificador numérico?
-- será necessário `AUTO_INCREMENT`?
+| Cliente | id_cliente | Identificador numérico único, não se repete, com AUTO_INCREMENT |
+| Funcionário | id_funcionario | Identificador numérico único, não se repete, com AUTO_INCREMENT |
+| Mesa | id_mesa | Identificador numérico único, independente do número físico da mesa |
+| Produto | id_produto | Identificador numérico único, evita ambiguidade entre produtos de mesmo nome |
+| Pedido | id_pedido | Identificador numérico único para cada pedido realizado |
+| Item_Pedido | id_item_pedido | Identificador numérico único para cada linha de item dentro de um pedido |
 
 ---
 
 # 9. Relacionamentos entre as entidades
 
-Identifique como as entidades se relacionam.
-
-### Exemplo
-
-```text
-Cliente realiza Pedido
-Pedido possui Item_Pedido
-Produto aparece em Item_Pedido
-```
-
 ### Relacionamentos planejados
 
 | Entidade A | Relacionamento | Entidade B |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Cliente | realiza | Pedido |
+| Funcionário | atende | Pedido |
+| Mesa | recebe | Pedido |
+| Pedido | possui | Item_Pedido |
+| Produto | aparece em | Item_Pedido |
 
 ---
 
 # 10. Cardinalidade inicial
 
-Utilize:
-
-```text
-1:1  → um para um
-1:N  → um para muitos
-N:N  → muitos para muitos
-```
-
 | Relacionamento | Cardinalidade prevista | Justificativa |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Cliente → Pedido | 1:N | Um cliente pode fazer vários pedidos, mas cada pedido pertence a um único cliente |
+| Funcionário → Pedido | 1:N | Um funcionário pode atender vários pedidos, mas cada pedido tem um único funcionário responsável |
+| Mesa → Pedido | 1:N | Uma mesa pode receber vários pedidos ao longo do tempo, mas cada pedido ocorre em uma única mesa |
+| Pedido → Item_Pedido | 1:N | Um pedido pode ter vários itens, mas cada item pertence a um único pedido |
+| Produto → Item_Pedido | 1:N | Um produto pode aparecer em vários itens de pedidos diferentes, mas cada item referencia um único produto |
 
 ---
 
@@ -308,10 +218,11 @@ N:N  → muitos para muitos
 
 | Tabela | Atributo previsto como FK | Referencia qual tabela? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Pedido | id_cliente | Cliente |
+| Pedido | id_mesa | Mesa |
+| Pedido | id_funcionario | Funcionário |
+| Item_Pedido | id_pedido | Pedido |
+| Item_Pedido | id_produto | Produto |
 
 > As `FOREIGN KEY` serão implementadas posteriormente. Nesta Sprint, apenas planeje os relacionamentos.
 
@@ -319,146 +230,135 @@ N:N  → muitos para muitos
 
 # 12. Restrições de integridade previstas
 
-Podem ser consideradas:
-
-```sql
-PRIMARY KEY
-FOREIGN KEY
-NOT NULL
-UNIQUE
-DEFAULT
-AUTO_INCREMENT
-```
-
 | Tabela | Atributo | Restrição prevista | Motivo |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Cliente | id_cliente | PRIMARY KEY, AUTO_INCREMENT | Identificação única de cada cliente |
+| Cliente | cpf | UNIQUE, NOT NULL | Evitar cadastro duplicado do mesmo cliente |
+| Funcionário | email | UNIQUE, NOT NULL | Cada funcionário deve ter um e-mail próprio |
+| Produto | preco | NOT NULL, DEFAULT 0.00 | Todo produto precisa ter um preço definido |
+| Mesa | status | DEFAULT 'livre' | Toda mesa nasce disponível até ser ocupada |
+| Pedido | id_cliente, id_mesa, id_funcionario | FOREIGN KEY, NOT NULL | Garantir que todo pedido esteja vinculado a registros existentes |
 
 ---
 
 # 13. Regras de negócio
 
-Defina pelo menos **5 regras de negócio** para o sistema.
-
-### Exemplos
-
-```text
-Um cliente não pode possuir dois cadastros com o mesmo CPF.
-Um pedido deve estar associado a um cliente existente.
-Um produto não pode possuir preço negativo.
-Uma matrícula deve estar associada a um aluno e a uma disciplina.
-Um empréstimo deve possuir uma data de realização.
-```
-
 ### Regras do seu banco
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Um cliente não pode possuir dois cadastros com o mesmo CPF.
+2. Um pedido deve estar associado a um cliente, uma mesa e um funcionário existentes.
+3. Um produto não pode possuir preço negativo.
+4. Um item de pedido deve referenciar um pedido e um produto válidos.
+5. Um funcionário inativo não pode ser vinculado a novos pedidos.
+6. Uma mesa não pode possuir dois pedidos "em aberto" ao mesmo tempo.
 
 ---
 
 # 14. Esboço da estrutura do banco
 
-Faça uma representação textual inicial das tabelas e relacionamentos.
-
-### Exemplo
+### Esboço do seu banco
 
 ```text
 CLIENTE
 ├── id_cliente (PK)
 ├── nome
-└── email
+├── cpf
+├── telefone
+└── data_cadastro
+
+FUNCIONÁRIO
+├── id_funcionario (PK)
+├── nome
+├── cargo
+├── email
+└── ativo
+
+MESA
+├── id_mesa (PK)
+├── numero
+├── capacidade
+└── status
+
+PRODUTO
+├── id_produto (PK)
+├── nome
+├── categoria
+└── preco
 
 PEDIDO
 ├── id_pedido (PK)
 ├── id_cliente (FK)
-└── data_pedido
+├── id_mesa (FK)
+├── id_funcionario (FK)
+├── data_pedido
+└── status
+
+ITEM_PEDIDO
+├── id_item_pedido (PK)
+├── id_pedido (FK)
+├── id_produto (FK)
+├── quantidade
+└── preco_unitario
 
 CLIENTE 1 ───── N PEDIDO
-```
-
-### Esboço do seu banco
-
-```text
-Escreva aqui a estrutura planejada.
+FUNCIONÁRIO 1 ───── N PEDIDO
+MESA 1 ───── N PEDIDO
+PEDIDO 1 ───── N ITEM_PEDIDO
+PRODUTO 1 ───── N ITEM_PEDIDO
 ```
 
 ---
 
 # 15. Dados que futuramente serão inseridos
 
-Descreva que tipos de registros deverão existir no banco quando ele for populado.
-
-1. 
-2. 
-3. 
-4. 
+1. Clientes cadastrados com nome, CPF e telefone.
+2. Funcionários com cargo e status (ativo/inativo).
+3. Mesas do salão com número e capacidade.
+4. Produtos do cardápio com categoria e preço, e os pedidos realizados com seus itens.
 
 ---
 
 # 16. Perguntas que o banco deverá ser capaz de responder
 
-Defina pelo menos **5 perguntas** que futuramente deverão ser respondidas por consultas SQL.
-
-### Exemplos
-
-```text
-Quais clientes estão cadastrados?
-Quais produtos custam mais de R$ 100?
-Quantos pedidos foram realizados por cliente?
-Qual é o valor médio dos produtos?
-Quais categorias possuem mais de 5 produtos?
-```
-
 ### Perguntas do seu projeto
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Quais clientes fizeram mais pedidos?
+2. Quais são os produtos mais vendidos?
+3. Qual o faturamento total por mês?
+4. Quantos pedidos cada funcionário atendeu?
+5. Qual é o ticket médio por mesa?
+6. Quais mesas têm maior rotatividade de pedidos?
 
 ---
 
 # 17. Decisões e dúvidas pendentes
 
-- 
-- 
-- 
-
-Caso não existam dúvidas:
-
-> Nenhuma dúvida pendente nesta Sprint.
+- Definir se, em Sprints futuras, será adicionada uma tabela de Pagamento (forma de pagamento, valor pago) — não incluída no escopo inicial.
+- Confirmar o nome final do banco de dados (`db_restaurante_sabor`) antes da Sprint 2/5.
 
 ---
 
 # 18. Checklist da Sprint 1/5
 
-- [ ] identifiquei o aluno responsável;
-- [ ] defini o tema do banco de dados;
-- [ ] descrevi o sistema;
-- [ ] defini o objetivo do banco;
-- [ ] defini o escopo inicial;
-- [ ] identifiquei pelo menos 4 entidades;
-- [ ] planejei os principais atributos;
-- [ ] defini as chaves primárias previstas;
-- [ ] identifiquei os relacionamentos;
-- [ ] defini as cardinalidades iniciais;
-- [ ] identifiquei possíveis chaves estrangeiras;
-- [ ] planejei restrições de integridade;
-- [ ] defini pelo menos 5 regras de negócio;
-- [ ] fiz um esboço da estrutura do banco;
-- [ ] defini os tipos de dados que futuramente serão cadastrados;
-- [ ] defini pelo menos 5 perguntas que o banco deverá responder;
-- [ ] registrei dúvidas ou decisões pendentes;
-- [ ] revisei o arquivo antes de finalizar.
+- [x] identifiquei o aluno responsável;
+- [x] defini o tema do banco de dados;
+- [x] descrevi o sistema;
+- [x] defini o objetivo do banco;
+- [x] defini o escopo inicial;
+- [x] identifiquei pelo menos 4 entidades;
+- [x] planejei os principais atributos;
+- [x] defini as chaves primárias previstas;
+- [x] identifiquei os relacionamentos;
+- [x] defini as cardinalidades iniciais;
+- [x] identifiquei possíveis chaves estrangeiras;
+- [x] planejei restrições de integridade;
+- [x] defini pelo menos 5 regras de negócio;
+- [x] fiz um esboço da estrutura do banco;
+- [x] defini os tipos de dados que futuramente serão cadastrados;
+- [x] defini pelo menos 5 perguntas que o banco deverá responder;
+- [x] registrei dúvidas ou decisões pendentes;
+- [x] revisei o arquivo antes de finalizar.
+
 
 ---
 
