@@ -438,9 +438,9 @@ Verifique se:
 
 | Tabela | Campo FK | Referencia | Relacionamento |
 |---|---|---|---|
-| Produto |FOREIGN KEY (id_categoria)| references Categoria(id_categoria) |  |
-|  |  |  |  |
-|  |  |  |  |
+| Produto |FOREIGN KEY (id_categoria)| references Categoria(id_categoria) | 1:N Uma categoria possui varios produtos |
+| item_venda | FOREIGN KEY (id_venda) | REFERENCES Venda(id_venda) | 1:N uma venda pode conter varios itens |
+| item_venda | FOREIGN KEY (id_produto) | REFERENCES Produto(id_produto) | 1:N um produto aparece em varias vendas |
 
 ---
 
@@ -489,12 +489,12 @@ CREATE TABLE tabela_associativa (
 
 ## Seu banco possui relacionamento N:N?
 
-- [ ] Sim
-- [X] Não
+- [X] Sim
+- [ ] Não
 
 Se sim, explique como foi implementado:
 
-> Escreva aqui.
+> Teoricamente o relacionamento N:N seria da bomba da venda pro produto, mas deu pra resolver isso criando a tabela item_venda pra não precisar ficar se preocupando com isso
 
 ---
 
