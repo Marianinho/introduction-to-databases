@@ -132,7 +132,38 @@ USE loja_virtual;
 ## Código utilizado no seu projeto
 
 ```sql
--- Copie aqui o código utilizado.
+CREATE DATABASE IF NOT EXISTS db_conveniencia;
+USE db_conveniencia;
+  
+CREATE TABLE Categoria(
+id_categoria INT PRIMARY KEY auto_increment,
+nome_categoria VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Produto(
+id_produto INT PRIMARY KEY auto_increment,
+id_categoria INT,
+codigo_barras VARCHAR(50) UNIQUE,
+nome_produto VARCHAR(100) NOT NULL,
+preco_venda DECIMAL(10,2) CHECK (preco_venda >= 0),
+quantidade_estoque INT CHECK (quantidade_estoque >=0),
+FOREIGN KEY (id_categoria) references Categoria(id_categoria)
+);
+
+CREATE TABLE Venda(
+id_venda INT auto_increment PRIMARY KEY,
+data_venda DATETIME DEFAULT current_timestamp,
+valor_total DECIMAL(10,2)
+);
+
+CREATE TABLE Item_venda(
+quantidade int,
+id_venda INT,
+id_produto int,
+PRIMARY KEY (id_venda, id_produto),
+FOREIGN KEY (id_venda) REFERENCES Venda(id_venda),
+FOREIGN KEY (id_produto) REFERENCES Produto(id_produto)
+);
 
 ```
 
@@ -141,7 +172,7 @@ USE loja_virtual;
 ```text
 
 ```
-
+db_conveniencia
 ---
 
 # 4. Tipos de dados
@@ -210,10 +241,10 @@ CREATE TABLE nome_tabela (
 
 | Nº | Nome da tabela | Finalidade |
 |---:|---|---|
-| 1 |  |  |
-| 2 |  |  |
-| 3 |  |  |
-| 4 |  |  |
+| 1 | Categoria | Armezenar o Nome da categoria e também o ID da categoria |
+| 2 | Produto | Armazenar o Id do produto, Id da categoria o codigo de barras, o nome do produto, a quantidade do estoque e o preco da venda |
+| 3 | Venda | Vai guardar o ID da venda, a data da venda e o Valor total da venda |
+| 4 | Item_venda | vai Armazenar a quantidade de itens, o id da venda e o id do produto |
 | 5 |  |  |
 | 6 |  |  |
 
@@ -246,10 +277,10 @@ Se `PEDIDO` possui uma FK para `CLIENTE`, então `CLIENTE` deve existir antes de
 
 ## Ordem definida para o seu projeto
 
-1. 
-2. 
-3. 
-4. 
+1. Categoria
+2. Produto
+3. Venda
+4. Item_venda
 5. 
 6. 
 
@@ -275,9 +306,9 @@ id_cliente INT PRIMARY KEY AUTO_INCREMENT
 
 | Tabela | Chave primária | Utiliza `AUTO_INCREMENT`? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Categoria | id_categoria | Sim |
+| Produto | id_produto | Sim |
+| Venda | id_venda | Sim |
 |  |  |  |
 
 ---
@@ -298,8 +329,8 @@ Não utilize `NOT NULL` indiscriminadamente. A restrição deve refletir uma reg
 
 | Tabela | Campo | Por que é obrigatório? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
+| Categoria | nome_categoria | Pelo fato de carregar o nome da categoria, isso e importante pra idetificação |
+| Produto | nome_produto | Mesma razão do nome da categoria, por carregar o nome do produto e é importante pra identifição |
 |  |  |  |
 
 ---
@@ -324,7 +355,7 @@ cpf CHAR(11) NOT NULL UNIQUE
 
 | Tabela | Campo | Por que não pode se repetir? |
 |---|---|---|
-|  |  |  |
+| Produto | codigo_barras | por ser um codigo unico destinado ao produto pelo fornecedor |
 |  |  |  |
 
 Caso nenhuma seja necessária, justifique:
@@ -353,7 +384,7 @@ status VARCHAR(20) NOT NULL DEFAULT 'ATIVO'
 
 | Tabela | Campo | DEFAULT | Justificativa |
 |---|---|---|---|
-|  |  |  |  |
+| Venda | data_venda | DATETIME DEFAULT | Ele vai pegar o horario atual do computador, então usar default eu já deixo claro que ele sempre vai tentar pegar o horario padrão da maquina |
 |  |  |  |  |
 
 Caso não utilize `DEFAULT`, justifique:
@@ -407,7 +438,7 @@ Verifique se:
 
 | Tabela | Campo FK | Referencia | Relacionamento |
 |---|---|---|---|
-|  |  |  |  |
+| Produto |FOREIGN KEY (id_categoria)| references Categoria(id_categoria) |  |
 |  |  |  |  |
 |  |  |  |  |
 
@@ -459,7 +490,7 @@ CREATE TABLE tabela_associativa (
 ## Seu banco possui relacionamento N:N?
 
 - [ ] Sim
-- [ ] Não
+- [X] Não
 
 Se sim, explique como foi implementado:
 
