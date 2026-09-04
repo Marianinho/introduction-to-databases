@@ -189,52 +189,68 @@ Ordem recomendada:
 
 **Nome:**
 
-```text
-
+```
+CATEGORIA
 ```
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO Categoria(nome_categoria) VALUES
+('Salgados'),
+('Doces e Bolachas'),
+('Pão fresco'),
+('Cobras');
 ```
 
 ## Tabela 2
 
 **Nome:**
 
-```text
-
+```
+PRODUTO
 ```
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO Produto(id_categoria, codigo_barras, nome_produto, quantidade_estoque) VALUES 
+(1, '102324232323', 'Pão Frito', 50),
+(1, '102324232324', 'Almoço velho', 50),
+(1, '142324232325', 'Doces e Legumes', 50),
+(1, '102324232326', 'Simplesmente a mulher mais linda do Mundo', 1);
 ```
 
 ## Tabela 3
 
 **Nome:**
 
-```text
-
+```
+VENDA
 ```
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO Venda(valor_total) VALUES
+(15.00),
+(13.00),
+(12.00),
+(03.00),
+(07.00),
+(23.00),
+(08.00);
 ```
 
 ## Tabela 4
 
 **Nome:**
 
-```text
-
+```
+ITEM_VENDA
 ```
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO Item_venda(quantidade, id_venda,id_produto) VALUES
+(1,1,1),
+(1,1,2),
+(1,2,3),
+(2,3,4),
+(1,5,2);
 ```
 
 ---
@@ -327,7 +343,7 @@ Registre os resultados:
 
 | Restrição testada | O que foi testado? | Resultado |
 |---|---|---|
-|  |  |  |
+| Valores Duplicados | se é possivel um valor INT com valor duplicado | não deixou:  Truncated incorrect DOUBLE value: '1,5'|
 |  |  |  |
 |  |  |  |
 
@@ -391,35 +407,38 @@ Execute pelo menos:
 ## UPDATE 1
 
 ```sql
--- Cole aqui.
-
+UPDATE Produto
+SET preco_venda = 10.50
+WHERE id_produto = 1;
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Preço da venda um que no caso seria o Pão frito
 
 ## UPDATE 2
 
 ```sql
--- Cole aqui.
-
+UPDATE Produto
+SET preco_venda = 20.00
+WHERE id_produto = 2;
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Preço da segunda venda ou seja o almoço velho
 
 ## UPDATE 3
 
 ```sql
--- Cole aqui.
-
+UPDATE Produto
+SET preco_venda = 1000000.00
+WHERE id_produto = 4;
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Deixando o valor mais linda do mundo no maximo que acaba sendo possivel.
 
 ---
 
@@ -498,24 +517,24 @@ Execute pelo menos:
 ## DELETE 1
 
 ```sql
--- Cole aqui.
-
+DELETE FROM item_venda 
+WHERE id_venda IN('1'); 
 ```
 
 **Registro removido:**
 
-> Escreva aqui.
+> Removeu o ID que tinham antes de valor: (1,1,1),
 
 ## DELETE 2
 
 ```sql
--- Cole aqui.
-
+DELETE FROM item_venda 
+WHERE id_venda IN('2'); 
 ```
 
 **Registro removido:**
 
-> Escreva aqui.
+> Removeu o ID (1,2,3) então né tá funcionando
 
 ---
 
@@ -544,63 +563,64 @@ Depois execute a alteração e consulte novamente.
 **Não entregue o código abaixo sem adaptação.**
 
 ```sql
-USE nome_do_banco;
+USE db_conveniencia;
 
 -- INSERTS
 
-INSERT INTO tabela_a (
-    campo_a1,
-    campo_a2
-)
-VALUES (
-    'Valor 1',
-    'Valor 2'
-);
+INSERT INTO Categoria(nome_categoria) VALUES
+('Salgados'),
+('Doces e Bolachas'),
+('Pão fresco'),
+('Cobras');
 
-INSERT INTO tabela_a (
-    campo_a1,
-    campo_a2
-)
-VALUES
-    ('Valor 3', 'Valor 4'),
-    ('Valor 5', 'Valor 6'),
-    ('Valor 7', 'Valor 8');
+INSERT INTO Produto(id_categoria, codigo_barras, nome_produto, quantidade_estoque) VALUES 
+(1, '102324232323', 'Pão Frito', 50),
+(2, '102324232324', 'Almoço velho', 50),
+(3, '142324232325', 'Doces e Legumes', 50),
+(4, '102324232326', 'Simplesmente a mulher mais linda do Mundo', 1);
 
-INSERT INTO tabela_b (
-    id_a,
-    campo_b1
-)
-VALUES (
-    1,
-    'Outro valor'
-);
+INSERT INTO Venda(valor_total) VALUES
+(15.00),
+(13.00),
+(12.00),
+(03.00),
+(07.00),
+(23.00),
+(08.00);
+
+INSERT INTO Item_venda(quantidade, id_venda,id_produto) VALUES
+(1,1,1),
+(1,1,2),
+(1,2,3),
+(2,3,4),
+(1,5,2);
 
 -- VERIFICAÇÕES
 
-SELECT * FROM tabela_a;
-SELECT * FROM tabela_b;
+SELECT * FROM Venda;
+SELECT * FROM item_venda;
 
 -- UPDATES
 
-UPDATE tabela_a
-SET campo_a1 = 'Valor atualizado'
-WHERE id_a = 1;
+UPDATE Produto
+SET preco_venda = 12.50
+WHERE id_produto = 1;
 
-UPDATE tabela_a
-SET campo_a2 = 'Outro valor'
-WHERE id_a = 2;
+UPDATE Produto
+SET preco_venda = 23.00
+WHERE id_produto = 2;
 
-UPDATE tabela_b
-SET campo_b1 = 'Atualizado'
-WHERE id_b = 1;
+UPDATE Produto
+SET preco_venda = 1000000.00
+WHERE id_produto = 4;
 
 -- DELETES
 
-DELETE FROM tabela_b
-WHERE id_b = 3;
+DELETE FROM item_venda 
+WHERE id_venda IN('1'); 
 
-DELETE FROM tabela_a
-WHERE id_a = 5;
+DELETE FROM item_venda 
+WHERE id_venda IN('2');
 ```
 
 ---
@@ -612,51 +632,87 @@ WHERE id_a = 5;
 -- IDENTIFICAÇÃO
 -- ============================================================
 
--- Aluno:
--- Banco:
+-- Aluno: Mariano Lino da Silva Neto
+-- Banco: db_conveniencia
 
 
 -- ============================================================
 -- SELECIONAR O BANCO
 -- ============================================================
 
-USE nome_do_banco;
+USE db_conveniencia;
 
 
 -- ============================================================
 -- INSERTS — TABELA 1
 -- ============================================================
-
+INSERT INTO Categoria(nome_categoria) VALUES
+('Salgados'),
+('Doces e Bolachas'),
+('Pão fresco'),
+('Cobras');
 
 -- ============================================================
 -- INSERTS — TABELA 2
 -- ============================================================
-
+INSERT INTO Produto(id_categoria, codigo_barras, nome_produto, quantidade_estoque) VALUES 
+(1, '102324232323', 'Pão Frito', 50),
+(2, '102324232324', 'Almoço velho', 50),
+(3, '142324232325', 'Doces e Legumes', 50),
+(4, '102324232326', 'Simplesmente a mulher mais linda do Mundo', 1);
 
 -- ============================================================
 -- INSERTS — TABELA 3
 -- ============================================================
-
+INSERT INTO Venda(valor_total) VALUES
+(15.00),
+(13.00),
+(12.00),
+(03.00),
+(07.00),
+(23.00),
+(08.00);
 
 -- ============================================================
 -- INSERTS — TABELA 4
 -- ============================================================
-
+INSERT INTO Item_venda(quantidade, id_venda,id_produto) VALUES
+(1,1,1),
+(1,1,2),
+(1,2,3),
+(2,3,4),
+(1,5,2);
 
 -- ============================================================
 -- VERIFICAÇÕES
 -- ============================================================
-
+SELECT * FROM item_venda;
+SELECT * FROM Produto;
+SELECT * FROM Venda;
 
 -- ============================================================
 -- UPDATES
 -- ============================================================
+UPDATE Produto
+SET preco_venda = 12.50
+WHERE id_produto = 1;
 
+UPDATE Produto
+SET preco_venda = 23.00
+WHERE id_produto = 2;
+
+UPDATE Produto
+SET preco_venda = 1000000.00
+WHERE id_produto = 4;
 
 -- ============================================================
 -- DELETES
 -- ============================================================
+DELETE FROM item_venda 
+WHERE id_venda IN('1'); 
 
+DELETE FROM item_venda 
+WHERE id_venda IN('2'); 
 
 -- ============================================================
 -- VERIFICAÇÃO FINAL
