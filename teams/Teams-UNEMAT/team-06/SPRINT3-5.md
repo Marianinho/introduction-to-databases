@@ -175,10 +175,10 @@ Ordem recomendada:
 
 | Tabela | Quantidade prevista | Depende de outra tabela? |
 |---|---:|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Categoria | 4 | Não |
+| Produto | 4 | Sim |
+| venda | 7 | Não |
+| Item_venda | 5 | Sim |
 |  |  |  |
 
 ---
@@ -344,7 +344,7 @@ Registre os resultados:
 | Restrição testada | O que foi testado? | Resultado |
 |---|---|---|
 | Valores Duplicados | se é possivel um valor INT com valor duplicado | não deixou:  Truncated incorrect DOUBLE value: '1,5'|
-|  |  |  |
+| Chave Estrangeria | Inserção de um id_produto no item_venda que não existe | O banco bloqueou a inserção devido a restrição de Foreign Key |
 |  |  |  |
 
 > Não mantenha comandos propositalmente inválidos no `SPRINT3-5.sql` final.
@@ -778,10 +778,10 @@ SPRINT3-5.sql
 
 | Tabela | Quantidade aproximada de registros ao final |
 |---|---:|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| Categoria | 4 |
+| Produto | 4 |
+| Venda | 7 |
+| Item_venda | 2 |
 |  |  |
 
 ---
@@ -853,22 +853,22 @@ Não exclua arquivos das etapas anteriores.
 
 # 27. Checklist da Sprint 3/5
 
-- [ ] utilizei o banco criado na Sprint 2/5;
-- [ ] utilizei `USE`;
-- [ ] inseri dados coerentes com o projeto;
-- [ ] respeitei a ordem das tabelas;
-- [ ] procurei inserir pelo menos 5 registros nas tabelas principais;
-- [ ] testei restrições de integridade;
-- [ ] executei pelo menos 3 `UPDATE`;
-- [ ] os `UPDATE` possuem condição adequada;
-- [ ] executei pelo menos 2 `DELETE`;
-- [ ] os `DELETE` possuem condição adequada;
-- [ ] verifiquei dependências de `FOREIGN KEY`;
-- [ ] utilizei `SELECT` para conferência;
-- [ ] registrei os problemas encontrados;
-- [ ] salvei o código como `SPRINT3-5.sql`;
-- [ ] preenchi completamente o `SPRINT3-5.md`;
-- [ ] revisei os arquivos antes do commit.
+- [x] utilizei o banco criado na Sprint 2/5;
+- [x] utilizei `USE`;
+- [x] inseri dados coerentes com o projeto;
+- [x] respeitei a ordem das tabelas;
+- [x] procurei inserir pelo menos 5 registros nas tabelas principais;
+- [x] testei restrições de integridade;
+- [x] executei pelo menos 3 `UPDATE`;
+- [x] os `UPDATE` possuem condição adequada;
+- [x] executei pelo menos 2 `DELETE`;
+- [x] os `DELETE` possuem condição adequada;
+- [x] verifiquei dependências de `FOREIGN KEY`;
+- [x] utilizei `SELECT` para conferência;
+- [x] registrei os problemas encontrados;
+- [x] salvei o código como `SPRINT3-5.sql`;
+- [x] preenchi completamente o `SPRINT3-5.md`;
+- [x] revisei os arquivos antes do commit.
 
 ---
 
