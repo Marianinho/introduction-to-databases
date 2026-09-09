@@ -127,7 +127,7 @@ FROM nome_tabela;
 ### SQL
 
 ```sql
--- 
+
    SELECT *
    FROM incidentes;
 
@@ -241,7 +241,7 @@ ORDER BY categoria ASC, preco DESC;
 
 ```sql
 -- 
-xSELECT titulo, severidade, data_identificacao
+SELECT titulo, severidade, data_identificacao
 FROM incidentes
 ORDER BY data_identificacao DESC;
 
@@ -297,7 +297,7 @@ FROM nome_tabela;
 ## COUNT
 
 ```sql
--- 
+
 SELECT COUNT(*) AS total_incidentes
 FROM incidentes;
 
@@ -310,7 +310,7 @@ FROM incidentes;
 ## SUM
 
 ```sql
--- 
+
 SELECT a.nome AS analista,
        SUM(CASE WHEN i.severidade IN ('ALTA', 'CRITICA') THEN 1 ELSE 0 END) AS incidentes_criticos
 FROM analistas a
@@ -329,7 +329,6 @@ Justificativa de uso: o domínio do projeto (segurança da informação) não po
 ## AVG
 
 ```sql
--- 
 SELECT AVG(quantidade) AS media_incidentes_por_analista
 FROM (
     SELECT id_analista, COUNT(*) AS quantidade
@@ -349,7 +348,6 @@ Essa consulta usa uma subconsulta: primeiro conta quantos incidentes cada analis
 ## MIN ou MAX
 
 ```sql
--- 
 SELECT MIN(data_identificacao) AS incidente_mais_antigo,
        MAX(data_identificacao) AS incidente_mais_recente
 FROM incidentes;
