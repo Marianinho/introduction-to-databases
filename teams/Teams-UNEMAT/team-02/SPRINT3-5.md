@@ -195,7 +195,8 @@ analistas
 ```
 
 ```sql
--- INSERT INTO analistas (nome, email, cargo)
+--
+   INSERT INTO analistas (nome, email, cargo)
    VALUES
     ('Mariana Alves',   'mariana.alves@empresa.com',   'Analista de Segurança Pleno'),
     ('Pedro Santos',    'pedro.santos@empresa.com',    'Analista de Segurança Júnior'),
@@ -214,7 +215,8 @@ dispositivos
 ```
 
 ```sql
--- INSERT INTO dispositivos (nome_dispositivo, tipo_dispositivo, ip_address, ativo)
+--
+   INSERT INTO dispositivos (nome_dispositivo, tipo_dispositivo, ip_address, ativo)
    VALUES
     ('Servidor-Web-01',        'Servidor',  '192.168.1.10', TRUE),
     ('Notebook-Financeiro-03', 'Notebook',  '192.168.1.55', TRUE),
@@ -233,7 +235,8 @@ tipos_ameacas
 ```
 
 ```sql
--- INSERT INTO tipos_ameacas (nome_ameaca, descricao)
+--
+   INSERT INTO tipos_ameacas (nome_ameaca, descricao)
    VALUES
     ('Phishing',                    'Tentativa de obter dados sensíveis se passando por uma fonte confiável.'),
     ('Ransomware',                  'Software malicioso que sequestra e criptografa arquivos, exigindo resgate.'),
@@ -252,7 +255,8 @@ alertas
 ```
 
 ```sql
--- INSERT INTO alertas (titulo, descricao, id_dispositivo, status)
+--
+   INSERT INTO alertas (titulo, descricao, id_dispositivo, status)
    VALUES
     ('Tentativa de login suspeita',           '...', 1, 'ABERTO'),
     ('Tráfego anômalo detectado',              '...', 3, 'ABERTO'),
@@ -270,7 +274,8 @@ incidentes
 ```
 
 ```sql
---  INSERT INTO incidentes (
+--
+    INSERT INTO incidentes (
     titulo, descricao, severidade, status,
     id_analista, id_dispositivo, id_ameaca, id_alerta)
     VALUES
@@ -291,7 +296,8 @@ acoes_resposta
 ```
 
 ```sql
--- INSERT INTO acoes_resposta (descricao, id_incidente)
+--
+    INSERT INTO acoes_resposta (descricao, id_incidente)
     VALUES
     ('Bloqueio temporário do IP de origem do ataque.', 1),
     ('Redefinição de senha do usuário afetado.', 1),
