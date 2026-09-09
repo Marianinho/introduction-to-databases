@@ -165,11 +165,12 @@ Preencha:
 
 | Tabela | PK correta? | FKs corretas? | Tipos corretos? | Restrições corretas? |
 |---|---|---|---|---|
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+|analistas |Sim  | Não se aplica (não possui FK) |Sim  | Sim (UNIQUE em email) |
+|dispositivos |Sim  | Não se aplica (não possui FK) | Sim | Sim (UNIQUE em ip_address) |
+|tipos_ameacas  |Sim  | Não se aplica (não possui FK) | Sim | Sim |
+|alertas  | Sim | Sim (id_dispositivo → dispositivos) | Sim| Sim (corrigido o DEFAULT de data_alerta) |
+|incidentes  |Sim  | 	Sim (4 FKs: analistas, dispositivos, tipos_ameacas, alertas) | Sim | Sim |
+|acoes_resposta  |Sim  |	Sim (id_incidente → incidentes)  | Sim | Sim |
 
 ---
 
@@ -179,10 +180,13 @@ Liste as chaves primárias finais.
 
 | Tabela | PRIMARY KEY | AUTO_INCREMENT? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+|analistas  | id_analista | Sim |
+|dispositivos  | id_dispositivo | Sim |
+| tipos_ameacas | id_ameaca | Sim |
+| alertas | id_alerta | Sim |
+| incidentes | id_incidente | Sim |
+| acoes_resposta | id_acao | Sim |
+
 
 Verifique se cada registro pode ser identificado de forma única.
 
@@ -194,10 +198,12 @@ Liste as chaves estrangeiras finais.
 
 | Tabela | FOREIGN KEY | Tabela referenciada | Campo referenciado |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| alertas | id_dispositivo |dispositivos  | id_dispositivo |
+| incidentes |id_analista  | analistas | id_analista |
+|incidentes  | id_dispositivo | dispositivos | id_dispositivo |
+| incidentes | id_ameaca | tipos_ameacas | id_ameaca |
+| incidentes |id_alerta| alertas |id_alerta  |
+| acoes_resposta | id_incidente | incidentes  | id_incidente |
 
 Confira se:
 
@@ -226,10 +232,13 @@ Registre exemplos:
 
 | Tabela | Campo | Restrição | Regra de negócio protegida |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+|analistas  | email | UNIQUE | Evita analistas duplicados com o mesmo e-mail |
+| dispositivos | ip_address | UNIQUE | Evita dispositivos duplicados com o mesmo IP |
+| incidentes |titulo, descricao, severidade, status  | NOT NULL | Todo incidente deve possuir título, descrição, severidade e status (regra de negócio 1 da Sprint 1/5) |
+| incidentes | status | DEFAULT 'ABERTO' | Todo incidente novo começa como aberto (regra de negócio 2) |
+|dispositivos  | ativo | DEFAULT TRUE | Um dispositivo cadastrado é considerado ativo até que se informe o contrário |
+|Todas as PKs  | id_* | PRIMARY KEY + AUTO_INCREMENT | Identifica cada registro de forma única, sem repetição |
+
 
 ---
 
@@ -241,11 +250,12 @@ Preencha:
 
 | Tabela | Quantidade aproximada de registros |
 |---|---:|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| analistas | 5 |
+| dispositivos | 5 |
+| tipos_ameacas | 5 |
+| alertas | 4 (5 inseridos, 1 excluído na Sprint 3/5) |
+| incidentes | 5 |
+| acoes_resposta | 5 (6 inseridos, 1 excluído na Sprint 3/5) |
 
 Pergunte:
 
@@ -261,12 +271,12 @@ Pergunte:
 
 Confirme:
 
-- [ ] os INSERTs executam sem erro;
-- [ ] respeitam as chaves estrangeiras;
-- [ ] não existem duplicações indevidas;
-- [ ] respeitam `NOT NULL`;
-- [ ] respeitam `UNIQUE`;
-- [ ] os dados fazem sentido no domínio.
+- [x] os INSERTs executam sem erro;
+- [x] respeitam as chaves estrangeiras;
+- [x] não existem duplicações indevidas;
+- [x] respeitam `NOT NULL`;
+- [x] respeitam `UNIQUE`;
+- [x] os dados fazem sentido no domínio.
 
 Caso encontre problemas, registre:
 
@@ -281,16 +291,31 @@ Caso encontre problemas, registre:
 
 Confirme:
 
-- [ ] os UPDATEs possuem `WHERE`;
-- [ ] alteram os registros esperados;
-- [ ] não modificam toda a tabela acidentalmente;
-- [ ] mantêm a integridade do banco.
+- [x] os UPDATEs possuem `WHERE`;
+- [x] alteram os registros esperados;
+- [x] não modificam toda a tabela acidentalmente;
+- [x] mantêm a integridade do banco.
 
 Liste os principais UPDATEs finais:
 
 ```sql
--- Cole aqui os UPDATEs mais importantes.
+-- 
+UPDATE incidentes
+SET data_encerramento = CURRENT_TIMESTAMP
+WHERE id_incidente = 5;
 
+UPDATE dispositivos
+SET ativo = TRUE
+WHERE id_dispositivo = 5;
+
+UPDATE incidentes
+SET status = 'RESOLVIDO',
+    data_encerramento = CURRENT_TIMESTAMP
+WHERE id_incidente = 1;
+
+UPDATE analistas
+SET cargo = 'Analista de Segurança Sênior'
+WHERE id_analista = 2;
 ```
 
 ---
@@ -299,15 +324,20 @@ Liste os principais UPDATEs finais:
 
 Confirme:
 
-- [ ] os DELETEs possuem `WHERE`;
-- [ ] não removem registros necessários ao funcionamento do projeto;
-- [ ] respeitam as dependências de `FOREIGN KEY`;
-- [ ] não comprometem consultas posteriores.
+- [x] os DELETEs possuem `WHERE`;
+- [x] não removem registros necessários ao funcionamento do projeto;
+- [x] respeitam as dependências de `FOREIGN KEY`;
+- [x] não comprometem consultas posteriores.
 
 Liste os DELETEs finais:
 
 ```sql
--- Cole aqui.
+--
+DELETE FROM alertas
+WHERE id_alerta = 4;
+
+DELETE FROM acoes_resposta
+WHERE id_acao = 6;
 
 ```
 
@@ -334,15 +364,15 @@ Preencha:
 
 | Recurso SQL | Possui consulta válida? | Pergunta respondida |
 |---|---|---|
-| SELECT |  |  |
-| WHERE |  |  |
-| ORDER BY |  |  |
-| COUNT |  |  |
-| SUM |  |  |
-| AVG |  |  |
-| MIN/MAX |  |  |
-| GROUP BY |  |  |
-| HAVING |  |  |
+| SELECT | Sim | Visão geral dos incidentes cadastrados |
+| WHERE | Sim | Quais incidentes estão atualmente abertos? |
+| ORDER BY | Sim | Quais foram os incidentes mais recentes? |
+| COUNT | Sim | Quantos incidentes já foram registrados no total? |
+| SUM |Sim  | Quantos incidentes críticos/altos cada analista acompanha? |
+| AVG |Sim  | Em média, quantos incidentes cada analista está acompanhando? |
+| MIN/MAX | Sim | Qual foi o incidente mais antigo e o mais recente? |
+| GROUP BY | Sim | Quantos incidentes foram registrados por tipo de ameaça? |
+| HAVING | Sim | Quais dispositivos estão relacionados a mais de um incidente? |
 
 ---
 
@@ -352,17 +382,20 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 1
 
-> Escreva aqui.
+> Quais incidentes de segurança estão atualmente abertos?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 **Consulta utilizada:**
 
 ```sql
--- Cole aqui.
+-- 
+SELECT titulo, severidade, status, data_identificacao
+FROM incidentes
+WHERE status = 'ABERTO';
 
 ```
 
@@ -370,15 +403,19 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 2
 
-> Escreva aqui.
+> Quais incidentes possuem severidade alta ou crítica?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
+-- 
+SELECT titulo, severidade, status
+FROM incidentes
+WHERE severidade IN ('ALTA', 'CRITICA')
+  AND status <> 'ENCERRADO';
 
 ```
 
@@ -386,15 +423,21 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 3
 
-> Escreva aqui.
+> Quais incidentes estão sob responsabilidade de cada analista?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
+-- 
+SELECT a.nome AS analista,
+       i.titulo AS incidente,
+       i.status
+FROM analistas a
+JOIN incidentes i ON i.id_analista = a.id_analista
+ORDER BY a.nome;
 
 ```
 
@@ -402,15 +445,22 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 4
 
-> Escreva aqui.
+> Quais dispositivos estão relacionados ao maior número de incidentes?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
+--
+SELECT d.nome_dispositivo,
+       COUNT(i.id_incidente) AS quantidade_incidentes
+FROM dispositivos d
+JOIN incidentes i ON i.id_dispositivo = d.id_dispositivo
+GROUP BY d.id_dispositivo, d.nome_dispositivo
+HAVING COUNT(i.id_incidente) > 1
+ORDER BY quantidade_incidentes DESC;
 
 ```
 
@@ -418,16 +468,21 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 5
 
-> Escreva aqui.
+> Quantos incidentes foram registrados por tipo de ameaça?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
-
+-- 
+SELECT t.nome_ameaca,
+       COUNT(i.id_incidente) AS quantidade_incidentes
+FROM tipos_ameacas t
+LEFT JOIN incidentes i ON i.id_ameaca = t.id_ameaca
+GROUP BY t.id_ameaca, t.nome_ameaca
+ORDER BY quantidade_incidentes DESC;
 ```
 
 ---
@@ -625,16 +680,16 @@ Confira se todas as tabelas aparecem.
 Quantidade de tabelas:
 
 ```text
-
+Quantidade de tabelas esperada: 6
 ```
 
 Quantidade encontrada:
 
 ```text
-
+Quantidade encontrada: 6
 ```
 
-- [ ] corresponde ao esperado.
+- [x] corresponde ao esperado.
 
 ---
 
@@ -688,18 +743,18 @@ Registre:
 ### Tabela testada
 
 ```text
-
+incidentes
 ```
 
 ### Restrição testada
 
 ```text
-
+FOREIGN KEY (id_analista)
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> Foi tentado inserir um incidente com id_analista = 999 (inexistente). O MySQL recusou o comando com o erro "Cannot add or update a child row: a foreign key constraint fails", confirmando que a integridade referencial está funcionando. O comando de teste foi mantido apenas como comentário no SPRINT5-5.sql.
 
 > Comandos propositalmente inválidos não devem permanecer ativos no SQL final. Caso queira documentá-los, mantenha-os comentados.
 
@@ -712,12 +767,12 @@ Caso exista uma restrição `UNIQUE`, teste seu funcionamento.
 ### Campo testado
 
 ```text
-
+analistas.email
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> Foi tentado cadastrar um novo analista com um e-mail já existente (mariana.alves@empresa.com). O MySQL recusou o comando com o erro "Duplicate entry ... for key 'email'", confirmando que a restrição UNIQUE está funcionando.
 
 ---
 
@@ -728,12 +783,12 @@ Caso exista `NOT NULL`, verifique se a restrição funciona.
 ### Campo testado
 
 ```text
-
+incidentes.titulo
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> Foi tentado inserir um incidente sem informar o campo titulo. O MySQL recusou o comando com o erro "Field 'titulo' doesn't have a default value", confirmando que a restrição NOT NULL está funcionando.
 
 ---
 
@@ -756,22 +811,29 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 ### Pergunta
 
-> Escreva aqui.
+> Quais dispositivos estão relacionados ao maior número de incidentes?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+-- 
+SELECT d.nome_dispositivo,
+       COUNT(i.id_incidente) AS quantidade_incidentes
+FROM dispositivos d
+JOIN incidentes i ON i.id_dispositivo = d.id_dispositivo
+GROUP BY d.id_dispositivo, d.nome_dispositivo
+HAVING COUNT(i.id_incidente) > 1
+ORDER BY quantidade_incidentes DESC;
 
 ```
 
 ### Resultado esperado
 
-> Escreva aqui.
+> Uma lista de dispositivos que aparecem em mais de um incidente, ordenados do que mais concentra incidentes para o que menos concentra.
 
 ### Por que essa consulta é importante?
 
-> Escreva aqui.
+> Porque ajuda a priorizar ações de segurança: dispositivos que aparecem repetidamente em incidentes podem indicar falhas de configuração, vulnerabilidades recorrentes ou exposição excessiva, merecendo atenção prioritária da equipe de segurança.
 
 ---
 
@@ -779,12 +841,19 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 ### Pergunta
 
-> Escreva aqui.
+> Em média, quantos incidentes cada analista está acompanhando?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+-- 
+SELECT AVG(quantidade) AS media_incidentes_por_analista
+FROM (
+    SELECT id_analista, COUNT(*) AS quantidade
+    FROM incidentes
+    WHERE id_analista IS NOT NULL
+    GROUP BY id_analista
+) AS incidentes_por_analista;
 
 ```
 
@@ -792,15 +861,15 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 - [ ] WHERE
 - [ ] ORDER BY
-- [ ] agregação
-- [ ] GROUP BY
+- [x] agregação
+- [x] GROUP BY
 - [ ] HAVING
 - [ ] expressão
-- [ ] outro
+- [x] outro
 
 ### Explique
 
-> Escreva aqui.
+> Essa consulta precisou de uma subconsulta porque o MySQL não permite aninhar duas funções de agregação (AVG(COUNT(*))) diretamente. A subconsulta interna agrupa os incidentes por analista e conta quantos cada um tem; a consulta externa então calcula a média sobre esses totais. Foi a consulta mais difícil de montar, pois exigiu entender a ordem de execução das agregações no SQL.
 
 ---
 
@@ -808,21 +877,21 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 | Teste | Resultado | Correção necessária? |
 |---|---|---|
-| CREATE DATABASE |  |  |
-| CREATE TABLE |  |  |
-| PRIMARY KEY |  |  |
-| FOREIGN KEY |  |  |
-| NOT NULL |  |  |
-| UNIQUE |  |  |
-| INSERT |  |  |
-| UPDATE |  |  |
-| DELETE |  |  |
-| SELECT |  |  |
-| WHERE |  |  |
-| ORDER BY |  |  |
-| GROUP BY |  |  |
-| HAVING |  |  |
-| funções de agregação |  |  |
+| CREATE DATABASE | OK | Não |
+| CREATE TABLE | OK | Não |
+| PRIMARY KEY | OK | Não |
+| FOREIGN KEY | OK | Não |
+| NOT NULL | OK | Não |
+| UNIQUE | OK | Não |
+| INSERT | OK (após correção do DEFAULT em alertas.data_alerta) | Sim, já corrigida |
+| UPDATE | OK | Não |
+| DELETE | OK | Não |
+| SELECT | OK | Não |
+| WHERE | OK | Não |
+| ORDER BY |OK  | Não |
+| GROUP BY | OK | Não |
+| HAVING | OK | Não |
+| funções de agregação | OK | Não |
 
 ---
 
@@ -830,10 +899,7 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 | Problema | Causa | Solução |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| INSERT INTO alertas retornava "Field 'data_alerta' doesn't have a default value" | A coluna data_alerta havia sido criada sem o DEFAULT CURRENT_TIMESTAMP previsto na Sprint 2/5 | Executado ALTER TABLE alertas MODIFY COLUMN data_alerta DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; durante a Sprint 3/5; o SPRINT5-5.sql já cria a coluna corretamente desde o início |
 
 Caso não tenha ocorrido nenhum problema:
 
@@ -982,18 +1048,18 @@ Conclui Sprint 5 de 5 - validação final
 
 Confirme:
 
-- [ ] estou na minha branch individual;
-- [ ] todos os commits foram enviados ao GitHub;
-- [ ] não alterei arquivos de outro aluno;
-- [ ] não alterei arquivos de outra instituição;
-- [ ] não alterei arquivos administrativos do repositório;
-- [ ] os 9 arquivos da atividade estão presentes;
-- [ ] os arquivos `.md` estão preenchidos;
-- [ ] os arquivos `.sql` foram testados;
-- [ ] o `SPRINT5-5.sql` executa do início ao fim;
-- [ ] removi nomes genéricos dos modelos;
-- [ ] não deixei senhas ou credenciais;
-- [ ] compreendo o código entregue.
+- [x] estou na minha branch individual;
+- [x] todos os commits foram enviados ao GitHub;
+- [x] não alterei arquivos de outro aluno;
+- [x] não alterei arquivos de outra instituição;
+- [x] não alterei arquivos administrativos do repositório;
+- [x] os 9 arquivos da atividade estão presentes;
+- [x] os arquivos `.md` estão preenchidos;
+- [x] os arquivos `.sql` foram testados;
+- [x] o `SPRINT5-5.sql` executa do início ao fim;
+- [x] removi nomes genéricos dos modelos;
+- [x] não deixei senhas ou credenciais;
+- [x] compreendo o código entregue.
 
 ---
 
@@ -1154,56 +1220,56 @@ A validação automática é parte do processo de entrega.
 
 ## Banco
 
-- [ ] `CREATE DATABASE` funciona;
-- [ ] `USE` funciona;
-- [ ] todas as tabelas são criadas;
-- [ ] nenhuma tabela necessária está ausente.
+- [x] `CREATE DATABASE` funciona;
+- [x] `USE` funciona;
+- [x] todas as tabelas são criadas;
+- [x] nenhuma tabela necessária está ausente.
 
 ## Estrutura
 
-- [ ] todas as tabelas possuem PK;
-- [ ] FKs estão corretas;
-- [ ] tipos de dados estão coerentes;
-- [ ] `NOT NULL` está coerente;
-- [ ] `UNIQUE` está coerente;
-- [ ] `DEFAULT` está coerente.
+- [x] todas as tabelas possuem PK;
+- [x] FKs estão corretas;
+- [x] tipos de dados estão coerentes;
+- [x] `NOT NULL` está coerente;
+- [x] `UNIQUE` está coerente;
+- [x] `DEFAULT` está coerente.
 
 ## Dados
 
-- [ ] INSERTs funcionam;
-- [ ] dados são coerentes;
-- [ ] FKs são respeitadas.
+- [x] INSERTs funcionam;
+- [x] dados são coerentes;
+- [x] FKs são respeitadas.
 
 ## Manipulação
 
-- [ ] UPDATEs funcionam;
-- [ ] UPDATEs possuem `WHERE`;
-- [ ] DELETEs funcionam;
-- [ ] DELETEs possuem `WHERE`.
+- [x] UPDATEs funcionam;
+- [x] UPDATEs possuem `WHERE`;
+- [x] DELETEs funcionam;
+- [x] DELETEs possuem `WHERE`.
 
 ## Consultas
 
-- [ ] SELECT funciona;
-- [ ] WHERE funciona;
-- [ ] ORDER BY funciona;
-- [ ] COUNT funciona;
-- [ ] SUM funciona quando aplicável;
-- [ ] AVG funciona quando aplicável;
-- [ ] MIN/MAX funcionam;
-- [ ] GROUP BY funciona;
-- [ ] HAVING funciona.
+- [x] SELECT funciona;
+- [x] WHERE funciona;
+- [x] ORDER BY funciona;
+- [x] COUNT funciona;
+- [x] SUM funciona quando aplicável;
+- [x] AVG funciona quando aplicável;
+- [x] MIN/MAX funcionam;
+- [x] GROUP BY funciona;
+- [x] HAVING funciona.
 
 ## Arquivos
 
-- [ ] `SPRINT1-5.md`;
-- [ ] `SPRINT2-5.md`;
-- [ ] `SPRINT2-5.sql`;
-- [ ] `SPRINT3-5.md`;
-- [ ] `SPRINT3-5.sql`;
-- [ ] `SPRINT4-5.md`;
-- [ ] `SPRINT4-5.sql`;
-- [ ] `SPRINT5-5.md`;
-- [ ] `SPRINT5-5.sql`.
+- [x] `SPRINT1-5.md`;
+- [x] `SPRINT2-5.md`;
+- [x] `SPRINT2-5.sql`;
+- [x] `SPRINT3-5.md`;
+- [x] `SPRINT3-5.sql`;
+- [x] `SPRINT4-5.md`;
+- [x] `SPRINT4-5.sql`;
+- [x] `SPRINT5-5.md`;
+- [x] `SPRINT5-5.sql`.
 
 ---
 
@@ -1213,23 +1279,23 @@ Responda brevemente.
 
 ## O que você considera que aprendeu melhor?
 
-> Escreva aqui.
+> A criação da estrutura do banco com CREATE TABLE, PRIMARY KEY e FOREIGN KEY, e como essas restrições realmente impedem dados inconsistentes na prática.
 
 ## Qual conteúdo apresentou maior dificuldade?
 
-> Escreva aqui.
+> As consultas mais avançadas, como o uso de subconsulta para calcular uma média sobre uma contagem (AVG de um COUNT agrupado), e entender a diferença entre WHERE e HAVING.
 
 ## Qual erro mais contribuiu para seu aprendizado?
 
-> Escreva aqui.
+> EO erro "Field 'data_alerta' doesn't have a default value" na Sprint 3/5, que me obrigou a entender de fato o que o DEFAULT faz e a diferença entre a estrutura planejada e a estrutura realmente criada no banco.
 
 ## Qual parte do banco você considera mais bem implementada?
 
-> Escreva aqui.
+> A tabela incidentes, por concentrar as principais chaves estrangeiras do projeto e representar bem o núcleo do sistema de gerenciamento de incidentes de segurança.
 
 ## Se tivesse mais tempo, o que melhoraria?
 
-> Escreva aqui.
+> Inseriria mais registros em cada tabela, para testar de forma ainda mais completa os agrupamentos e as funções de agregação.
 
 ---
 
