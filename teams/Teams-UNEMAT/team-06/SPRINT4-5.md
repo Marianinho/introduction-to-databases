@@ -366,7 +366,7 @@ GROUP BY status;
 
 ### Pergunta respondida
 
-> Ele basicamente junta todas as linhas da tabela pacote que possuem o mesmo Id_categoria e forma pacotes
+> Quantos Produtos Existem em cada categoria?
 
 ### SQL
 
@@ -378,7 +378,7 @@ GROUP BY id_categoria;
 
 ### Explique o agrupamento
 
-> Escreva aqui.
+> Ele basicamente junta todas as linhas da tabela pacote que possuem o mesmo Id_categoria e forma pacotes.
 
 ---
 
@@ -402,7 +402,7 @@ HAVING COUNT(*) > 5;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais categorias possuem apenas um produto cadastrado?.
 
 ### SQL
 
