@@ -85,11 +85,11 @@ SPRINT4-5.sql
 
 Recupere as perguntas que você definiu anteriormente para o banco.
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Quais categorias estão cadastradas no sistema?
+2. Quais produtos estão com a quantidade de estoque zerada ou baixa?
+3. Quais produtos custam mais de R$ 10,00?
+4. Quantos produtos temos cadastrados por categoria?
+5. Qual foi o valor total arrecadado com todas as vendas?
 
 Agora identifique quais delas exigem:
 
@@ -122,19 +122,18 @@ FROM nome_tabela;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais categorias estão Cadastradas no Banco?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT nome_categoria
+from Categoria;
 ```
 
 ### Explique o resultado
 
-> Escreva aqui.
-
+> Nosso banco varre a categoria e procura todas as colunas com nomes sem trazer os IDs de cada um.
 ---
 
 # 5. WHERE
@@ -185,18 +184,19 @@ WHERE preco > 100
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais produtos possuem valor superior a 15 em vendas?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT nome_produto, preco_venda
+from Produto
+WHERE preco_venda > 15.00;
 ```
 
 ### Explique o filtro
 
-> Escreva aqui.
+> Vai fazer uma varredura e descobrir quais produtos possuem valor maior que 15 e vai trazer apenas eles, ignorando todos os outros com valor abaixo disso.
 
 ---
 
@@ -230,12 +230,14 @@ ORDER BY categoria ASC, preco DESC;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Qual a lista de produtos ordenhada do mais barato pro mais caro.
 
 ### SQL
 
 ```sql
--- Cole aqui.
+select nome_produto, preco_venda
+from Produto
+ORDER BY preco_venda ASC;
 
 ```
 
@@ -289,50 +291,52 @@ FROM nome_tabela;
 ## COUNT
 
 ```sql
--- Cole aqui.
-
+SELECT COUNT(*) AS total_produtos
+FROM Produto;
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Quantos produtos no total estão cadastrados no catalogo da loja de conveniencia.
 
 ## SUM
 
 ```sql
--- Cole aqui.
+SELECT SUM(valot_total) AS total_produtos
+from Produto;
 
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual foi o valor total das vendas que entrou no caixa da loja de conveniencia de todas as vendas realizadas. 
 
 Caso não seja aplicável ao domínio, justifique.
 
 ## AVG
 
 ```sql
--- Cole aqui.
-
+SELECT AVG(valor_total) AS ticke_medio
+FROM Venda;
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> qual é o valor do ticket medio que os clientes costumam gastar em cada compra na loja.
 
 Caso não seja aplicável ao domínio, justifique.
 
 ## MIN ou MAX
 
 ```sql
--- Cole aqui.
-
+SELECT min(valor_total) as menor_venda,
+	Max(valor_total) as maior_venda
+	from Venda;
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual foi a venda mais cara e a mais barata registrada no caixa.
 
 ---
 
@@ -362,13 +366,14 @@ GROUP BY status;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Ele basicamente junta todas as linhas da tabela pacote que possuem o mesmo Id_categoria e forma pacotes
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+from Produto
+GROUP BY id_categoria;
 ```
 
 ### Explique o agrupamento
@@ -402,13 +407,15 @@ HAVING COUNT(*) > 5;
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+FROM Produto 
+GROUP BY  id_categoria 
+HAVING COUNT(*) = 1;
 ```
 
 ### Por que HAVING foi necessário?
 
-> Escreva aqui.
+> Porque ele filtra as linhas soltas antes de serem agrupadas e como a gente precisa filtrar alguns valores especificos, era bom filtrar essas linhas soltas antes de agrupar elas.
 
 ---
 
@@ -437,13 +444,16 @@ FROM item_pedido;
 ## Consulta com expressão
 
 ```sql
--- Cole aqui.
-
+SELECT nome_produto,
+preco_venda,
+Preco_venda * 0.90 AS preco_desconto
+FROM Produto
+WHERE preco_venda is not null;
 ```
 
 ### Explique o cálculo
 
-> Escreva aqui.
+>O banco pega o preço da coluna atual, que no caso e o produto + venda e depois multiplica o valor por 0.90 que vai dar no total 10% de desconto, e com isso ele mostra o novo valor, mas sem alterar o valor original.
 
 Caso não seja aplicável ao domínio, justifique.
 
@@ -506,67 +516,68 @@ Quais produtos estão com estoque baixo?
 **Não entregue este código sem adaptação.**
 
 ```sql
-USE nome_do_banco;
+USE db_conveniencia;
 
 -- SELECT básico
-SELECT *
-FROM tabela_a;
+SELECT nome_categoria
+from Categoria;
 
 -- Colunas específicas
-SELECT campo_a1, campo_a2
-FROM tabela_a;
+SELECT nome_produto, preco_venda
+from Produto;
 
 -- WHERE
-SELECT *
-FROM tabela_a
-WHERE campo_numerico > 10;
+SELECT nome_produto, preco_venda
+from Produto
+WHERE preco_venda > 15.00;
 
 -- Duas condições
-SELECT *
-FROM tabela_a
-WHERE campo_numerico > 10
-  AND campo_status = 'ATIVO';
+SELECT nome_produto, preco_venda, quantidade_estoque
+FROM Produto
+WHERE preco_venda > 10.00
+AND quantidade_estoque >= 50;
 
 -- ORDER BY
-SELECT *
-FROM tabela_a
-ORDER BY campo_a1 ASC;
+select nome_produto, preco_venda
+from Produto
+ORDER BY preco_venda ASC;
+
 
 -- COUNT
-SELECT COUNT(*) AS total_registros
-FROM tabela_a;
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+from Produto
+GROUP BY id_categoria;
 
 -- SUM
-SELECT SUM(campo_numerico) AS total
-FROM tabela_a;
+SELECT SUM(valot_total) AS total_produtos
+from Produto;
 
 -- AVG
-SELECT AVG(campo_numerico) AS media
-FROM tabela_a;
+SELECT AVG(valor_total) AS ticke_medio
+FROM Venda;
 
 -- MIN / MAX
-SELECT MIN(campo_numerico) AS menor_valor,
-       MAX(campo_numerico) AS maior_valor
-FROM tabela_a;
+SELECT min(valor_total) as menor_venda,
+	Max(valor_total) as maior_venda
+	from Venda;
 
 -- GROUP BY
-SELECT campo_categoria,
-       COUNT(*) AS quantidade
-FROM tabela_a
-GROUP BY campo_categoria;
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+from Produto
+GROUP BY id_categoria;
 
 -- HAVING
-SELECT campo_categoria,
-       COUNT(*) AS quantidade
-FROM tabela_a
-GROUP BY campo_categoria
-HAVING COUNT(*) > 1;
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+FROM Produto 
+GROUP BY  id_categoria 
+HAVING COUNT(*) = 1;
 
 -- Expressão
-SELECT campo_a1,
-       campo_numerico,
-       campo_numerico * 1.10 AS valor_calculado
-FROM tabela_a;
+SELECT nome_produto,
+preco_venda,
+Preco_venda * 0.90 AS preco_desconto
+FROM Produto
+WHERE preco_venda is not null;
 ```
 
 > Substitua `nome_do_banco`, `tabela_a`, `campo_a1`, `campo_numerico`, `campo_categoria` e demais nomes genéricos pelos nomes reais do seu projeto.
@@ -580,54 +591,90 @@ FROM tabela_a;
 -- IDENTIFICAÇÃO
 -- ============================================================
 
--- Aluno:
--- Banco:
+-- Aluno: Mariano Lino da Silva Neto
+-- Banco: db_conveniencia
 
 -- ============================================================
 -- SELECIONAR O BANCO
 -- ============================================================
 
-USE nome_do_banco;
+USE db_conveniencia;
 
 -- ============================================================
 -- 1. CONSULTAS BÁSICAS
 -- ============================================================
-
-
+SELECT * FROM Venda;
+SELECT * FROM Item_venda;
+SELECT * FROM Produto;
+select nome_produto, preco_venda
+from Produto
+ORDER BY preco_venda ASC;
 -- ============================================================
 -- 2. WHERE
 -- ============================================================
+SELECT nome_categoria
+from Categoria;
+WHERE id_venda IN('2');
 
+SELECT nome_produto, preco_venda
+from Produto
+WHERE preco_venda > 15.00;
 
 -- ============================================================
 -- 3. ORDER BY
 -- ============================================================
-
+select nome_produto, preco_venda
+from Produto
+ORDER BY preco_venda ASC;
 
 -- ============================================================
 -- 4. FUNÇÕES DE AGREGAÇÃO
 -- ============================================================
+SELECT SUM(valot_total) AS total_produtos
+from Produto;
 
+SELECT COUNT(*) AS total_produtos
+FROM Produto;
+
+SELECT AVG(valor_total) AS ticke_medio
+FROM Venda;
 
 -- ============================================================
 -- 5. GROUP BY
 -- ============================================================
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+from Produto
+GROUP BY id_categoria;
 
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+FROM Produto 
+GROUP BY  id_categoria 
+HAVING COUNT(*) = 1;
 
 -- ============================================================
 -- 6. HAVING
 -- ============================================================
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+FROM Produto 
+GROUP BY  id_categoria 
+HAVING COUNT(*) = 1;
 
 -- ============================================================
 -- 7. EXPRESSÕES SQL
 -- ============================================================
-
+SELECT nome_produto,
+preco_venda,
+Preco_venda * 0.90 AS preco_desconto
+FROM Produto
+WHERE preco_venda is not null;
 
 -- ============================================================
 -- CONSULTAS EXTRAS
 -- ============================================================
-
+SELECT nome_produto, preco_venda, quantidade_estoque
+FROM Produto
+WHERE preco_venda > 10.00
+AND quantidade_estoque >= 50;
 ```
 
 ---
@@ -695,14 +742,14 @@ SPRINT4-5.sql
 
 | Nº | Pergunta | Recursos SQL utilizados | Funcionou? |
 |---:|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
-| 6 |  |  |  |
-| 7 |  |  |  |
-| 8 |  |  |  |
+| 1 | Quais categorias estão cadastradas | SELECT | Sim |
+| 2 | Quais produtos custam mais de 15 | WHERE(>) | Sim |
+| 3 | Produtos Ordenados por preço | ORDER BY ASC | Sim |
+| 4 | Total de Produtos cadastrados | COUNT | Sim |
+| 5 | Qual o faturamento total da Loja | SUM | Sim |
+| 6 | QUal o Ticket medio das vendas | AVG | Sim |
+| 7 | Maior e menor venda registrada | MIN,MAX | Sim |
+| 8 | Quantos itens por categoria | GROUP BY, COUNT | Sim |
 
 ---
 
@@ -710,18 +757,19 @@ SPRINT4-5.sql
 
 ### Pergunta
 
-> Escreva aqui.
+> Se for pra escolher uma eu acho que com toda certeza precisa ser do valor total em dinheiro que entrou no caixa.
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT SUM(valor_total) AS faturamente_total
+FROM Venda;
 
 ```
 
 ### Por que ela é útil?
 
-> Escreva aqui.
+> Ela vai garantir que o gerente da nossa loja fique sabendo o valor total arrecadado e essa informação ajuda ele a escolher quais produtos precisam ser continuados a comprar ou não, e ele também iria precisar calcular os lucros todos os dias depois de terminar o experdiente.
 
 ---
 
@@ -729,18 +777,20 @@ SPRINT4-5.sql
 
 ### Pergunta
 
-> Escreva aqui.
+> Quais Categorias vão possuir uma quantidade especifica de produtos cadastrados.
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+FROM Produto 
+GROUP BY  id_categoria 
+HAVING COUNT(*) = 1;
 ```
 
 ### Qual foi a dificuldade?
 
-> Escreva aqui.
+> Com toda e entender as diferenças mininas que existem em cada um desses malditos, preferencialmente o HAVING que é uma bomba pra entender, pq tem vez que o MYSQL ainda dá errro de Sintaxe, então acaba sendo dificil pra carmaba.
 
 ---
 
@@ -812,26 +862,26 @@ Não exclua arquivos anteriores.
 
 # 23. Checklist da Sprint 4/5
 
-- [ ] utilizei o banco das Sprints anteriores;
-- [ ] confirmei que existem dados suficientes;
-- [ ] utilizei `SELECT`;
-- [ ] selecionei colunas específicas;
-- [ ] utilizei `WHERE`;
-- [ ] utilizei mais de uma condição;
-- [ ] utilizei `ORDER BY`;
-- [ ] utilizei `COUNT`;
-- [ ] utilizei `SUM`, quando aplicável;
-- [ ] utilizei `AVG`, quando aplicável;
-- [ ] utilizei `MIN` ou `MAX`;
-- [ ] utilizei `GROUP BY`;
-- [ ] utilizei `HAVING`;
-- [ ] utilizei aliases com `AS`;
-- [ ] utilizei expressão SQL quando aplicável;
-- [ ] minhas consultas respondem perguntas reais;
-- [ ] testei as consultas no MySQL Workbench;
-- [ ] salvei o código em `SPRINT4-5.sql`;
-- [ ] preenchi completamente o `SPRINT4-5.md`;
-- [ ] revisei os arquivos antes do commit.
+- [x] utilizei o banco das Sprints anteriores;
+- [x] confirmei que existem dados suficientes;
+- [x] utilizei `SELECT`;
+- [x] selecionei colunas específicas;
+- [x] utilizei `WHERE`;
+- [x] utilizei mais de uma condição;
+- [x] utilizei `ORDER BY`;
+- [x] utilizei `COUNT`;
+- [X] utilizei `SUM`, quando aplicável;
+- [X] utilizei `AVG`, quando aplicável;
+- [x] utilizei `MIN` ou `MAX`;
+- [x] utilizei `GROUP BY`;
+- [x] utilizei `HAVING`;
+- [x] utilizei aliases com `AS`;
+- [X] utilizei expressão SQL quando aplicável;
+- [x] minhas consultas respondem perguntas reais;
+- [X] testei as consultas no MySQL Workbench;
+- [X] salvei o código em `SPRINT4-5.sql`;
+- [X] preenchi completamente o `SPRINT4-5.md`;
+- [X] revisei os arquivos antes do commit.
 
 ---
 
