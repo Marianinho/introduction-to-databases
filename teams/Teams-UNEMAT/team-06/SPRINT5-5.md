@@ -99,31 +99,31 @@ Verifique se o banco final ainda corresponde ao projeto proposto.
 
 ## Tema do banco
 
-```text
-
+```
+Vendas e Produto Loja de Conveniencia
 ```
 
 ## Objetivo principal
 
-> Escreva aqui.
+> Recriar em um banco de dados o funcionamento de estoque e caixa de uma pequena loja de conveniencia, dando pra cadastrar produtos e colocar eles em categorias.
 
 ## Quantidade final de tabelas
 
-```text
-
+```
+4
 ```
 
 ## Principais entidades do banco
 
-1. 
-2. 
-3. 
-4. 
+1. Categoria 
+2. Produto
+3. Venda
+4. Item_venda
 5. 
 
 ## O projeto final permaneceu igual ao planejamento inicial?
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 Caso tenha mudado, explique:
@@ -164,10 +164,10 @@ Preencha:
 
 | Tabela | PK correta? | FKs corretas? | Tipos corretos? | Restrições corretas? |
 |---|---|---|---|---|
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| Categoria | Sim | N/A | Sim | Sim |
+| Produto | sim | Sim | Sim | Sim |
+| Venda | Sim | N/A | Sim | Sim |
+| Item_venda | Sim | Sim | Sim | Sim |
 |  |  |  |  |  |
 
 ---
@@ -178,10 +178,10 @@ Liste as chaves primárias finais.
 
 | Tabela | PRIMARY KEY | AUTO_INCREMENT? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Categoria | id_categoria | sim |
+| Produto | id_produto | Sim |
+| Venda | id_venda | Sim |
+| Item_venda | id_venda, Id_produto | Não |
 
 Verifique se cada registro pode ser identificado de forma única.
 
@@ -193,9 +193,9 @@ Liste as chaves estrangeiras finais.
 
 | Tabela | FOREIGN KEY | Tabela referenciada | Campo referenciado |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Produto | id_categoria | Categoria | id_categoria |
+| Item_venda | id_venda | Venda | id_venda |
+| Item_venda | id_produto | Produto | id_produto |
 |  |  |  |  |
 
 Confira se:
@@ -225,9 +225,9 @@ Registre exemplos:
 
 | Tabela | Campo | Restrição | Regra de negócio protegida |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Produto | codigo_barras | UNIQUE | impede que dois produtos tenham o mesmo codigo |
+| Produto | preco_venda | CHECK(>=0) | Impede que o sistema grave valores negativos |
+| Venda | data_venda | DEFAULT CURRENT_TIMESTAMP | Garante que o horario que o sistema pegue seja gravado automaticamente no cupom |
 |  |  |  |  |
 
 ---
@@ -240,10 +240,10 @@ Preencha:
 
 | Tabela | Quantidade aproximada de registros |
 |---|---:|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| Categoria | 4 |
+| Produto | 4 |
+| Venda | 7 |
+| item_venda | 3 |
 |  |  |
 
 Pergunte:
@@ -260,12 +260,12 @@ Pergunte:
 
 Confirme:
 
-- [ ] os INSERTs executam sem erro;
-- [ ] respeitam as chaves estrangeiras;
-- [ ] não existem duplicações indevidas;
-- [ ] respeitam `NOT NULL`;
-- [ ] respeitam `UNIQUE`;
-- [ ] os dados fazem sentido no domínio.
+- [x] os INSERTs executam sem erro;
+- [x] respeitam as chaves estrangeiras;
+- [x] não existem duplicações indevidas;
+- [x] respeitam `NOT NULL`;
+- [x] respeitam `UNIQUE`;
+- [x] os dados fazem sentido no domínio.
 
 Caso encontre problemas, registre:
 
@@ -280,16 +280,25 @@ Caso encontre problemas, registre:
 
 Confirme:
 
-- [ ] os UPDATEs possuem `WHERE`;
-- [ ] alteram os registros esperados;
-- [ ] não modificam toda a tabela acidentalmente;
-- [ ] mantêm a integridade do banco.
+- [x] os UPDATEs possuem `WHERE`;
+- [x] alteram os registros esperados;
+- [x] não modificam toda a tabela acidentalmente;
+- [x] mantêm a integridade do banco.
 
 Liste os principais UPDATEs finais:
 
 ```sql
--- Cole aqui os UPDATEs mais importantes.
+UPDATE Produto
+SET preco_venda = 12.50
+WHERE id_produto = 1;
 
+UPDATE Produto
+SET preco_venda = 23.00
+WHERE id_produto = 2;
+
+UPDATE Produto
+SET preco_venda = 1000000.00
+WHERE id_produto = 4;
 ```
 
 ---
@@ -298,16 +307,18 @@ Liste os principais UPDATEs finais:
 
 Confirme:
 
-- [ ] os DELETEs possuem `WHERE`;
-- [ ] não removem registros necessários ao funcionamento do projeto;
-- [ ] respeitam as dependências de `FOREIGN KEY`;
-- [ ] não comprometem consultas posteriores.
+- [x] os DELETEs possuem `WHERE`;
+- [x] não removem registros necessários ao funcionamento do projeto;
+- [x] respeitam as dependências de `FOREIGN KEY`;
+- [x] não comprometem consultas posteriores.
 
 Liste os DELETEs finais:
 
 ```sql
--- Cole aqui.
+DELETE FROM item_venda 
+WHERE id_venda IN('1'); 
 
+DELETE FROM item_venda 
 ```
 
 ---
@@ -333,15 +344,15 @@ Preencha:
 
 | Recurso SQL | Possui consulta válida? | Pergunta respondida |
 |---|---|---|
-| SELECT |  |  |
-| WHERE |  |  |
-| ORDER BY |  |  |
-| COUNT |  |  |
-| SUM |  |  |
-| AVG |  |  |
-| MIN/MAX |  |  |
-| GROUP BY |  |  |
-| HAVING |  |  |
+| SELECT | Sim | Quais categorias estão cadastradas? |
+| WHERE | Sim | Quais produtos custam mais de 15 reais |
+| ORDER BY | Sim | Produtos ordenados por preço |
+| COUNT | Sim | Total de produtos cadastrados |
+| SUM | sim | faturamento total da loja |
+| AVG | Sim | Ticket Medio das vendas |
+| MIN/MAX | Sim | Venda mais barata e mais cara |
+| GROUP BY | Sim | Quantos itens existem por Categoria |
+| HAVING | Sim | Quais Categorias Possuem apenas 1 produto |
 
 ---
 
@@ -351,82 +362,86 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 1
 
-> Escreva aqui.
+> Quantis Categorias estão cadastradas no Sistema.
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 **Consulta utilizada:**
 
 ```sql
--- Cole aqui.
-
+SELECT nome_categoria
+from Categoria;
 ```
 
 ---
 
 ## Pergunta 2
 
-> Escreva aqui.
+> Quais produtos custam mais de 15 reais?.
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
-
+SELECT nome_produto, preco_venda
+from Produto
+WHERE preco_venda > 15.00;
 ```
 
 ---
 
 ## Pergunta 3
 
-> Escreva aqui.
+> Quais produtos custam mais de 10 e tem estoque acima de 50?.
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
-
+SELECT nome_produto, preco_venda, quantidade_estoque
+FROM Produto
+WHERE preco_venda > 10.00
+AND quantidade_estoque >= 50;
 ```
 
 ---
 
 ## Pergunta 4
 
-> Escreva aqui.
+> Quantos produtos existem em cada categoria?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+from Produto
+GROUP BY id_categoria;
 ```
 
 ---
 
 ## Pergunta 5
 
-> Escreva aqui.
+> Qual o valor total arrecadado das vendas?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
-
+SELECT SUM(valot_total) AS total_produtos
+from Produto;
 ```
 
 ---
@@ -460,87 +475,191 @@ Use esta organização:
 -- IDENTIFICAÇÃO
 -- ============================================================
 
--- Aluno:
--- Tema:
--- Banco:
+-- Aluno: Mariano Lino da Silva Neto
+-- Tema: Vendas e Produtos Loja de Conveniencia
+-- Banco: db_conveniencia
 
 
 -- ============================================================
 -- 1. CRIAÇÃO DO BANCO
 -- ============================================================
-
+CREATE DATABASE IF NOT EXISTS db_conveniencia;
 
 -- ============================================================
 -- 2. SELEÇÃO DO BANCO
 -- ============================================================
-
+USE db_conveniencia;
 
 -- ============================================================
 -- 3. CRIAÇÃO DAS TABELAS
 -- ============================================================
+CREATE TABLE Categoria(
+id_categoria INT PRIMARY KEY auto_increment,
+nome_categoria VARCHAR(50) NOT NULL
+);
 
+CREATE TABLE Produto(
+id_produto INT PRIMARY KEY auto_increment,
+id_categoria INT,
+codigo_barras VARCHAR(50) UNIQUE,
+nome_produto VARCHAR(100) NOT NULL,
+preco_venda DECIMAL(10,2) CHECK (preco_venda >= 0),
+quantidade_estoque INT CHECK (quantidade_estoque >=0),
+FOREIGN KEY (id_categoria) references Categoria(id_categoria)
+);
+
+CREATE TABLE Venda(
+id_venda INT auto_increment PRIMARY KEY,
+data_venda DATETIME DEFAULT current_timestamp,
+valor_total DECIMAL(10,2)
+);
+
+CREATE TABLE Item_venda(
+quantidade int,
+id_venda INT,
+id_produto int,
+PRIMARY KEY (id_venda, id_produto),
+FOREIGN KEY (id_venda) REFERENCES Venda(id_venda),
+FOREIGN KEY (id_produto) REFERENCES Produto(id_produto)
+);
 
 -- ============================================================
 -- 4. RESTRIÇÕES E RELACIONAMENTOS
 -- ============================================================
-
+ALTER TABLE Produto
+ADD COLUMN marca varchar(50);
 
 -- ============================================================
 -- 5. INSERTS
 -- ============================================================
+INSERT INTO Categoria(nome_categoria) VALUES
+('Salgados'),
+('Doces e Bolachas'),
+('Pão fresco'),
+('Cobras');
 
+INSERT INTO Produto(id_categoria, codigo_barras, nome_produto, quantidade_estoque) VALUES 
+(1, '102324232323', 'Pão Frito', 50),
+(2, '102324232324', 'Almoço velho', 50),
+(3, '142324232325', 'Doces e Legumes', 50),
+(4, '102324232326', 'Simplesmente a mulher mais linda do Mundo', 1);
+
+INSERT INTO Venda(valor_total) VALUES
+(15.00),
+(13.00),
+(12.00),
+(03.00),
+(07.00),
+(23.00),
+(08.00);
+
+INSERT INTO Item_venda(quantidade, id_venda,id_produto) VALUES
+(1,1,1),
+(1,1,2),
+(1,2,3),
+(2,3,4),
+(1,5,2);
 
 -- ============================================================
 -- 6. UPDATES
 -- ============================================================
+UPDATE Produto
+SET preco_venda = 12.50
+WHERE id_produto = 1;
 
+UPDATE Produto
+SET preco_venda = 23.00
+WHERE id_produto = 2;
+
+UPDATE Produto
+SET preco_venda = 1000000.00
+WHERE id_produto = 4;
 
 -- ============================================================
 -- 7. DELETES
 -- ============================================================
+DELETE FROM item_venda 
+WHERE id_venda IN('1'); 
 
+DELETE FROM item_venda 
 
 -- ============================================================
 -- 8. CONSULTAS BÁSICAS
 -- ============================================================
-
+SELECT nome_categoria
+from Categoria;
 
 -- ============================================================
 -- 9. WHERE
 -- ============================================================
+SELECT nome_categoria
+from Categoria;
+WHERE id_venda IN('2');
 
+SELECT nome_produto, preco_venda
+from Produto
+WHERE preco_venda > 15.00;
 
 -- ============================================================
 -- 10. ORDER BY
 -- ============================================================
-
+select nome_produto, preco_venda
+from Produto
+ORDER BY preco_venda ASC;
 
 -- ============================================================
 -- 11. FUNÇÕES DE AGREGAÇÃO
 -- ============================================================
+select nome_produto, preco_venda
+from Produto
+ORDER BY preco_venda ASC;
 
+SELECT SUM(valot_total) AS total_produtos
+from Produto;
+
+SELECT COUNT(*) AS total_produtos
+FROM Produto;
+
+SELECT AVG(valor_total) AS ticke_medio
+FROM Venda;
+
+SELECT min(valor_total) as menor_venda,
+	Max(valor_total) as maior_venda
+	from Venda;
 
 -- ============================================================
 -- 12. GROUP BY
 -- ============================================================
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+from Produto
+GROUP BY id_categoria;
 
 -- ============================================================
 -- 13. HAVING
 -- ============================================================
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+FROM Produto 
+GROUP BY  id_categoria 
+HAVING COUNT(*) = 1;
 
 -- ============================================================
 -- 14. EXPRESSÕES SQL
 -- ============================================================
-
+SELECT nome_produto,
+preco_venda,
+Preco_venda * 0.90 AS preco_desconto
+FROM Produto
+WHERE preco_venda is not null;
 
 -- ============================================================
 -- 15. VALIDAÇÃO FINAL
 -- ============================================================
-
+SHOW TABLES;
 ```
-
+DESCRIBE Categoria;
+DESCRIBE Produto;
+DESCRIBE Venda;
+DESCRIBE Item_venda;
 ---
 
 # 17. Teste principal — reconstruir o banco do zero
@@ -623,17 +742,17 @@ Confira se todas as tabelas aparecem.
 
 Quantidade de tabelas:
 
-```text
-
+```
+4
 ```
 
 Quantidade encontrada:
 
-```text
-
+```
+4
 ```
 
-- [ ] corresponde ao esperado.
+- [x] corresponde ao esperado.
 
 ---
 
@@ -686,19 +805,19 @@ Registre:
 
 ### Tabela testada
 
-```text
-
+```
+Item_venda
 ```
 
 ### Restrição testada
 
-```text
-
+```
+FOREIGN KEY(id_produto)
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> Tentamos inserir um item de venda referenciado que é inexsistente e o MYSQL bloqueou com o erro "cannot add or update a child row, a FOREIGN KEY constraint fails".
 
 > Comandos propositalmente inválidos não devem permanecer ativos no SQL final. Caso queira documentá-los, mantenha-os comentados.
 
@@ -710,13 +829,13 @@ Caso exista uma restrição `UNIQUE`, teste seu funcionamento.
 
 ### Campo testado
 
-```text
-
+```
+Produto.codigo_barras
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> Tentamos inserir um novo produto repetindo o codigo de barras, mas ele recusou dizendo que não dava pra duplicar uma entry.
 
 ---
 
@@ -726,13 +845,13 @@ Caso exista `NOT NULL`, verifique se a restrição funciona.
 
 ### Campo testado
 
-```text
-
+```
+Produto.nome_produto
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> Tentativa de inserção de produto deixando o nome vazio(NULL) com isso o MYSQL recusou na hora falando que não tinha como nome_produto ser nulo.
 
 ---
 
@@ -755,22 +874,22 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 ### Pergunta
 
-> Escreva aqui.
+> Qual o faturamento financio total registrado pela loja.
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT SUM(valot_total) AS total_produtos
+from Produto;
 ```
 
 ### Resultado esperado
 
-> Escreva aqui.
+> A soma de todos os valores na columa valor_total.
 
 ### Por que essa consulta é importante?
 
-> Escreva aqui.
+> Pra evitar que as pessoas da loja calculem manualmente o faturamento da loja, melhor deixar essa parte automatizada pelo SUM.
 
 ---
 
@@ -778,28 +897,30 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 ### Pergunta
 
-> Escreva aqui.
+> Quais Categorias possuem apenas 1 produto cadastrado no catálogo?.
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT id_categoria, COUNT(*) AS quantidade_itens
+FROM Produto 
+GROUP BY  id_categoria 
+HAVING COUNT(*) = 1;
 ```
 
 ### Conceitos utilizados
 
 - [ ] WHERE
 - [ ] ORDER BY
-- [ ] agregação
-- [ ] GROUP BY
-- [ ] HAVING
+- [x] agregação
+- [x] GROUP BY
+- [x] HAVING
 - [ ] expressão
 - [ ] outro
 
 ### Explique
 
-> Escreva aqui.
+> Basicamente o banco vai agrupar os itens pela categoria de cada um, e depois vai contar o volume interno de cada um, pra só depois filtrar os grupos ultilizando o HAVING.
 
 ---
 
@@ -807,21 +928,21 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 | Teste | Resultado | Correção necessária? |
 |---|---|---|
-| CREATE DATABASE |  |  |
-| CREATE TABLE |  |  |
-| PRIMARY KEY |  |  |
-| FOREIGN KEY |  |  |
-| NOT NULL |  |  |
-| UNIQUE |  |  |
-| INSERT |  |  |
-| UPDATE |  |  |
-| DELETE |  |  |
-| SELECT |  |  |
-| WHERE |  |  |
-| ORDER BY |  |  |
-| GROUP BY |  |  |
-| HAVING |  |  |
-| funções de agregação |  |  |
+| CREATE DATABASE | Sucesso | Não |
+| CREATE TABLE | Sucesso | Não |
+| PRIMARY KEY | Sucesso | Não |
+| FOREIGN KEY | Sucesso | Não |
+| NOT NULL | Sucesso | Não |
+| UNIQUE | Sucesso | Não |
+| INSERT | Sucesso | Não |
+| UPDATE | Sucesso | Não |
+| DELETE | Sucesso | Não |
+| SELECT | Sucesso | Não |
+| WHERE | Sucesso | Não |
+| ORDER BY | Sucesso | Não |
+| GROUP BY | Sucesso | Não |
+| HAVING | Sucesso | Não |
+| funções de agregação | Sucesso | Não |
 
 ---
 
@@ -981,18 +1102,18 @@ Conclui Sprint 5 de 5 - validação final
 
 Confirme:
 
-- [ ] estou na minha branch individual;
-- [ ] todos os commits foram enviados ao GitHub;
-- [ ] não alterei arquivos de outro aluno;
-- [ ] não alterei arquivos de outra instituição;
-- [ ] não alterei arquivos administrativos do repositório;
-- [ ] os 9 arquivos da atividade estão presentes;
-- [ ] os arquivos `.md` estão preenchidos;
-- [ ] os arquivos `.sql` foram testados;
-- [ ] o `SPRINT5-5.sql` executa do início ao fim;
-- [ ] removi nomes genéricos dos modelos;
-- [ ] não deixei senhas ou credenciais;
-- [ ] compreendo o código entregue.
+- [x] estou na minha branch individual;
+- [x] todos os commits foram enviados ao GitHub;
+- [x] não alterei arquivos de outro aluno;
+- [x] não alterei arquivos de outra instituição;
+- [x] não alterei arquivos administrativos do repositório;
+- [x] os 9 arquivos da atividade estão presentes;
+- [x] os arquivos `.md` estão preenchidos;
+- [x] os arquivos `.sql` foram testados;
+- [x] o `SPRINT5-5.sql` executa do início ao fim;
+- [x] removi nomes genéricos dos modelos;
+- [x] não deixei senhas ou credenciais;
+- [x] compreendo o código entregue.
 
 ---
 
@@ -1153,56 +1274,56 @@ A validação automática é parte do processo de entrega.
 
 ## Banco
 
-- [ ] `CREATE DATABASE` funciona;
-- [ ] `USE` funciona;
-- [ ] todas as tabelas são criadas;
-- [ ] nenhuma tabela necessária está ausente.
+- [x] `CREATE DATABASE` funciona;
+- [x] `USE` funciona;
+- [x] todas as tabelas são criadas;
+- [x] nenhuma tabela necessária está ausente.
 
 ## Estrutura
 
-- [ ] todas as tabelas possuem PK;
-- [ ] FKs estão corretas;
-- [ ] tipos de dados estão coerentes;
-- [ ] `NOT NULL` está coerente;
-- [ ] `UNIQUE` está coerente;
-- [ ] `DEFAULT` está coerente.
+- [x] todas as tabelas possuem PK;
+- [x] FKs estão corretas;
+- [x] tipos de dados estão coerentes;
+- [x] `NOT NULL` está coerente;
+- [X] `UNIQUE` está coerente;
+- [x] `DEFAULT` está coerente.
 
 ## Dados
 
-- [ ] INSERTs funcionam;
-- [ ] dados são coerentes;
-- [ ] FKs são respeitadas.
+- [x] INSERTs funcionam;
+- [x] dados são coerentes;
+- [x] FKs são respeitadas.
 
 ## Manipulação
 
-- [ ] UPDATEs funcionam;
-- [ ] UPDATEs possuem `WHERE`;
-- [ ] DELETEs funcionam;
-- [ ] DELETEs possuem `WHERE`.
+- [x] UPDATEs funcionam;
+- [x] UPDATEs possuem `WHERE`;
+- [x] DELETEs funcionam;
+- [x] DELETEs possuem `WHERE`.
 
 ## Consultas
 
-- [ ] SELECT funciona;
-- [ ] WHERE funciona;
-- [ ] ORDER BY funciona;
-- [ ] COUNT funciona;
-- [ ] SUM funciona quando aplicável;
-- [ ] AVG funciona quando aplicável;
-- [ ] MIN/MAX funcionam;
-- [ ] GROUP BY funciona;
-- [ ] HAVING funciona.
+- [x] SELECT funciona;
+- [x] WHERE funciona;
+- [x] ORDER BY funciona;
+- [x] COUNT funciona;
+- [x] SUM funciona quando aplicável;
+- [x] AVG funciona quando aplicável;
+- [x] MIN/MAX funcionam;
+- [x] GROUP BY funciona;
+- [x] HAVING funciona.
 
 ## Arquivos
 
-- [ ] `SPRINT1-5.md`;
-- [ ] `SPRINT2-5.md`;
-- [ ] `SPRINT2-5.sql`;
-- [ ] `SPRINT3-5.md`;
-- [ ] `SPRINT3-5.sql`;
-- [ ] `SPRINT4-5.md`;
-- [ ] `SPRINT4-5.sql`;
-- [ ] `SPRINT5-5.md`;
-- [ ] `SPRINT5-5.sql`.
+- [x] `SPRINT1-5.md`;
+- [x] `SPRINT2-5.md`;
+- [x] `SPRINT2-5.sql`;
+- [x] `SPRINT3-5.md`;
+- [x] `SPRINT3-5.sql`;
+- [x] `SPRINT4-5.md`;
+- [x] `SPRINT4-5.sql`;
+- [x] `SPRINT5-5.md`;
+- [x] `SPRINT5-5.sql`.
 
 ---
 
@@ -1212,23 +1333,23 @@ Responda brevemente.
 
 ## O que você considera que aprendeu melhor?
 
-> Escreva aqui.
+> Se brincar foi a parte de mexer nos comandos do DBEAVER visto que não to usando MYSQL pro PC.
 
 ## Qual conteúdo apresentou maior dificuldade?
 
-> Escreva aqui.
+> Pensar sobre as Sprints UM e também não tive muito tempo pras coisas.
 
 ## Qual erro mais contribuiu para seu aprendizado?
 
-> Escreva aqui.
+> Falta de Tempo.
 
 ## Qual parte do banco você considera mais bem implementada?
 
-> Escreva aqui.
+> Criação de Tabelas.
 
 ## Se tivesse mais tempo, o que melhoraria?
 
-> Escreva aqui.
+> Provavelmente ficaria bem mais organizado como foi distribuido os comandos no SQL.
 
 ---
 
