@@ -42,13 +42,17 @@ O arquivo `SPRINT3-5.md` documentará o trabalho realizado. O arquivo `SPRINT3-5
 5. Selecione o banco:
 
 ```sql
-USE nome_do_banco;
+USE pacote_viagens;
 ```
 
 6. Confira as tabelas:
 
 ```sql
-DESCRIBE nome_da_tabela;
+DESCRIBE cliente;
+DESCRIBE destino;
+DESCRIBE transporte;
+DESCRIBE hospedagem;
+DESCRIBE reserva_pacote;
 ```
 
 ---
@@ -175,11 +179,11 @@ Ordem recomendada:
 
 | Tabela | Quantidade prevista | Depende de outra tabela? |
 |---|---:|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| destino | 5 | Não |
+| cliente | 5 | Não |
+| transporte | 5 | Não |
+| hospedagem | 5 | Sim (destino) |
+| reserva_pacote | 5 | Sim (cliente, hospedagem, transporte) |
 
 ---
 
@@ -190,11 +194,22 @@ Ordem recomendada:
 **Nome:**
 
 ```text
-
+destino
 ```
 
 ```sql
--- Cole aqui os INSERTs realizados.
+INSERT INTO destino (
+    nome,
+    pais,
+    estado,
+    descricao
+)
+VALUES
+    ('Fernando de Noronha', 'Brasil', 'Pernambuco', 'Arquipélago vulcânico com praias paradisíacas e vida marinha abundante.'),
+    ('Gramado', 'Brasil', 'Rio Grande do Sul', 'Cidade turística na Serra Gaúcha famosa pela arquitetura e gastronomia.'),
+    ('Salvador', 'Brasil', 'Bahia', 'Capital baiana reconhecida pelo centro histórico do Pelourinho e cultura rica.'),
+    ('Foz do Iguaçu', 'Brasil', 'Paraná', 'Famosa pelas Cataratas do Iguaçu e Parque das Aves.'),
+    ('Rio de Janeiro', 'Brasil', 'Rio de Janeiro', 'Conhecida pelas praias de Copacabana e Ipanema e a estátua do Cristo Redentor.');
 
 ```
 
@@ -203,11 +218,22 @@ Ordem recomendada:
 **Nome:**
 
 ```text
-
+cliente
 ```
 
 ```sql
--- Cole aqui os INSERTs realizados.
+INSERT INTO cliente (
+    nome,
+    cpf,
+    email,
+    telefone
+)
+VALUES
+    ('Carlos Silva', '123.456.789-01', 'carlos.silva@email.com', '(11) 98765-4321'),
+    ('Mariana Oliveira', '234.567.890-12', 'mariana.oliveira@email.com', '(21) 97654-3210'),
+    ('Roberto Santos', '345.678.901-23', 'roberto.santos@email.com', '(31) 96543-2109'),
+    ('Ana Souza', '456.789.012-34', 'ana.souza@email.com', '(41) 95432-1098'),
+    ('Beatriz Lima', '567.890.123-45', 'beatriz.lima@email.com', '(51) 94321-0987');
 
 ```
 
@@ -218,9 +244,20 @@ Ordem recomendada:
 ```text
 
 ```
-
+transporte
 ```sql
--- Cole aqui os INSERTs realizados.
+INSERT INTO transporte (
+    tipo,
+    empresa,
+    origem,
+    destino
+)
+VALUES
+    ('Aéreo', 'LATAM', 'São Paulo (GRU)', 'Fernando de Noronha (FEN)'),
+    ('Aéreo', 'Gol', 'Rio de Janeiro (GIG)', 'Porto Alegre (POA)'),
+    ('Rodoviário', 'Viação Cometa', 'São Paulo (Tietê)', 'Curitiba (TRM)'),
+    ('Aéreo', 'Azul', 'Belo Horizonte (CNF)', 'Salvador (SSA)'),
+    ('Rodoviário', 'Catarinense', 'Florianópolis', 'Foz do Iguaçu');
 
 ```
 
@@ -229,12 +266,48 @@ Ordem recomendada:
 **Nome:**
 
 ```text
-
+hospedagem
 ```
 
 ```sql
--- Cole aqui os INSERTs realizados.
+INSERT INTO hospedagem (
+    nome,
+    endereco,
+    tipo,
+    valor_diaria,
+    id_destino
+)
+VALUES
+    ('Pousada Zé Maria', 'Rua Maj. José Vicente, 100', 'Pousada', 1200.00, 1),
+    ('Hotel Colline de France', 'Rua Nilo Peçanha, 79', 'Hotel Resort', 950.00, 2),
+    ('Fera Palace Hotel', 'Rua da Chile, 20', 'Hotel', 650.00, 3),
+    ('Belmond Hotel das Cataratas', 'Rodovia BR-469, Km 28', 'Hotel Luxo', 1800.00, 4),
+    ('Copacabana Palace', 'Av. Atlântica, 1702', 'Hotel Luxo', 2200.00, 5);
 
+```
+
+## Tabela 5
+
+**Nome:**
+
+```text
+reserva_pacote
+```
+
+```sql
+INSERT INTO reserva_pacote (
+    id_cliente,
+    id_hospedagem,
+    id_transporte,
+    data_reserva,
+    quantidade_pessoas
+)
+VALUES
+    (1, 1, 1, '2026-09-02', 2),
+    (2, 2, 2, '2026-09-03', 1),
+    (3, 3, 4, '2026-09-04', 4),
+    (4, 4, 5, '2026-09-05', 2),
+    (5, 5, 1, '2026-09-06', 3);
 ```
 
 ---
@@ -327,9 +400,9 @@ Registre os resultados:
 
 | Restrição testada | O que foi testado? | Resultado |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| UNIQUE | Tentativa de inserir um novo cliente com o CPF '123.456.789-01' já existente | O banco bloqueou a inserção retornando erro Error Code: 1062. Duplicate entry. |
+| NOT NULL | Tentativa de inserir uma hospedagem com valor_diaria definido como NULL | O banco impediu a execução retornando erro Error Code: 1048. Column cannot be null. |
+| FOREIGN KEY | Inserção de registro na tabela hospedagem com id_destino = 99. | O banco rejeitou o comando com erro Error Code: 1452. Cannot add or update a child row. |
 
 > Não mantenha comandos propositalmente inválidos no `SPRINT3-5.sql` final.
 
@@ -391,35 +464,41 @@ Execute pelo menos:
 ## UPDATE 1
 
 ```sql
--- Cole aqui.
+UPDATE cliente
+SET telefone = '(11) 99999-8888'
+WHERE id_cliente = 1;
 
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Foi atualizado o número de telefone do cliente de ID 1 (Carlos Silva).
 
 ## UPDATE 2
 
 ```sql
--- Cole aqui.
+UPDATE hospedagem
+SET valor_diaria = 1050.00
+WHERE id_hospedagem = 2;
 
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Foi reajustado o valor da diária da hospedagem de ID 2 (Hotel Colline de France) de R$ 950.00 para R$ 1050.00.
 
 ## UPDATE 3
 
 ```sql
--- Cole aqui.
+UPDATE reserva_pacote
+SET quantidade_pessoas = 5
+WHERE id_reserva = 3;
 
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Foi alterada a quantidade de pessoas da reserva de pacote de ID 3, mudando 4 para 5 pessoas.
 
 ---
 
@@ -498,24 +577,27 @@ Execute pelo menos:
 ## DELETE 1
 
 ```sql
--- Cole aqui.
+SQL
+DELETE FROM reserva_pacote
+WHERE id_reserva = 5;
 
 ```
 
 **Registro removido:**
 
-> Escreva aqui.
+> Removida a reserva de pacote de ID 5, eliminando a dependência do cliente 5.
 
 ## DELETE 2
 
 ```sql
--- Cole aqui.
+DELETE FROM cliente
+WHERE id_cliente = 5;
 
 ```
 
 **Registro removido:**
 
-> Escreva aqui.
+> Excluído o registro do cliente de ID 5 (Beatriz Lima), operação realizada de forma segura após a exclusão de sua reserva associada.
 
 ---
 
@@ -544,63 +626,23 @@ Depois execute a alteração e consulte novamente.
 **Não entregue o código abaixo sem adaptação.**
 
 ```sql
-USE nome_do_banco;
+USE pacote_viagens;
 
--- INSERTS
-
-INSERT INTO tabela_a (
-    campo_a1,
-    campo_a2
-)
-VALUES (
-    'Valor 1',
-    'Valor 2'
-);
-
-INSERT INTO tabela_a (
-    campo_a1,
-    campo_a2
-)
-VALUES
-    ('Valor 3', 'Valor 4'),
-    ('Valor 5', 'Valor 6'),
-    ('Valor 7', 'Valor 8');
-
-INSERT INTO tabela_b (
-    id_a,
-    campo_b1
-)
-VALUES (
-    1,
-    'Outro valor'
-);
+-- INSERTS EXEMPLO
+INSERT INTO destino (nome, pais, estado, descricao)
+VALUES ('Fernando de Noronha', 'Brasil', 'Pernambuco', 'Praias paradisíacas.');
 
 -- VERIFICAÇÕES
-
-SELECT * FROM tabela_a;
-SELECT * FROM tabela_b;
+SELECT * FROM destino;
 
 -- UPDATES
-
-UPDATE tabela_a
-SET campo_a1 = 'Valor atualizado'
-WHERE id_a = 1;
-
-UPDATE tabela_a
-SET campo_a2 = 'Outro valor'
-WHERE id_a = 2;
-
-UPDATE tabela_b
-SET campo_b1 = 'Atualizado'
-WHERE id_b = 1;
+UPDATE cliente
+SET telefone = '(11) 99999-8888'
+WHERE id_cliente = 1;
 
 -- DELETES
-
-DELETE FROM tabela_b
-WHERE id_b = 3;
-
-DELETE FROM tabela_a
-WHERE id_a = 5;
+DELETE FROM reserva_pacote
+WHERE id_reserva = 5;
 ```
 
 ---
@@ -722,11 +764,11 @@ SPRINT3-5.sql
 
 | Tabela | Quantidade aproximada de registros ao final |
 |---|---:|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| destino | 5 |
+| cliente | 4 |
+| transporte | 5 |
+| hospedagem | 5 |
+| reserva_pacote | 4 |
 
 ---
 
@@ -737,7 +779,7 @@ SPRINT3-5.sql
 Quantidade aproximada de registros inseridos:
 
 ```text
-
+25 registros (5 em cada uma das 5 tabelas)
 ```
 
 ## UPDATE
@@ -745,7 +787,7 @@ Quantidade aproximada de registros inseridos:
 Quantidade de operações:
 
 ```text
-
+3 operações
 ```
 
 ## DELETE
@@ -753,7 +795,7 @@ Quantidade de operações:
 Quantidade de operações:
 
 ```text
-
+2 operações
 ```
 
 ---
@@ -762,9 +804,8 @@ Quantidade de operações:
 
 | Problema | Possível causa | Solução aplicada |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Error Code: 1452. Cannot add or update a child row | Tentativa de inserir registros na tabela reserva_pacote referente a um id_transporte antes da execução dos INSERTs na tabela transporte | Reorganizada a ordem de execução do script para criar todas as tabelas independentes (transporte) antes das tabelas dependentes |
+| Error Code: 1175. You are using safe update mode | Trava padrão do MySQL Workbench que bloqueia UPDATE e DELETE sem restrição restrita por PK ou índice | Adicionado o comando SET SQL_SAFE_UPDATES = 0; no início do script para desativar a restrição temporariamente durante o teste |
 
 Mensagens que podem aparecer:
 
@@ -797,22 +838,22 @@ Não exclua arquivos das etapas anteriores.
 
 # 27. Checklist da Sprint 3/5
 
-- [ ] utilizei o banco criado na Sprint 2/5;
-- [ ] utilizei `USE`;
-- [ ] inseri dados coerentes com o projeto;
-- [ ] respeitei a ordem das tabelas;
-- [ ] procurei inserir pelo menos 5 registros nas tabelas principais;
-- [ ] testei restrições de integridade;
-- [ ] executei pelo menos 3 `UPDATE`;
-- [ ] os `UPDATE` possuem condição adequada;
-- [ ] executei pelo menos 2 `DELETE`;
-- [ ] os `DELETE` possuem condição adequada;
-- [ ] verifiquei dependências de `FOREIGN KEY`;
-- [ ] utilizei `SELECT` para conferência;
-- [ ] registrei os problemas encontrados;
-- [ ] salvei o código como `SPRINT3-5.sql`;
-- [ ] preenchi completamente o `SPRINT3-5.md`;
-- [ ] revisei os arquivos antes do commit.
+- [x] utilizei o banco criado na Sprint 2/5;
+- [x] utilizei `USE`;
+- [x] inseri dados coerentes com o projeto;
+- [x] respeitei a ordem das tabelas;
+- [x] procurei inserir pelo menos 5 registros nas tabelas principais;
+- [x] testei restrições de integridade;
+- [x] executei pelo menos 3 `UPDATE`;
+- [x] os `UPDATE` possuem condição adequada;
+- [x] executei pelo menos 2 `DELETE`;
+- [x] os `DELETE` possuem condição adequada;
+- [x] verifiquei dependências de `FOREIGN KEY`;
+- [x] utilizei `SELECT` para conferência;
+- [x] registrei os problemas encontrados;
+- [x] salvei o código como `SPRINT3-5.sql`;
+- [x] preenchi completamente o `SPRINT3-5.md`;
+- [x] revisei os arquivos antes do commit.
 
 ---
 
