@@ -480,24 +480,24 @@ Caso não existam dúvidas:
 
 # 18. Checklist da Sprint 1/5
 
-- [ ] identifiquei o aluno responsável;
-- [ ] defini o tema do banco de dados;
-- [ ] descrevi o sistema;
-- [ ] defini o objetivo do banco;
-- [ ] defini o escopo inicial;
-- [ ] identifiquei pelo menos 4 entidades;
-- [ ] planejei os principais atributos;
-- [ ] defini as chaves primárias previstas;
-- [ ] identifiquei os relacionamentos;
-- [ ] defini as cardinalidades iniciais;
-- [ ] identifiquei possíveis chaves estrangeiras;
-- [ ] planejei restrições de integridade;
-- [ ] defini pelo menos 5 regras de negócio;
-- [ ] fiz um esboço da estrutura do banco;
-- [ ] defini os tipos de dados que futuramente serão cadastrados;
-- [ ] defini pelo menos 5 perguntas que o banco deverá responder;
-- [ ] registrei dúvidas ou decisões pendentes;
-- [ ] revisei o arquivo antes de finalizar.
+- [x] identifiquei o aluno responsável;
+- [x] defini o tema do banco de dados;
+- [x] descrevi o sistema;
+- [x] defini o objetivo do banco;
+- [x] defini o escopo inicial;
+- [x] identifiquei pelo menos 4 entidades;
+- [x] planejei os principais atributos;
+- [x] defini as chaves primárias previstas;
+- [x] identifiquei os relacionamentos;
+- [x] defini as cardinalidades iniciais;
+- [x] identifiquei possíveis chaves estrangeiras;
+- [x] planejei restrições de integridade;
+- [x] defini pelo menos 5 regras de negócio;
+- [x] fiz um esboço da estrutura do banco;
+- [x] defini os tipos de dados que futuramente serão cadastrados;
+- [x] defini pelo menos 5 perguntas que o banco deverá responder;
+- [x] registrei dúvidas ou decisões pendentes;
+- [x] revisei o arquivo antes de finalizar.
 
 ---
 
