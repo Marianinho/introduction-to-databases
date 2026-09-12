@@ -1,8 +1,9 @@
 # SPRINT 3/5 — Manipulação de Dados com DML
 
 **Disciplina:** Laboratório de Banco de Dados  
-**Modalidade:** Atividade individual  
-**Entrega desta Sprint:** `SPRINT3-5.md` + `SPRINT3-5.sql`
+**Modalidade:** Atividade individual / Equipe  
+**Aluna:** Célia Hiromi Watanabe (Team 03)  
+**Entrega desta Sprint:** `SPRINT3-5.md` + `SPRINT3-5.sql`  
 
 ---
 
@@ -36,19 +37,22 @@ O arquivo `SPRINT3-5.md` documentará o trabalho realizado. O arquivo `SPRINT3-5
 # 1. Antes de começar
 
 1. Abra o MySQL Workbench.
-2. Abra sua conexão.
-3. Confirme que o banco criado na Sprint 2/5 existe.
+2. Abra sua conexão local (`Local instance 3306`).
+3. Confirme que o banco criado na Sprint 2/5 (`db_salao_beleza`) existe.
 4. Abra ou execute o `SPRINT2-5.sql`, se necessário.
 5. Selecione o banco:
 
 ```sql
-USE nome_do_banco;
+USE db_salao_beleza;
 ```
 
 6. Confira as tabelas:
 
 ```sql
-DESCRIBE nome_da_tabela;
+DESCRIBE cliente;
+DESCRIBE profissional;
+DESCRIBE servico;
+DESCRIBE agendamento;
 ```
 
 ---
@@ -70,16 +74,16 @@ File → Save Script As...
 Salve exatamente como:
 
 ```text
-SPRINT3-5.sql
+teams/Teams-UNEMAT/team-03/SPRINT3-5.sql
 ```
 
-Esse arquivo deverá conter os comandos DML desta Sprint.
+Esse arquivo contém todos os comandos DML desenvolvidos e validados nesta Sprint.
 
 ---
 
 # 3. INSERT — inserindo dados
 
-Estrutura básica:
+Estrutura básica utilizada:
 
 ```sql
 INSERT INTO nome_tabela (
@@ -94,18 +98,20 @@ VALUES (
 );
 ```
 
-Exemplo:
+Exemplo aplicado ao projeto:
 
 ```sql
 INSERT INTO cliente (
     nome,
-    email,
-    data_nascimento
+    cpf,
+    telefone,
+    email
 )
 VALUES (
-    'Ana Souza',
-    'ana@email.com',
-    '2000-05-10'
+    'Mariana Souza',
+    '111.222.333-44',
+    '(65) 99111-2233',
+    'mariana.souza@email.com'
 );
 ```
 
@@ -113,61 +119,49 @@ VALUES (
 
 # 4. Inserindo vários registros
 
+No projeto, foram utilizadas inserções em lote (*multiple rows*) para ganho de performance e organização:
+
 ```sql
-INSERT INTO cliente (
-    nome,
-    email
-)
+INSERT INTO cliente (nome, cpf, telefone, email)
 VALUES
-    ('Ana Souza', 'ana@email.com'),
-    ('Carlos Lima', 'carlos@email.com'),
-    ('Mariana Silva', 'mariana@email.com');
+    ('Mariana Souza', '111.222.333-44', '(65) 99111-2233', 'mariana.souza@email.com'),
+    ('Beatriz Santos', '222.333.444-55', '(65) 99222-3344', 'beatriz.santos@email.com'),
+    ('Camila Oliveira', '333.444.555-66', '(65) 99333-4455', 'camila.oliveira@email.com');
 ```
 
 ---
 
 # 5. Quantidade mínima de dados
 
-Procure inserir:
+O projeto contemplou pelo menos 5 a 6 registros em cada tabela principal:
 
 ```text
-pelo menos 5 registros em cada tabela principal
+cliente        → 6 registros inseridos (1 específico para teste de exclusão segura)
+profissional   → 5 registros inseridos
+servico        → 6 registros inseridos
+agendamento    → 6 registros inseridos (1 específico para teste de exclusão segura)
 ```
 
-Exemplo:
-
-```text
-CLIENTE        → pelo menos 5 registros
-PRODUTO        → pelo menos 5 registros
-PEDIDO         → pelo menos 5 registros
-ITEM_PEDIDO    → registros suficientes para representar os relacionamentos
-```
-
-Os dados precisam ser coerentes e úteis para as consultas da Sprint 4/5.
+Os dados são totalmente realistas e cobrem cenários reais do cotidiano de um salão de beleza.
 
 ---
 
 # 6. Ordem correta dos INSERTs
 
-Quando existem `FOREIGN KEY`, insira primeiro os registros das tabelas independentes.
-
-Exemplo:
+A ordem de inserção respeitou rigorosamente as restrições de integridade referencial (`FOREIGN KEY`):
 
 ```text
-CLIENTE
-   ↓
-PEDIDO
-   ↓
-ITEM_PEDIDO
+  [cliente]       [profissional]       [servico]
+(independente)    (independente)     (independente)
+        │                │                  │
+        └────────────────┼──────────────────┘
+                         ▼
+                   [agendamento]
+                    (dependente)
 ```
 
-Ordem recomendada:
-
-```text
-1. tabelas independentes;
-2. tabelas com FOREIGN KEY;
-3. tabelas associativas.
-```
+1. **Primeiro:** Inserir dados nas tabelas pai independentes (`cliente`, `profissional`, `servico`);
+2. **Depois:** Inserir registros na tabela filha `agendamento`, referenciando IDs válidos já existentes.
 
 ---
 
@@ -175,169 +169,101 @@ Ordem recomendada:
 
 | Tabela | Quantidade prevista | Depende de outra tabela? |
 |---|---:|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| `cliente` | 6 registros | Não (tabela pai independente) |
+| `profissional` | 5 registros | Não (tabela pai independente) |
+| `servico` | 6 registros | Não (tabela pai independente) |
+| `agendamento` | 6 registros | Sim (depende de `cliente`, `profissional` e `servico`) |
 
 ---
 
 # 8. INSERTs realizados
 
-## Tabela 1
-
-**Nome:**
-
-```text
-
-```
+## Tabela 1: `cliente`
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO cliente (nome, cpf, telefone, email)
+VALUES
+    ('Mariana Souza', '111.222.333-44', '(65) 99111-2233', 'mariana.souza@email.com'),
+    ('Beatriz Santos', '222.333.444-55', '(65) 99222-3344', 'beatriz.santos@email.com'),
+    ('Camila Oliveira', '333.444.555-66', '(65) 99333-4455', 'camila.oliveira@email.com'),
+    ('Juliana Costa', '444.555.666-77', '(65) 99444-5566', 'juliana.costa@email.com'),
+    ('Fernanda Lima', '555.666.777-88', '(65) 99555-6677', 'fernanda.lima@email.com'),
+    ('Lucas Ribeiro (Teste)', '666.777.888-99', '(65) 99666-7788', 'lucas.teste@email.com');
 ```
 
-## Tabela 2
-
-**Nome:**
-
-```text
-
-```
+## Tabela 2: `profissional`
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO profissional (nome, especialidade, telefone)
+VALUES
+    ('Ana Paula Nogueira', 'Cabeleireira', '(65) 98111-1001'),
+    ('Carla Mendes', 'Manicure e Pedicure', '(65) 98222-1002'),
+    ('Daniela Rocha', 'Maquiadora', '(65) 98333-1003'),
+    ('Eduardo Martins', 'Barbeiro', '(65) 98444-1004'),
+    ('Fabiana Silveira', 'Esteticista', '(65) 98555-1005');
 ```
 
-## Tabela 3
-
-**Nome:**
-
-```text
-
-```
+## Tabela 3: `servico`
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO servico (nome_servico, duracao_minutos, preco)
+VALUES
+    ('Corte Feminino', 45, 80.00),
+    ('Corte Masculino', 30, 50.00),
+    ('Manicure e Pedicure', 60, 65.00),
+    ('Escova e Hidratação', 50, 90.00),
+    ('Maquiagem Social', 60, 150.00),
+    ('Limpeza de Pele', 75, 120.00);
 ```
 
-## Tabela 4
-
-**Nome:**
-
-```text
-
-```
+## Tabela 4: `agendamento`
 
 ```sql
--- Cole aqui os INSERTs realizados.
-
+INSERT INTO agendamento (id_cliente, id_profissional, id_servico, data_hora, status, forma_pagamento, observacoes)
+VALUES
+    (1, 1, 1, '2026-09-15 09:00:00', 'Agendado', NULL, 'Cliente prefere corte na tesoura'),
+    (2, 2, 3, '2026-09-15 10:30:00', 'Agendado', NULL, 'Trazer esmalte próprio'),
+    (3, 3, 5, '2026-09-15 14:00:00', 'Agendado', NULL, 'Evento à noite, maquiagem marcante'),
+    (4, 4, 2, '2026-09-16 11:00:00', 'Agendado', NULL, 'Acabamento com navalha'),
+    (5, 5, 6, '2026-09-16 15:30:00', 'Agendado', NULL, 'Pele sensível'),
+    (1, 2, 3, '2026-09-17 16:00:00', 'Cancelado', NULL, 'Cliente cancelou com antecedência por imprevisto');
 ```
 
 ---
 
 # 9. AUTO_INCREMENT
 
-Se a chave primária utiliza `AUTO_INCREMENT`, normalmente você não informa o identificador no `INSERT`.
-
-Exemplo:
-
-```sql
-CREATE TABLE cliente (
-    id_cliente INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL
-);
-```
-
-Inserção:
-
-```sql
-INSERT INTO cliente (nome)
-VALUES ('Maria');
-```
+Todas as quatro tabelas do projeto utilizam `AUTO_INCREMENT` nas chaves primárias (`id_cliente`, `id_profissional`, `id_servico`, `id_agendamento`). Por esse motivo, as colunas identificadoras são omitidas nos comandos `INSERT`, permitindo que o MySQL gere a sequência numérica de forma automática, consistente e sem risco de duplicidade manual.
 
 ---
 
 # 10. Tipos de valores
 
-Texto:
+Os seguintes tipos de valores foram praticados nos comandos DML:
 
-```sql
-'João da Silva'
-```
-
-Inteiro:
-
-```sql
-10
-```
-
-Decimal:
-
-```sql
-199.90
-```
-
-Data:
-
-```sql
-'2026-09-02'
-```
-
-Booleano:
-
-```sql
-TRUE
-```
-
-ou:
-
-```sql
-FALSE
-```
-
-Ausência de valor:
-
-```sql
-NULL
-```
+- **Texto:** `'Mariana Souza'`, `'Agendado'`, `'Pix'`
+- **Inteiro:** `45` (duração em minutos), `1` (IDs relacionais)
+- **Decimal:** `80.00`, `95.00` (valores de serviços)
+- **Data e Hora:** `'2026-09-15 09:00:00'` (formato ISO `YYYY-MM-DD HH:MM:SS`)
+- **Ausência de valor:** `NULL` (usado nos agendamentos ainda não pagos ou sem anotações)
 
 ---
 
 # 11. Testando restrições de integridade
 
-Agora que existem dados, teste restrições criadas na Sprint 2/5.
-
-Exemplo:
-
-```sql
-email VARCHAR(150) UNIQUE
-```
-
-Pergunte:
-
-- o banco impede valores duplicados?
-- `NOT NULL` está funcionando?
-- a `FOREIGN KEY` impede referências inexistentes?
-
-Registre os resultados:
+Durante os testes em bancada no MySQL Workbench, foram avaliadas as restrições criadas na Sprint 2/5:
 
 | Restrição testada | O que foi testado? | Resultado |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-
-> Não mantenha comandos propositalmente inválidos no `SPRINT3-5.sql` final.
+| `UNIQUE` (`cpf`) | Tentativa de inserir outro cliente com o CPF `'111.222.333-44'` já cadastrado | **Bloqueado pelo MySQL:** `Error Code 1062: Duplicate entry '111.222.333-44' for key 'cliente.cpf'` |
+| `NOT NULL` (`nome`) | Tentativa de inserir um serviço com `nome_servico = NULL` | **Bloqueado pelo MySQL:** `Error Code 1048: Column 'nome_servico' cannot be null` |
+| `FOREIGN KEY` | Tentativa de agendamento informando `id_cliente = 999` (inexistente) | **Bloqueado pelo MySQL:** `Error Code 1452: Cannot add or update a child row: a foreign key constraint fails` |
 
 ---
 
 # 12. UPDATE — alterando registros
 
-Estrutura:
+Estrutura padrão utilizada:
 
 ```sql
 UPDATE nome_tabela
@@ -345,376 +271,158 @@ SET campo = novo_valor
 WHERE condicao;
 ```
 
-Exemplo:
-
-```sql
-UPDATE cliente
-SET email = 'novo@email.com'
-WHERE id_cliente = 1;
-```
-
 ---
 
 # 13. Atenção ao WHERE no UPDATE
 
-Este comando:
-
-```sql
-UPDATE cliente
-SET ativo = FALSE;
-```
-
-pode alterar **todos os registros**.
-
-Já:
-
-```sql
-UPDATE cliente
-SET ativo = FALSE
-WHERE id_cliente = 3;
-```
-
-altera somente o registro escolhido.
-
-> Confira sempre o `WHERE` antes da execução.
+Nunca executar `UPDATE` sem cláusula `WHERE` em ambiente de produção, pois isso alteraria indiscriminadamente todas as linhas da tabela. Antes de cada execução, o filtro `WHERE` foi inspecionado com auxílio de uma consulta prévia (`SELECT`).
 
 ---
 
 # 14. UPDATEs obrigatórios
 
-Execute pelo menos:
-
-```text
-3 operações UPDATE
-```
+Foram executadas **3 operações UPDATE** com objetivos claros de negócio:
 
 ## UPDATE 1
 
 ```sql
--- Cole aqui.
-
+UPDATE cliente
+SET telefone = '(65) 99999-3344',
+    email = 'beatriz.nova@email.com'
+WHERE id_cliente = 2;
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Atualização dos dados de contato (telefone e e-mail) da cliente Beatriz Santos (`id_cliente = 2`) após solicitação de alteração cadastral.
+
+---
 
 ## UPDATE 2
 
 ```sql
--- Cole aqui.
-
+UPDATE servico
+SET preco = 95.00
+WHERE id_servico = 4;
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Reajuste de valor na tabela de preços do serviço "Escova e Hidratação" (`id_servico = 4`), alterando o preço de R$ 90.00 para R$ 95.00.
+
+---
 
 ## UPDATE 3
 
 ```sql
--- Cole aqui.
-
+UPDATE agendamento
+SET status = 'Concluído',
+    forma_pagamento = 'Pix',
+    observacoes = 'Atendimento concluído com sucesso, cliente satisfeita'
+WHERE id_agendamento = 1;
 ```
 
 **O que foi alterado?**
 
-> Escreva aqui.
+> Conclusão do atendimento do agendamento 1 (`id_agendamento = 1`), alterando o status de `'Agendado'` para `'Concluído'`, registrando a forma de pagamento `'Pix'` e adicionando nota sobre a satisfação da cliente.
 
 ---
 
 # 15. DELETE — removendo registros
 
-Estrutura:
+Estrutura utilizada:
 
 ```sql
 DELETE FROM nome_tabela
 WHERE condicao;
 ```
 
-Exemplo:
-
-```sql
-DELETE FROM cliente
-WHERE id_cliente = 5;
-```
-
 ---
 
 # 16. Atenção ao WHERE no DELETE
 
-Este comando:
-
-```sql
-DELETE FROM cliente;
-```
-
-remove todos os registros.
-
-Este:
-
-```sql
-DELETE FROM cliente
-WHERE id_cliente = 5;
-```
-
-remove apenas o registro selecionado.
-
-> Nunca execute `DELETE` sem conferir a condição.
+A cláusula `WHERE` é indispensável no `DELETE` para delimitar com precisão cirúrgica o registro a ser removido e evitar o esvaziamento acidental da tabela.
 
 ---
 
 # 17. DELETE e FOREIGN KEY
 
-Uma exclusão pode ser impedida pela integridade referencial.
-
-Exemplo:
-
-```text
-CLIENTE
-   ↓
-PEDIDO
-```
-
-Se um pedido depende de um cliente, o MySQL pode impedir:
-
-```sql
-DELETE FROM cliente
-WHERE id_cliente = 1;
-```
-
-Isso pode indicar que a `FOREIGN KEY` está funcionando corretamente.
+O MySQL atua ativamente para impedir exclusões que violem a integridade referencial:
+- Se tentássemos rodar `DELETE FROM cliente WHERE id_cliente = 1;`, o MySQL rejeitaria com o erro `1451: Cannot delete or update a parent row: a foreign key constraint fails`, pois o cliente 1 possui agendamentos ativos.
+- Para demonstrar o `DELETE` correto e seguro, as exclusões foram planejadas na ordem adequada (primeiro excluir agendamento cancelado, e exclusão de cliente que não possui dependentes).
 
 ---
 
 # 18. DELETEs obrigatórios
 
-Execute pelo menos:
-
-```text
-2 operações DELETE
-```
+Foram executadas **2 operações DELETE** controladas:
 
 ## DELETE 1
 
 ```sql
--- Cole aqui.
-
+DELETE FROM agendamento
+WHERE id_agendamento = 6;
 ```
 
 **Registro removido:**
 
-> Escreva aqui.
+> Exclusão do agendamento cancelado previamente pela cliente por imprevisto (`id_agendamento = 6`), liberando o histórico de atendimentos descartados.
+
+---
 
 ## DELETE 2
 
 ```sql
--- Cole aqui.
-
+DELETE FROM cliente
+WHERE id_cliente = 6;
 ```
 
 **Registro removido:**
 
-> Escreva aqui.
+> Exclusão do cliente de testes Lucas Ribeiro (`id_cliente = 6`), que não possuía nenhum agendamento vinculado, comprovando a execução de um `DELETE` sem restrições de chave estrangeira.
 
 ---
 
 # 19. Conferindo os registros
 
-Nesta Sprint, você pode utilizar `SELECT` apenas para verificar o estado das tabelas.
+A cada etapa de manipulação, comandos `SELECT` foram executados para auditar as alterações:
 
 ```sql
-SELECT * FROM nome_tabela;
+-- Conferência antes da exclusão:
+SELECT * FROM agendamento WHERE id_agendamento = 6;
+
+-- Conferência após exclusão:
+SELECT * FROM agendamento;
 ```
-
-Antes de um `UPDATE` ou `DELETE`, é recomendável verificar o registro.
-
-```sql
-SELECT *
-FROM cliente
-WHERE id_cliente = 3;
-```
-
-Depois execute a alteração e consulte novamente.
 
 ---
 
 # 20. Modelo genérico para adaptar
 
-**Não entregue o código abaixo sem adaptação.**
-
-```sql
-USE nome_do_banco;
-
--- INSERTS
-
-INSERT INTO tabela_a (
-    campo_a1,
-    campo_a2
-)
-VALUES (
-    'Valor 1',
-    'Valor 2'
-);
-
-INSERT INTO tabela_a (
-    campo_a1,
-    campo_a2
-)
-VALUES
-    ('Valor 3', 'Valor 4'),
-    ('Valor 5', 'Valor 6'),
-    ('Valor 7', 'Valor 8');
-
-INSERT INTO tabela_b (
-    id_a,
-    campo_b1
-)
-VALUES (
-    1,
-    'Outro valor'
-);
-
--- VERIFICAÇÕES
-
-SELECT * FROM tabela_a;
-SELECT * FROM tabela_b;
-
--- UPDATES
-
-UPDATE tabela_a
-SET campo_a1 = 'Valor atualizado'
-WHERE id_a = 1;
-
-UPDATE tabela_a
-SET campo_a2 = 'Outro valor'
-WHERE id_a = 2;
-
-UPDATE tabela_b
-SET campo_b1 = 'Atualizado'
-WHERE id_b = 1;
-
--- DELETES
-
-DELETE FROM tabela_b
-WHERE id_b = 3;
-
-DELETE FROM tabela_a
-WHERE id_a = 5;
-```
+O modelo genérico sugerido pelo professor foi completamente customizado para o domínio do salão de beleza e estruturado no script executável da equipe.
 
 ---
 
 # 21. Estrutura recomendada do SPRINT3-5.sql
 
-```sql
--- ============================================================
--- IDENTIFICAÇÃO
--- ============================================================
-
--- Aluno:
--- Banco:
-
-
--- ============================================================
--- SELECIONAR O BANCO
--- ============================================================
-
-USE nome_do_banco;
-
-
--- ============================================================
--- INSERTS — TABELA 1
--- ============================================================
-
-
--- ============================================================
--- INSERTS — TABELA 2
--- ============================================================
-
-
--- ============================================================
--- INSERTS — TABELA 3
--- ============================================================
-
-
--- ============================================================
--- INSERTS — TABELA 4
--- ============================================================
-
-
--- ============================================================
--- VERIFICAÇÕES
--- ============================================================
-
-
--- ============================================================
--- UPDATES
--- ============================================================
-
-
--- ============================================================
--- DELETES
--- ============================================================
-
-
--- ============================================================
--- VERIFICAÇÃO FINAL
--- ============================================================
-
-```
+O arquivo `SPRINT3-5.sql` segue rigorosamente a estrutura modular de boas práticas:
+1. Identificação e `USE db_salao_beleza;`
+2. `INSERT` nas tabelas independentes (`cliente`, `profissional`, `servico`);
+3. `INSERT` na tabela dependente (`agendamento`);
+4. Verificações intermediárias (`SELECT`);
+5. Três operações de `UPDATE`;
+6. Duas operações de `DELETE`;
+7. Verificação final (`SELECT`) de todas as tabelas.
 
 ---
 
 # 22. Passo a passo no MySQL Workbench
 
-## Etapa 1 — Abra o banco
-
-No painel `Schemas`, confirme se o banco e as tabelas da Sprint 2/5 estão disponíveis.
-
-## Etapa 2 — Selecione o banco
-
-```sql
-USE nome_do_banco;
-```
-
-## Etapa 3 — Insira dados nas tabelas independentes
-
-Comece pelas tabelas que não possuem dependências.
-
-## Etapa 4 — Confira os dados
-
-```sql
-SELECT * FROM nome_tabela;
-```
-
-## Etapa 5 — Insira dados nas tabelas dependentes
-
-Respeite as `FOREIGN KEY`.
-
-## Etapa 6 — Execute os UPDATEs
-
-Realize pelo menos três alterações coerentes.
-
-## Etapa 7 — Execute os DELETEs
-
-Realize pelo menos duas exclusões seguras.
-
-## Etapa 8 — Faça a verificação final
-
-Confira o conteúdo das tabelas.
-
-## Etapa 9 — Salve o arquivo
-
-```text
-File → Save Script As...
-```
-
-Nome obrigatório:
-
-```text
-SPRINT3-5.sql
-```
+1. **Etapa 1:** Conectar no MySQL Workbench e verificar o schema `db_salao_beleza`.
+2. **Etapa 2:** Abrir o script `SPRINT3-5.sql` no Workbench.
+3. **Etapa 3:** Clicar no botão do **Raio (⚡)** para executar o script.
+4. **Etapa 4:** Observar a grade de resultados (*Result Grid*) com os dados povoados e o histórico de comandos bem-sucedidos no painel **Action Output**.
+5. **Etapa 5:** Salvar o arquivo atualizado na pasta do projeto.
 
 ---
 
@@ -722,11 +430,10 @@ SPRINT3-5.sql
 
 | Tabela | Quantidade aproximada de registros ao final |
 |---|---:|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| `cliente` | 5 registros ativos |
+| `profissional` | 5 registros ativos |
+| `servico` | 6 registros ativos |
+| `agendamento` | 5 registros ativos |
 
 ---
 
@@ -734,10 +441,10 @@ SPRINT3-5.sql
 
 ## INSERT
 
-Quantidade aproximada de registros inseridos:
+Quantidade total de registros inseridos:
 
 ```text
-
+23 registros (6 clientes + 5 profissionais + 6 serviços + 6 agendamentos)
 ```
 
 ## UPDATE
@@ -745,7 +452,7 @@ Quantidade aproximada de registros inseridos:
 Quantidade de operações:
 
 ```text
-
+3 operações UPDATE executadas com sucesso
 ```
 
 ## DELETE
@@ -753,7 +460,7 @@ Quantidade de operações:
 Quantidade de operações:
 
 ```text
-
+2 operações DELETE executadas com sucesso
 ```
 
 ---
@@ -762,76 +469,65 @@ Quantidade de operações:
 
 | Problema | Possível causa | Solução aplicada |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-
-Mensagens que podem aparecer:
-
-```text
-Duplicate entry
-Cannot add or update a child row
-Cannot delete or update a parent row
-Column cannot be null
-Data too long for column
-Unknown column
-```
+| Risco de erro `1451` em `DELETE` | Tentar excluir cliente que possuía agendamento relacionado | Planejada a exclusão exclusiva de cliente sem agendamentos ativos (`id_cliente = 6`) |
+| Risco de alteração em massa no `UPDATE` | Ausência acidental de `WHERE` | Todas as instruções foram validadas previamente e executadas com filtro por chave primária |
+| Risco de duplicidade de CPF | Violação da restrição `UNIQUE` | Criada lista de CPFs distintos para todos os clientes inseridos |
 
 ---
 
 # 26. O que deve existir ao final desta Sprint
 
+A pasta da equipe `teams/Teams-UNEMAT/team-03/` agora possui a árvore completa:
+
 ```text
 SPRINT1-5.md
-
 SPRINT2-5.md
 SPRINT2-5.sql
-
 SPRINT3-5.md
 SPRINT3-5.sql
 ```
-
-Não exclua arquivos das etapas anteriores.
 
 ---
 
 # 27. Checklist da Sprint 3/5
 
-- [ ] utilizei o banco criado na Sprint 2/5;
-- [ ] utilizei `USE`;
-- [ ] inseri dados coerentes com o projeto;
-- [ ] respeitei a ordem das tabelas;
-- [ ] procurei inserir pelo menos 5 registros nas tabelas principais;
-- [ ] testei restrições de integridade;
-- [ ] executei pelo menos 3 `UPDATE`;
-- [ ] os `UPDATE` possuem condição adequada;
-- [ ] executei pelo menos 2 `DELETE`;
-- [ ] os `DELETE` possuem condição adequada;
-- [ ] verifiquei dependências de `FOREIGN KEY`;
-- [ ] utilizei `SELECT` para conferência;
-- [ ] registrei os problemas encontrados;
-- [ ] salvei o código como `SPRINT3-5.sql`;
-- [ ] preenchi completamente o `SPRINT3-5.md`;
-- [ ] revisei os arquivos antes do commit.
+- [x] utilizei o banco criado na Sprint 2/5 (`db_salao_beleza`);
+- [x] utilizei `USE db_salao_beleza;`;
+- [x] inseri dados coerentes com o projeto do salão de beleza;
+- [x] respeitei a ordem das tabelas (tabelas pai antes da dependente);
+- [x] procurei inserir pelo menos 5 registros nas tabelas principais;
+- [x] testei restrições de integridade (`UNIQUE`, `NOT NULL`, `FOREIGN KEY`);
+- [x] executei pelo menos 3 `UPDATE`;
+- [x] os `UPDATE` possuem condição adequada com `WHERE`;
+- [x] executei pelo menos 2 `DELETE`;
+- [x] os `DELETE` possuem condição adequada com `WHERE`;
+- [x] verifiquei dependências de `FOREIGN KEY`;
+- [x] utilizei `SELECT` para conferência antes e depois;
+- [x] registrei os problemas encontrados;
+- [x] salvei o código como `SPRINT3-5.sql`;
+- [x] preenchi completamente o `SPRINT3-5.md`;
+- [x] revisei os arquivos antes do commit.
 
 ---
 
 # 28. Regras de Git/GitHub
 
-A atividade continua **individual**.
+A atividade continua **individual / por equipe**.
 
-Utilize a mesma branch individual das Sprints anteriores.
-
-Não crie uma branch nova.
-
-## Arquivos obrigatórios no commit desta Sprint
+Utilize a mesma branch individual das Sprints anteriores:
 
 ```text
-SPRINT3-5.md
-SPRINT3-5.sql
+team-03-sprints-1-5
 ```
 
-Mensagem sugerida:
+## Arquivos obrigatórios no commit desta Sprint:
+
+```text
+teams/Teams-UNEMAT/team-03/SPRINT3-5.md
+teams/Teams-UNEMAT/team-03/SPRINT3-5.sql
+```
+
+## Mensagem sugerida pelo professor:
 
 ```text
 Conclui Sprint 3 de 5 - operações DML
@@ -841,55 +537,31 @@ Conclui Sprint 3 de 5 - operações DML
 
 # 29. Pull Request
 
-**Ainda não abra o Pull Request final.**
-
-O PR será aberto somente após a Sprint 5/5.
-
-```text
-SPRINT1-5.md
-      ↓ commit
-
-SPRINT2-5.md + SPRINT2-5.sql
-      ↓ commit
-
-SPRINT3-5.md + SPRINT3-5.sql
-      ↓ commit
-
-SPRINT4-5.md + SPRINT4-5.sql
-      ↓ commit
-
-SPRINT5-5.md + SPRINT5-5.sql
-      ↓ commit
-
-PULL REQUEST FINAL
-      ↓
-main
-```
+> **Ainda não abra o Pull Request final.**  
+> O PR será aberto exclusivamente após a conclusão da Sprint 5/5, reunindo todas as cinco entregas de forma consolidada para a branch `main`.
 
 ---
 
 # 30. Critério de conclusão
 
-A Sprint 3/5 será considerada concluída quando o aluno:
+A Sprint 3/5 está concluída com todos os critérios cumpridos:
 
-1. utilizar o banco criado anteriormente;
-2. popular suas tabelas;
-3. respeitar os relacionamentos existentes;
-4. utilizar corretamente `INSERT`;
-5. realizar pelo menos 3 `UPDATE`;
-6. realizar pelo menos 2 `DELETE`;
-7. preservar a integridade dos dados;
-8. documentar a atividade no `SPRINT3-5.md`;
-9. salvar o código executável em `SPRINT3-5.sql`;
-10. incluir os dois arquivos no commit.
+1. Utilizou o banco `db_salao_beleza` criado na Sprint 2/5;
+2. Populou todas as 4 tabelas com dados de alta qualidade;
+3. Respeitou a integridade referencial e chaves estrangeiras;
+4. Utilizou `INSERT` em lote para produtividade;
+5. Realizou 3 `UPDATE` explicados e contextualizados;
+6. Realizou 2 `DELETE` seguros;
+7. Preservou a integridade dos dados;
+8. Documentou a atividade integralmente no `SPRINT3-5.md`;
+9. Salvou o código executável em `SPRINT3-5.sql`;
+10. Arquivos prontos e validados para o commit.
 
 ---
 
 # Próxima etapa
 
-Na **Sprint 4/5**, os dados criados nesta etapa serão utilizados para consultas SQL.
-
-Serão trabalhados:
+Na **Sprint 4/5**, os dados inseridos nesta etapa serão utilizados para consultas SQL avançadas:
 
 ```sql
 SELECT
@@ -903,5 +575,3 @@ AVG
 MIN
 MAX
 ```
-
-> **Não desenvolva a Sprint 4/5 neste arquivo.**
