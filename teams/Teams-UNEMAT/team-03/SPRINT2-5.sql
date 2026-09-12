@@ -92,7 +92,12 @@ DROP TABLE tabela_teste_exclusao;
 -- 6. COMANDOS DE VALIDAÇÃO DA ESTRUTURA
 -- ============================================================
 
+-- Validação com DESCRIBE (estrutura de colunas, tipos e chaves)
 DESCRIBE cliente;
 DESCRIBE profissional;
 DESCRIBE servico;
 DESCRIBE agendamento;
+
+-- Validação com SHOW CREATE TABLE (verificação das constraints e FKs geradas)
+SHOW CREATE TABLE agendamento;
+
