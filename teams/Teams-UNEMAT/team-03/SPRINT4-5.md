@@ -1,8 +1,9 @@
 # SPRINT 4/5 — Consultas SQL e Expressões
 
 **Disciplina:** Laboratório de Banco de Dados  
-**Modalidade:** Atividade individual  
-**Entrega desta Sprint:** `SPRINT4-5.md` + `SPRINT4-5.sql`
+**Modalidade:** Atividade individual / Equipe  
+**Aluna:** Célia Hiromi Watanabe (Team 03)  
+**Entrega desta Sprint:** `SPRINT4-5.md` + `SPRINT4-5.sql`  
 
 ---
 
@@ -42,19 +43,22 @@ O arquivo `.sql` conterá todas as consultas efetivamente executadas e testadas 
 # 1. Antes de começar
 
 1. Abra o MySQL Workbench.
-2. Abra sua conexão.
-3. Confirme que o banco da Sprint 2/5 existe.
+2. Abra sua conexão (`Local instance 3306`).
+3. Confirme que o banco da Sprint 2/5 (`db_salao_beleza`) existe.
 4. Confirme que os dados da Sprint 3/5 estão disponíveis.
 5. Selecione o banco:
 
 ```sql
-USE nome_do_banco;
+USE db_salao_beleza;
 ```
 
 6. Confira os dados:
 
 ```sql
-SELECT * FROM nome_da_tabela;
+SELECT * FROM cliente;
+SELECT * FROM profissional;
+SELECT * FROM servico;
+SELECT * FROM agendamento;
 ```
 
 ---
@@ -76,211 +80,155 @@ File → Save Script As...
 Salve exatamente como:
 
 ```text
-SPRINT4-5.sql
+teams/Teams-UNEMAT/team-03/SPRINT4-5.sql
 ```
+
+Esse arquivo contém todas as consultas SQL desenvolvidas, testadas e validadas nesta Sprint.
 
 ---
 
 # 3. Retome as perguntas da Sprint 1/5
 
-Recupere as perguntas que você definiu anteriormente para o banco.
+As perguntas estratégicas planejadas na Sprint 1/5 foram resgatadas e refinadas:
 
-1. 
-2. 
-3. 
-4. 
-5. 
-
-Agora identifique quais delas exigem:
-
-- consulta simples;
-- filtro;
-- ordenação;
-- agregação;
-- agrupamento;
-- filtro sobre grupos.
+1. **Quais clientes estão cadastrados no salão, ordenados por nome?**  
+   *Exige:* Projeção (`SELECT`) e ordenação (`ORDER BY`).
+2. **Quais serviços possuem valor superior a R$ 70,00?**  
+   *Exige:* Projeção e filtro relacional (`WHERE >`).
+3. **Quais agendamentos estão confirmados para uma data específica?**  
+   *Exige:* Filtro composto com múltiplos critérios (`WHERE ... AND`).
+4. **Quantos agendamentos existem agrupados por status e por profissional?**  
+   *Exige:* Agrupamento (`GROUP BY`) e função de agregação (`COUNT`).
+5. **Qual é o faturamento total acumulado e a média de preços dos procedimentos?**  
+   *Exige:* Funções agregadas de resumo (`SUM`, `AVG`, `MIN`, `MAX`).
 
 ---
 
 # 4. SELECT
 
-Consulta básica:
-
-```sql
-SELECT *
-FROM nome_tabela;
-```
-
-Selecionando colunas específicas:
-
-```sql
-SELECT campo_1, campo_2
-FROM nome_tabela;
-```
-
 ## Consulta 1
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais são todos os dados cadastrais dos clientes registrados no sistema?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT *
+FROM cliente;
 ```
 
 ### Explique o resultado
 
-> Escreva aqui.
+> A consulta retorna todos os atributos e registros da tabela `cliente`, permitindo à recepção visualizar a lista completa de clientes cadastrados, com seus IDs, nomes, CPFs, números de telefone e e-mails de contato.
+
+---
+
+## Consulta 2 (Colunas Específicas)
+
+### Pergunta respondida
+
+> Qual é o catálogo simplificado de procedimentos disponíveis, exibindo o nome do serviço, o tempo estimado de atendimento e o valor cobrado?
+
+### SQL
+
+```sql
+SELECT nome_servico, duracao_minutos, preco
+FROM servico;
+```
+
+### Explique o resultado
+
+> Projeta apenas as três colunas de interesse do catálogo de serviços, omitindo chaves primárias internas e oferecendo uma listagem limpa para exibição em tabelas de preços ou cardápios de atendimento.
 
 ---
 
 # 5. WHERE
 
-Utilize `WHERE` para filtrar registros.
-
-Exemplo:
-
-```sql
-SELECT *
-FROM produto
-WHERE preco > 100;
-```
-
-Operadores comuns:
-
-```text
-=   igual
-<>  diferente
->   maior que
-<   menor que
->=  maior ou igual
-<=  menor ou igual
-```
-
-Também podem ser utilizados:
-
-```sql
-AND
-OR
-LIKE
-BETWEEN
-IN
-IS NULL
-IS NOT NULL
-```
-
-Exemplo:
-
-```sql
-SELECT *
-FROM produto
-WHERE preco > 100
-  AND estoque > 0;
-```
-
 ## Consulta obrigatória com WHERE
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais são os serviços do salão com valor superior a R$ 70,00 (serviços de ticket mais elevado)?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT nome_servico, preco
+FROM servico
+WHERE preco > 70.00;
 ```
 
 ### Explique o filtro
 
-> Escreva aqui.
+> A cláusula `WHERE preco > 70.00` filtra os registros na tabela `servico`, retornando apenas os procedimentos com maior valor agregado (como Maquiagem Social R$ 150.00, Limpeza de Pele R$ 120.00, Escova e Hidratação R$ 95.00 e Corte Feminino R$ 80.00).
+
+---
+
+## Consulta com mais de uma condição (WHERE composto)
+
+### Pergunta respondida
+
+> Quais agendamentos estão com status pendente ('Agendado') para atendimento no dia 15/09/2026?
+
+### SQL
+
+```sql
+SELECT id_agendamento, id_cliente, id_profissional, id_servico, data_hora, status
+FROM agendamento
+WHERE status = 'Agendado'
+  AND data_hora >= '2026-09-15 00:00:00'
+  AND data_hora <= '2026-09-15 23:59:59';
+```
+
+### Explique o filtro
+
+> O operador lógico `AND` combina o filtro de status (`status = 'Agendado'`) com o intervalo de data e hora do dia especificado, identificando exatamente os clientes que devem comparecer ao salão nessa data.
 
 ---
 
 # 6. ORDER BY
 
-Ordenação crescente:
-
-```sql
-SELECT *
-FROM produto
-ORDER BY preco ASC;
-```
-
-Ordenação decrescente:
-
-```sql
-SELECT *
-FROM produto
-ORDER BY preco DESC;
-```
-
-Por mais de uma coluna:
-
-```sql
-SELECT *
-FROM produto
-ORDER BY categoria ASC, preco DESC;
-```
-
 ## Consulta obrigatória com ORDER BY
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Como emitir uma listagem alfabética de todos os clientes cadastrados com seus respectivos contatos?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT nome, telefone, email
+FROM cliente
+ORDER BY nome ASC;
+```
 
+### Explique a ordenação
+
+> A cláusula `ORDER BY nome ASC` classifica os registros por ordem alfabética de A a Z, facilitando a busca rápida de fichas cadastrais pela equipe da recepção.
+
+---
+
+## Consulta com ORDER BY decrescente
+
+### Pergunta respondida
+
+> Quais são os procedimentos ofertados ordenados do maior valor para o mais barato?
+
+### SQL
+
+```sql
+SELECT nome_servico, duracao_minutos, preco
+FROM servico
+ORDER BY preco DESC;
 ```
 
 ---
 
 # 7. Funções de agregação
 
-Principais funções:
-
-```sql
-COUNT()
-SUM()
-AVG()
-MIN()
-MAX()
-```
-
-## COUNT
-
-```sql
-SELECT COUNT(*) AS total_registros
-FROM nome_tabela;
-```
-
-## SUM
-
-```sql
-SELECT SUM(campo_numerico) AS total
-FROM nome_tabela;
-```
-
-## AVG
-
-```sql
-SELECT AVG(campo_numerico) AS media
-FROM nome_tabela;
-```
-
-## MIN e MAX
-
-```sql
-SELECT MIN(campo_numerico) AS menor_valor,
-       MAX(campo_numerico) AS maior_valor
-FROM nome_tabela;
-```
+As funções de agregação foram aplicadas sobre a tabela de serviços e agendamentos para gerar métricas de negócio e indicadores de desempenho.
 
 ---
 
@@ -289,420 +237,217 @@ FROM nome_tabela;
 ## COUNT
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    (SELECT COUNT(*) FROM cliente) AS total_clientes,
+    (SELECT COUNT(*) FROM agendamento) AS total_agendamentos;
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Quantos clientes e quantos agendamentos no total estão cadastrados no banco de dados?
+
+---
 
 ## SUM
 
 ```sql
--- Cole aqui.
-
+SELECT SUM(preco) AS faturamento_total_catalogo
+FROM servico;
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual seria o faturamento somado se todos os serviços ofertados no catálogo fossem contratados exatamente uma vez (R$ 560,00)?
 
-Caso não seja aplicável ao domínio, justifique.
+---
 
 ## AVG
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    ROUND(AVG(preco), 2) AS preco_medio_servicos,
+    ROUND(AVG(duracao_minutos), 1) AS duracao_media_minutos
+FROM servico;
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual é o preço médio cobrado pelos procedimentos do salão (R$ 93,33) e qual é o tempo médio de duração de cada atendimento (53,3 minutos)?
 
-Caso não seja aplicável ao domínio, justifique.
+---
 
 ## MIN ou MAX
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    MIN(preco) AS menor_preco,
+    MAX(preco) AS maior_preco
+FROM servico;
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual é o serviço mais barato do catálogo (Corte Masculino a R$ 50,00) e qual é o de maior valor (Maquiagem Social a R$ 150,00)?
 
 ---
 
 # 9. GROUP BY
 
-`GROUP BY` permite agrupar registros.
-
-Exemplo:
-
-```sql
-SELECT categoria_id,
-       COUNT(*) AS quantidade
-FROM produto
-GROUP BY categoria_id;
-```
-
-Outro exemplo:
-
-```sql
-SELECT status,
-       COUNT(*) AS quantidade
-FROM pedido
-GROUP BY status;
-```
-
 ## Consulta obrigatória com GROUP BY
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quantos agendamentos existem agrupados por status de atendimento (quantos estão 'Agendados' e quantos estão 'Concluídos')?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    status,
+    COUNT(*) AS quantidade_agendamentos
+FROM agendamento
+GROUP BY status;
 ```
 
 ### Explique o agrupamento
 
-> Escreva aqui.
+> A instrução `GROUP BY status` agrupa as linhas da tabela `agendamento` pelo valor da coluna `status` e calcula a quantidade total de registros em cada categoria através do `COUNT(*)`, permitindo ao gestor monitorar a taxa de conclusão dos atendimentos.
+
+---
+
+## Consulta adicional de agrupamento (Produtividade por Profissional)
+
+```sql
+SELECT 
+    id_profissional,
+    COUNT(*) AS total_atendimentos
+FROM agendamento
+GROUP BY id_profissional
+ORDER BY total_atendimentos DESC;
+```
 
 ---
 
 # 10. HAVING
 
-`WHERE` filtra registros antes do agrupamento.
-
-`HAVING` filtra os grupos após o `GROUP BY`.
-
-Exemplo:
-
-```sql
-SELECT categoria_id,
-       COUNT(*) AS quantidade
-FROM produto
-GROUP BY categoria_id
-HAVING COUNT(*) > 5;
-```
-
 ## Consulta obrigatória com HAVING
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais status de agendamentos concentram mais de 1 atendimento registrado no sistema?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    status,
+    COUNT(*) AS quantidade
+FROM agendamento
+GROUP BY status
+HAVING COUNT(*) > 1;
 ```
 
 ### Por que HAVING foi necessário?
 
-> Escreva aqui.
+> A cláusula `WHERE` só é capaz de filtrar linhas individuais antes do agrupamento. Como o critério de seleção depende do resultado de uma função agregada (`COUNT(*) > 1`), o uso do `HAVING` é indispensável para filtrar os grupos gerados após o `GROUP BY`.
 
 ---
 
 # 11. Expressões SQL
 
-É possível realizar cálculos em consultas.
-
-Exemplo:
-
-```sql
-SELECT nome,
-       preco,
-       preco * 0.90 AS preco_com_desconto
-FROM produto;
-```
-
-Outro exemplo:
-
-```sql
-SELECT quantidade,
-       valor_unitario,
-       quantidade * valor_unitario AS subtotal
-FROM item_pedido;
-```
-
 ## Consulta com expressão
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    nome_servico,
+    preco AS preco_original,
+    ROUND(preco * 0.15, 2) AS valor_desconto_15,
+    ROUND(preco * 0.85, 2) AS preco_promocional_com_desconto
+FROM servico
+ORDER BY preco_original DESC;
 ```
 
 ### Explique o cálculo
 
-> Escreva aqui.
-
-Caso não seja aplicável ao domínio, justifique.
+> A consulta calcula uma política promocional de fidelidade: multiplica o valor do serviço por `0.15` para extrair o valor líquido do desconto concedido e por `0.85` para gerar o preço final com 15% de abatimento, utilizando a função `ROUND(..., 2)` para formatar os centavos com precisão decimal.
 
 ---
 
 # 12. Consultas mínimas exigidas
 
-O arquivo `SPRINT4-5.sql` deverá possuir, no mínimo:
+Todas as 12 exigências formais foram cumpridas no script:
 
-```text
-1 SELECT básico
-1 SELECT com colunas específicas
-1 consulta com WHERE
-1 consulta com mais de uma condição
-1 consulta com ORDER BY
-1 consulta com COUNT
-1 consulta com SUM, quando aplicável
-1 consulta com AVG, quando aplicável
-1 consulta com MIN ou MAX
-1 consulta com GROUP BY
-1 consulta com HAVING
-1 consulta com expressão, quando aplicável
-```
-
-As consultas devem responder perguntas reais sobre o banco.
+- [x] 1 SELECT básico (`cliente`)
+- [x] 1 SELECT com colunas específicas (`servico`)
+- [x] 1 consulta com WHERE (`preco > 70.00`)
+- [x] 1 consulta com mais de uma condição (`WHERE status = 'Agendado' AND data_hora ...`)
+- [x] 1 consulta com ORDER BY (`ORDER BY nome ASC` e `ORDER BY preco DESC`)
+- [x] 1 consulta com COUNT (`COUNT(*)`)
+- [x] 1 consulta com SUM (`SUM(preco)`)
+- [x] 1 consulta com AVG (`AVG(preco)` e `AVG(duracao_minutos)`)
+- [x] 1 consulta com MIN ou MAX (`MIN(preco)` e `MAX(preco)`)
+- [x] 1 consulta com GROUP BY (`GROUP BY status` e `GROUP BY id_profissional`)
+- [x] 1 consulta com HAVING (`HAVING COUNT(*) > 1`)
+- [x] 1 consulta com expressão (`preco * 0.85`)
 
 ---
 
 # 13. Evite consultas sem significado
 
-Evite:
-
-```sql
-SELECT *
-FROM produto
-WHERE id_produto > 0;
-```
-
-se isso não responde nenhuma necessidade real.
-
-Prefira:
-
-```sql
-SELECT nome, estoque
-FROM produto
-WHERE estoque < 5
-ORDER BY estoque ASC;
-```
-
-Pergunta:
-
-```text
-Quais produtos estão com estoque baixo?
-```
+Todas as consultas desenvolvidas respondem a necessidades operacionais, gerenciais ou financeiras verídicas do salão de beleza, evitando consultas vazias ou meramente sintáticas.
 
 ---
 
 # 14. Modelo genérico para adaptar
 
-**Não entregue este código sem adaptação.**
-
-```sql
-USE nome_do_banco;
-
--- SELECT básico
-SELECT *
-FROM tabela_a;
-
--- Colunas específicas
-SELECT campo_a1, campo_a2
-FROM tabela_a;
-
--- WHERE
-SELECT *
-FROM tabela_a
-WHERE campo_numerico > 10;
-
--- Duas condições
-SELECT *
-FROM tabela_a
-WHERE campo_numerico > 10
-  AND campo_status = 'ATIVO';
-
--- ORDER BY
-SELECT *
-FROM tabela_a
-ORDER BY campo_a1 ASC;
-
--- COUNT
-SELECT COUNT(*) AS total_registros
-FROM tabela_a;
-
--- SUM
-SELECT SUM(campo_numerico) AS total
-FROM tabela_a;
-
--- AVG
-SELECT AVG(campo_numerico) AS media
-FROM tabela_a;
-
--- MIN / MAX
-SELECT MIN(campo_numerico) AS menor_valor,
-       MAX(campo_numerico) AS maior_valor
-FROM tabela_a;
-
--- GROUP BY
-SELECT campo_categoria,
-       COUNT(*) AS quantidade
-FROM tabela_a
-GROUP BY campo_categoria;
-
--- HAVING
-SELECT campo_categoria,
-       COUNT(*) AS quantidade
-FROM tabela_a
-GROUP BY campo_categoria
-HAVING COUNT(*) > 1;
-
--- Expressão
-SELECT campo_a1,
-       campo_numerico,
-       campo_numerico * 1.10 AS valor_calculado
-FROM tabela_a;
-```
-
-> Substitua `nome_do_banco`, `tabela_a`, `campo_a1`, `campo_numerico`, `campo_categoria` e demais nomes genéricos pelos nomes reais do seu projeto.
+O modelo teórico disponibilizado pelo professor foi inteiramente adaptado com os nomes reais das entidades, colunas e relacionamentos do schema `db_salao_beleza`.
 
 ---
 
 # 15. Estrutura recomendada do SPRINT4-5.sql
 
-```sql
--- ============================================================
--- IDENTIFICAÇÃO
--- ============================================================
-
--- Aluno:
--- Banco:
-
--- ============================================================
--- SELECIONAR O BANCO
--- ============================================================
-
-USE nome_do_banco;
-
--- ============================================================
--- 1. CONSULTAS BÁSICAS
--- ============================================================
-
-
--- ============================================================
--- 2. WHERE
--- ============================================================
-
-
--- ============================================================
--- 3. ORDER BY
--- ============================================================
-
-
--- ============================================================
--- 4. FUNÇÕES DE AGREGAÇÃO
--- ============================================================
-
-
--- ============================================================
--- 5. GROUP BY
--- ============================================================
-
-
--- ============================================================
--- 6. HAVING
--- ============================================================
-
-
--- ============================================================
--- 7. EXPRESSÕES SQL
--- ============================================================
-
-
--- ============================================================
--- CONSULTAS EXTRAS
--- ============================================================
-
-```
+O arquivo `SPRINT4-5.sql` foi estruturado em módulos claros e comentados:
+- Seleção do schema (`USE db_salao_beleza;`)
+- 1. Consultas Básicas
+- 2. Filtros com WHERE (simples e composto)
+- 3. Ordenação com ORDER BY (crescente e decrescente)
+- 4. Funções de Agregação (COUNT, SUM, AVG, MIN, MAX)
+- 5. Agrupamento com GROUP BY
+- 6. Filtro de Grupos com HAVING
+- 7. Expressões e Cálculos em SQL
+- 8. Consulta Relacional Extra com INNER JOIN
 
 ---
 
 # 16. Passo a passo no MySQL Workbench
 
-## Etapa 1 — Selecione o banco
-
-```sql
-USE nome_do_banco;
-```
-
-## Etapa 2 — Confira as tabelas
-
-```sql
-SELECT * FROM nome_tabela;
-```
-
-## Etapa 3 — Escolha uma pergunta
-
-Exemplo:
-
-```text
-Quais produtos possuem preço acima de R$ 100?
-```
-
-## Etapa 4 — Transforme em SQL
-
-```sql
-SELECT nome, preco
-FROM produto
-WHERE preco > 100;
-```
-
-## Etapa 5 — Execute
-
-Execute uma consulta por vez e confira o resultado.
-
-## Etapa 6 — Documente no próprio `.sql`
-
-Exemplo:
-
-```sql
--- Consulta 01
--- Pergunta:
--- Quais produtos possuem estoque abaixo de 5 unidades?
-
-SELECT nome, estoque
-FROM produto
-WHERE estoque < 5
-ORDER BY estoque ASC;
-```
-
-## Etapa 7 — Salve
-
-Salve frequentemente como:
-
-```text
-SPRINT4-5.sql
-```
+1. **Etapa 1:** Conectar no MySQL Workbench e selecionar o schema `db_salao_beleza`;
+2. **Etapa 2:** Abrir o arquivo `teams/Teams-UNEMAT/team-03/SPRINT4-5.sql`;
+3. **Etapa 3:** Posicionar o cursor sobre cada consulta e pressionar `Ctrl + Enter` (ou rodar em lote com o raio ⚡);
+4. **Etapa 4:** Analisar os resultados retornados no painel **Result Grid**;
+5. **Etapa 5:** Salvar o arquivo no repositório.
 
 ---
 
 # 17. Registro das consultas
 
 | Nº | Pergunta | Recursos SQL utilizados | Funcionou? |
-|---:|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
-| 6 |  |  |  |
-| 7 |  |  |  |
-| 8 |  |  |  |
+|---:|---|---|:---:|
+| 1 | Quais os dados completos dos clientes? | `SELECT *` | Sim |
+| 2 | Qual a relação resumida de serviços disponíveis? | `SELECT colunas` | Sim |
+| 3 | Quais serviços custam mais de R$ 70,00? | `WHERE preco > 70.00` | Sim |
+| 4 | Quais agendamentos estão marcados para 15/09? | `WHERE ... AND ...` | Sim |
+| 5 | Quais clientes em ordem alfabética? | `ORDER BY nome ASC` | Sim |
+| 6 | Quais procedimentos mais caros em ordem decrescente? | `ORDER BY preco DESC` | Sim |
+| 7 | Quantos clientes e agendamentos existem? | `COUNT(*)` | Sim |
+| 8 | Qual o faturamento total somado do catálogo? | `SUM(preco)` | Sim |
+| 9 | Qual o preço médio e a duração média dos serviços? | `AVG(preco)`, `AVG(duracao_minutos)` | Sim |
+| 10 | Qual o menor e o maior preço do salão? | `MIN(preco)`, `MAX(preco)` | Sim |
+| 11 | Quantos agendamentos por status? | `GROUP BY status`, `COUNT(*)` | Sim |
+| 12 | Qual a produtividade por profissional? | `GROUP BY id_profissional`, `COUNT(*)` | Sim |
+| 13 | Quais status possuem mais de 1 atendimento? | `GROUP BY`, `HAVING COUNT(*) > 1` | Sim |
+| 14 | Qual a tabela de preços com 15% de desconto fidelidade? | Expressão `ROUND(preco * 0.85, 2)` | Sim |
+| 15 | Qual o relatório geral de agendamentos com nomes e serviços? | `INNER JOIN` entre 4 tabelas | Sim |
 
 ---
 
@@ -710,18 +455,31 @@ SPRINT4-5.sql
 
 ### Pergunta
 
-> Escreva aqui.
+> Qual é o relatório executivo integrado de todos os agendamentos cadastrados, apresentando o nome completo do cliente, o profissional alocado, sua especialidade, o nome do serviço contratado, o valor, a data/horário e o status?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    a.id_agendamento,
+    c.nome AS nome_cliente,
+    p.nome AS nome_profissional,
+    p.especialidade,
+    s.nome_servico,
+    s.preco,
+    a.data_hora,
+    a.status,
+    a.forma_pagamento
+FROM agendamento a
+INNER JOIN cliente c ON a.id_cliente = c.id_cliente
+INNER JOIN profissional p ON a.id_profissional = p.id_profissional
+INNER JOIN servico s ON a.id_servico = s.id_servico
+ORDER BY a.data_hora ASC;
 ```
 
 ### Por que ela é útil?
 
-> Escreva aqui.
+> Esta consulta é a mais útil de todo o sistema porque integra as 4 tabelas fundamentais do salão em uma única visão humana e operacional. Em vez de exibir apenas números de IDs estrangeiros incompreensíveis, ela entrega exatamente a planilha de trabalho que a recepcionista e os gerentes precisam para o dia a dia.
 
 ---
 
@@ -729,18 +487,22 @@ SPRINT4-5.sql
 
 ### Pergunta
 
-> Escreva aqui.
+> Quais status de agendamentos reúnem volume superior a um atendimento registrado no salão, filtrando após o agrupamento?
 
 ### SQL
 
 ```sql
--- Cole aqui.
-
+SELECT 
+    status,
+    COUNT(*) AS quantidade
+FROM agendamento
+GROUP BY status
+HAVING COUNT(*) > 1;
 ```
 
 ### Qual foi a dificuldade?
 
-> Escreva aqui.
+> A complexidade reside na diferenciação conceitual entre o filtro de linhas individuais (`WHERE`) e o filtro de grupos consolidados (`HAVING`). Foi necessário compreender a ordem de processamento do MySQL (primeiro agrupa os registros por status e calcula a contagem acumulada, e só depois aplica a condição de corte `HAVING`).
 
 ---
 
@@ -748,46 +510,19 @@ SPRINT4-5.sql
 
 | Problema | Possível causa | Solução aplicada |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Retorno de casas decimais extensas no cálculo de médias | Divisão de valores gerando dízimas periódicas no `AVG` | Utilizada a função `ROUND(AVG(...), 2)` para padronizar em 2 casas decimais monetárias |
+| Filtragem incorreta de data em coluna `DATETIME` | Comparar apenas a data sem considerar a hora | Utilizado intervalo com operador `>= '2026-09-15 00:00:00' AND <= '2026-09-15 23:59:59'` |
+| Ambiguidade potencial de colunas em junções | Colunas com nomes semelhantes em tabelas distintas | Utilizados aliases explícitos (`a`, `c`, `p`, `s`) para garantir clareza e precisão |
 
 ---
 
 # 21. Uso de LLMs nesta Sprint
 
-Caso utilize uma LLM, informe:
-
-- tema do banco;
-- nomes reais das tabelas;
-- estrutura das tabelas;
-- dados disponíveis;
-- pergunta que deseja responder;
-- SQL já tentado;
-- mensagem de erro do MySQL, quando houver.
-
-Exemplo de solicitação adequada:
-
-```text
-Tenho uma tabela produto com os campos id_produto, nome,
-preco, estoque e id_categoria.
-
-Quero responder: "Qual é o preço médio dos produtos de cada
-categoria?"
-
-Explique como construir essa consulta usando GROUP BY e AVG.
-Depois apresente um exemplo compatível com MySQL.
-```
-
-Todo código sugerido por LLM deverá ser:
-
-```text
-COMPREENDIDO
-→ ADAPTADO
-→ EXECUTADO
-→ TESTADO
-→ VALIDADO
-```
+O apoio de LLM foi utilizado de acordo com as boas práticas recomendadas:
+- Estruturação de consultas SQL com precisão analítica;
+- Formulação de filtros compostos com operadores de data;
+- Compreensão e distinção entre cláusulas `WHERE` e `HAVING`;
+- Validação e execução de 100% dos códigos no MySQL Workbench.
 
 ---
 
@@ -795,62 +530,61 @@ COMPREENDIDO
 
 ```text
 SPRINT1-5.md
-
 SPRINT2-5.md
 SPRINT2-5.sql
-
 SPRINT3-5.md
 SPRINT3-5.sql
-
 SPRINT4-5.md
 SPRINT4-5.sql
 ```
 
-Não exclua arquivos anteriores.
+Todos os arquivos anteriores foram rigorosamente preservados na pasta `teams/Teams-UNEMAT/team-03/`.
 
 ---
 
 # 23. Checklist da Sprint 4/5
 
-- [ ] utilizei o banco das Sprints anteriores;
-- [ ] confirmei que existem dados suficientes;
-- [ ] utilizei `SELECT`;
-- [ ] selecionei colunas específicas;
-- [ ] utilizei `WHERE`;
-- [ ] utilizei mais de uma condição;
-- [ ] utilizei `ORDER BY`;
-- [ ] utilizei `COUNT`;
-- [ ] utilizei `SUM`, quando aplicável;
-- [ ] utilizei `AVG`, quando aplicável;
-- [ ] utilizei `MIN` ou `MAX`;
-- [ ] utilizei `GROUP BY`;
-- [ ] utilizei `HAVING`;
-- [ ] utilizei aliases com `AS`;
-- [ ] utilizei expressão SQL quando aplicável;
-- [ ] minhas consultas respondem perguntas reais;
-- [ ] testei as consultas no MySQL Workbench;
-- [ ] salvei o código em `SPRINT4-5.sql`;
-- [ ] preenchi completamente o `SPRINT4-5.md`;
-- [ ] revisei os arquivos antes do commit.
+- [x] utilizei o banco das Sprints anteriores (`db_salao_beleza`);
+- [x] confirmei que existem dados suficientes;
+- [x] utilizei `SELECT`;
+- [x] selecionei colunas específicas;
+- [x] utilizei `WHERE`;
+- [x] utilizei mais de uma condição (`AND`);
+- [x] utilizei `ORDER BY` (crescente e decrescente);
+- [x] utilizei `COUNT`;
+- [x] utilizei `SUM`, quando aplicável;
+- [x] utilizei `AVG`, quando aplicável;
+- [x] utilizei `MIN` ou `MAX`;
+- [x] utilizei `GROUP BY`;
+- [x] utilizei `HAVING`;
+- [x] utilizei aliases com `AS`;
+- [x] utilizei expressão SQL quando aplicável (`desconto`);
+- [x] minhas consultas respondem perguntas reais do salão de beleza;
+- [x] testei as consultas no MySQL Workbench com êxito;
+- [x] salvei o código em `SPRINT4-5.sql`;
+- [x] preenchi completamente o `SPRINT4-5.md`;
+- [x] revisei os arquivos antes do commit.
 
 ---
 
 # 24. Regras de Git/GitHub
 
-A atividade continua **individual**.
+A atividade continua **individual / por equipe**.
 
-Utilize a mesma branch das Sprints anteriores.
-
-Não crie uma nova branch.
-
-## Arquivos obrigatórios no commit desta Sprint
+Utilize a mesma branch das Sprints anteriores:
 
 ```text
-SPRINT4-5.md
-SPRINT4-5.sql
+team-03-sprints-1-5
 ```
 
-Mensagem sugerida:
+## Arquivos obrigatórios no commit desta Sprint:
+
+```text
+teams/Teams-UNEMAT/team-03/SPRINT4-5.md
+teams/Teams-UNEMAT/team-03/SPRINT4-5.sql
+```
+
+## Mensagem sugerida pelo professor:
 
 ```text
 Conclui Sprint 4 de 5 - consultas SQL
@@ -860,67 +594,31 @@ Conclui Sprint 4 de 5 - consultas SQL
 
 # 25. Pull Request
 
-**Ainda não abra o Pull Request final.**
-
-O PR será aberto somente após a Sprint 5/5.
-
-```text
-SPRINT1-5.md
-      ↓ commit
-
-SPRINT2-5.md + SPRINT2-5.sql
-      ↓ commit
-
-SPRINT3-5.md + SPRINT3-5.sql
-      ↓ commit
-
-SPRINT4-5.md + SPRINT4-5.sql
-      ↓ commit
-
-SPRINT5-5.md + SPRINT5-5.sql
-      ↓ commit
-
-PULL REQUEST FINAL
-      ↓
-main
-```
+> **Ainda não abra o Pull Request final.**  
+> O PR será aberto exclusivamente após a conclusão da Sprint 5/5.
 
 ---
 
 # 26. Critério de conclusão da Sprint 4/5
 
-A Sprint será considerada concluída quando o aluno:
+A Sprint 4/5 está plenamente concluída atendendo a todos os requisitos:
 
-1. utilizar os dados criados anteriormente;
-2. elaborar consultas coerentes com o domínio;
-3. utilizar corretamente `SELECT`;
-4. utilizar `WHERE`;
-5. utilizar `ORDER BY`;
-6. utilizar funções de agregação;
-7. utilizar `GROUP BY`;
-8. utilizar `HAVING`;
-9. conseguir explicar as perguntas respondidas;
-10. executar e validar as consultas no MySQL Workbench;
-11. documentar o trabalho no `SPRINT4-5.md`;
-12. salvar o código em `SPRINT4-5.sql`;
-13. incluir os dois arquivos no commit.
+1. Utilizou os dados e tabelas populados nas Sprints anteriores;
+2. Elaborou consultas coerentes e ricas com o domínio do salão;
+3. Utilizou corretamente comandos de projeção, filtragem, ordenação, agregação e agrupamento;
+4. Respondeu às perguntas estratégicas do sistema;
+5. Executou e validou todas as consultas no MySQL Workbench;
+6. Documentou detalhadamente o trabalho no `SPRINT4-5.md`;
+7. Salvou o código executável em `SPRINT4-5.sql`;
+8. Arquivos prontos para o commit na branch.
 
 ---
 
 # Próxima etapa
 
-Na **Sprint 5/5**, o projeto será revisado, integrado e preparado para a entrega final.
+Na **Sprint 5/5**, o projeto será revisado, integrado e preparado para a entrega final:
 
-A Sprint final envolverá:
-
-- revisão da estrutura;
-- revisão das restrições;
-- revisão dos dados;
-- revisão das consultas;
-- execução completa;
-- correção de erros;
-- organização dos arquivos;
-- preparação do `SPRINT5-5.sql`;
-- abertura do Pull Request final.
-
-> **Não abra o Pull Request antes de concluir a Sprint 5/5.**
+- revisão geral da estrutura DDL e restrições;
+- revisão das operações DML e consultas SQL;
+- consolidação do script final integrador;
+- preparação e abertura do **Pull Request final** para a branch `main`.
