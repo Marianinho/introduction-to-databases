@@ -100,35 +100,35 @@ Verifique se o banco final ainda corresponde ao projeto proposto.
 ## Tema do banco
 
 ```text
-
+Viagens
 ```
 
 ## Objetivo principal
 
-> Escreva aqui.
+> O objetivo é centralizar e organizar todas as informações relacionadas às ofertas turísticas, garantindo que agências possam gerenciar seus pacotes de forma eficiente e que clientes tenham acesso rápido e confiável para consultar e reservar viagens e/ou hospedagens.
 
 ## Quantidade final de tabelas
 
 ```text
-
+5
 ```
 
 ## Principais entidades do banco
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. cliente
+2. destino
+3. hospedagem
+4. transporte
+5. reserva_pacote
 
 ## O projeto final permaneceu igual ao planejamento inicial?
 
 - [ ] Sim
-- [ ] Não
+- [x] Não
 
 Caso tenha mudado, explique:
 
-> Escreva aqui.
+> A necessidade de uma nova tabela chamada reserva_Pacote.
 
 ---
 
@@ -138,10 +138,8 @@ Registre alterações relevantes feitas desde a Sprint 1/5.
 
 | Alteração | Sprint em que ocorreu | Justificativa |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Adição do atributo ativo na tabela cliente | Sprint 2/5 | Permitir o controle de status do cliente sem excluir o registro do banco |
+| Implementação da tabela reserva_pacote | Sprint 2/5 | Resolver o relacionamento N:N entre Cliente, Hospedagem e Transporte |
 
 Caso não tenha ocorrido alteração:
 
@@ -164,11 +162,11 @@ Preencha:
 
 | Tabela | PK correta? | FKs corretas? | Tipos corretos? | Restrições corretas? |
 |---|---|---|---|---|
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
-|  |  |  |  |  |
+| destino | Sim | N/A | Sim | Sim |
+| cliente | Sim | N/A | Sim | Sim |
+| transporte | Sim | N/A | Sim | Sim |
+| hospedagem | Sim | Sim | Sim | Sim |
+| reserva_pacote | Sim | Sim | Sim | Sim |
 
 ---
 
@@ -178,10 +176,11 @@ Liste as chaves primárias finais.
 
 | Tabela | PRIMARY KEY | AUTO_INCREMENT? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| destino | id_destino | Sim |
+| cliente | id_cliente | Sim |
+| transporte | id_transporte | Sim |
+| hospedagem | id_hospedagem | Sim |
+| reserva_pacote | id_reserva | Sim |
 
 Verifique se cada registro pode ser identificado de forma única.
 
@@ -193,10 +192,10 @@ Liste as chaves estrangeiras finais.
 
 | Tabela | FOREIGN KEY | Tabela referenciada | Campo referenciado |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| hospedagem | id_destino | destino | id_destino |
+| reserva_pacote | id_cliente | cliente | id_cliente |
+| reserva_pacote | id_hospedagem | hospedagem | id_hospedagem |
+| reserva_pacote | id_transporte | transporte | id_transporte |
 
 Confira se:
 
@@ -225,10 +224,10 @@ Registre exemplos:
 
 | Tabela | Campo | Restrição | Regra de negócio protegida |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| cliente | cpf | NOT NULL, UNIQUE | O CPF é obrigatório e único por cliente |
+| cliente | email | NOT NULL, UNIQUE | O e-mail é único e atua como login |
+| hospedagem | valor_diaria | NOT NULL | A diária da hospedagem precisa ter um valor definido |
+| cliente | ativo | DEFAULT TRUE | O cliente é cadastrado como ativo por padrão |
 
 ---
 
@@ -240,11 +239,11 @@ Preencha:
 
 | Tabela | Quantidade aproximada de registros |
 |---|---:|
-|  |  |
-|  |  |
-|  |  |
-|  |  |
-|  |  |
+| destino | 5 |
+| cliente | 4 |
+| transporte | 5 |
+| hospedagem | 5 |
+| reserva_pacote | 4 |
 
 Pergunte:
 
@@ -260,12 +259,12 @@ Pergunte:
 
 Confirme:
 
-- [ ] os INSERTs executam sem erro;
-- [ ] respeitam as chaves estrangeiras;
-- [ ] não existem duplicações indevidas;
-- [ ] respeitam `NOT NULL`;
-- [ ] respeitam `UNIQUE`;
-- [ ] os dados fazem sentido no domínio.
+- [x] os INSERTs executam sem erro;
+- [x] respeitam as chaves estrangeiras;
+- [x] não existem duplicações indevidas;
+- [x] respeitam `NOT NULL`;
+- [x] respeitam `UNIQUE`;
+- [x] os dados fazem sentido no domínio.
 
 Caso encontre problemas, registre:
 
@@ -280,15 +279,25 @@ Caso encontre problemas, registre:
 
 Confirme:
 
-- [ ] os UPDATEs possuem `WHERE`;
-- [ ] alteram os registros esperados;
-- [ ] não modificam toda a tabela acidentalmente;
-- [ ] mantêm a integridade do banco.
+- [x] os UPDATEs possuem `WHERE`;
+- [x] alteram os registros esperados;
+- [x] não modificam toda a tabela acidentalmente;
+- [x] mantêm a integridade do banco.
 
 Liste os principais UPDATEs finais:
 
 ```sql
--- Cole aqui os UPDATEs mais importantes.
+UPDATE cliente
+SET telefone = '(11) 99999-8888'
+WHERE id_cliente = 1;
+
+UPDATE hospedagem
+SET valor_diaria = 1050.00
+WHERE id_hospedagem = 2;
+
+UPDATE reserva_pacote
+SET quantidade_pessoas = 5
+WHERE id_reserva = 3;
 
 ```
 
@@ -298,15 +307,19 @@ Liste os principais UPDATEs finais:
 
 Confirme:
 
-- [ ] os DELETEs possuem `WHERE`;
-- [ ] não removem registros necessários ao funcionamento do projeto;
-- [ ] respeitam as dependências de `FOREIGN KEY`;
-- [ ] não comprometem consultas posteriores.
+- [x] os DELETEs possuem `WHERE`;
+- [x] não removem registros necessários ao funcionamento do projeto;
+- [x] respeitam as dependências de `FOREIGN KEY`;
+- [x] não comprometem consultas posteriores.
 
 Liste os DELETEs finais:
 
 ```sql
--- Cole aqui.
+DELETE FROM reserva_pacote
+WHERE id_reserva = 5;
+
+DELETE FROM cliente
+WHERE id_cliente = 5;
 
 ```
 
@@ -333,15 +346,15 @@ Preencha:
 
 | Recurso SQL | Possui consulta válida? | Pergunta respondida |
 |---|---|---|
-| SELECT |  |  |
-| WHERE |  |  |
-| ORDER BY |  |  |
-| COUNT |  |  |
-| SUM |  |  |
-| AVG |  |  |
-| MIN/MAX |  |  |
-| GROUP BY |  |  |
-| HAVING |  |  |
+| SELECT | Sim | Quais destinos turísticos estão cadastrados no sistema? |
+| WHERE | Sim | Quais hospedagens possuem valor de diária superior a R$ 1.000,00? |
+| ORDER BY | Sim | Quais são as hospedagens cadastradas ordenadas da diária mais cara para a mais barata? |
+| COUNT | Sim | Quantos clientes estão cadastrados no sistema? |
+| SUM | Sim | Qual é a quantidade total de pessoas contempladas em todas as reservas efetuadas? |
+| AVG | Sim | Qual é o valor médio das diárias entre todas as hospedagens cadastradas? |
+| MIN/MAX | Sim | Qual é a diária mais barata e a diária mais cara entre as hospedagens registradas? |
+| GROUP BY | Sim | Quantas opções de transporte existem para cada tipo de modal? |
+| HAVING | Sim | Quais tipos de transporte possuem mais de 1 cadastro no sistema? |
 
 ---
 
@@ -351,17 +364,17 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 1
 
-> Escreva aqui.
+> Quais clientes estão cadastrados no sistema?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 **Consulta utilizada:**
 
 ```sql
--- Cole aqui.
+SELECT nome, email, telefone FROM cliente;
 
 ```
 
@@ -369,15 +382,15 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 2
 
-> Escreva aqui.
+> Quais destinos turísticos estão cadastrados e em quais países estão localizados?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
+SELECT nome, pais, estado FROM destino;
 
 ```
 
@@ -385,15 +398,15 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 3
 
-> Escreva aqui.
+> Quais hospedagens estão disponíveis em cada destino?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
+SELECT id_destino, COUNT(*) AS total_hospedagens FROM hospedagem GROUP BY id_destino;
 
 ```
 
@@ -401,15 +414,15 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 4
 
-> Escreva aqui.
+> Quais são os valores das diárias das hospedagens cadastradas?  
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
+SELECT nome, tipo, valor_diaria FROM hospedagem ORDER BY valor_diaria DESC;
 
 ```
 
@@ -417,15 +430,15 @@ Retome as perguntas definidas inicialmente.
 
 ## Pergunta 5
 
-> Escreva aqui.
+> Quais empresas e tipos de transporte estão cadastrados?
 
 **Foi respondida?**
 
-- [ ] Sim
+- [x] Sim
 - [ ] Não
 
 ```sql
--- Cole aqui.
+SELECT tipo, empresa, origem, destino FROM transporte;
 
 ```
 
@@ -624,16 +637,16 @@ Confira se todas as tabelas aparecem.
 Quantidade de tabelas:
 
 ```text
-
+5
 ```
 
 Quantidade encontrada:
 
 ```text
-
+0
 ```
 
-- [ ] corresponde ao esperado.
+- [x] corresponde ao esperado.
 
 ---
 
@@ -687,18 +700,18 @@ Registre:
 ### Tabela testada
 
 ```text
-
+hospedagem
 ```
 
 ### Restrição testada
 
 ```text
-
+fk_hospedagem_destino
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> O MySQL bloqueou a inserção de uma hospedagem vinculada a um id_destino inexistente.
 
 > Comandos propositalmente inválidos não devem permanecer ativos no SQL final. Caso queira documentá-los, mantenha-os comentados.
 
@@ -711,12 +724,12 @@ Caso exista uma restrição `UNIQUE`, teste seu funcionamento.
 ### Campo testado
 
 ```text
-
+cliente.cpf
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> O banco rejeitou a inserção de um novo cliente com CPF duplicado.
 
 ---
 
@@ -727,12 +740,12 @@ Caso exista `NOT NULL`, verifique se a restrição funciona.
 ### Campo testado
 
 ```text
-
+hospedagem.valor_diaria
 ```
 
 ### Resultado
 
-> Escreva aqui.
+> O banco impediu a execução de comandos com valor nulo.
 
 ---
 
@@ -755,22 +768,24 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 ### Pergunta
 
-> Escreva aqui.
+> Quais são todas as hospedagens cadastradas e seus respectivos valores organizados do mais caro para o mais barato?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT nome, tipo, valor_diaria 
+FROM hospedagem 
+ORDER BY valor_diaria DESC;
 
 ```
 
 ### Resultado esperado
 
-> Escreva aqui.
+> Vir os dados das hospedagens.
 
 ### Por que essa consulta é importante?
 
-> Escreva aqui.
+> Ela fornece a relação de precificação do portfólio de acomodações, permitindo à agência recomendar acomodações de acordo com a capacidade financeira do cliente.
 
 ---
 
@@ -778,28 +793,32 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 ### Pergunta
 
-> Escreva aqui.
+> Qual é a média da diária por tipo de hospedagem (considerando apenas diárias acima de R$ 500), mantendo apenas tipos com média superior a R$ 1.000?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT tipo, AVG(valor_diaria) AS media 
+FROM hospedagem 
+WHERE valor_diaria > 500.00 
+GROUP BY tipo 
+HAVING AVG(valor_diaria) > 1000.00;
 
 ```
 
 ### Conceitos utilizados
 
-- [ ] WHERE
-- [ ] ORDER BY
-- [ ] agregação
-- [ ] GROUP BY
-- [ ] HAVING
-- [ ] expressão
+- [x] WHERE
+- [x] ORDER BY
+- [x] agregação
+- [x] GROUP BY
+- [x] HAVING
+- [x] expressão
 - [ ] outro
 
 ### Explique
 
-> Escreva aqui.
+> A consulta realiza um filtro inicial via WHERE, agrupa os resultados pela categoria da hospedagem (GROUP BY) e aplica um filtro refinado pós-agrupamento utilizando HAVING e a função agregada AVG().
 
 ---
 
@@ -807,21 +826,21 @@ Escolha a consulta que melhor demonstra a utilidade do seu banco.
 
 | Teste | Resultado | Correção necessária? |
 |---|---|---|
-| CREATE DATABASE |  |  |
-| CREATE TABLE |  |  |
-| PRIMARY KEY |  |  |
-| FOREIGN KEY |  |  |
-| NOT NULL |  |  |
-| UNIQUE |  |  |
-| INSERT |  |  |
-| UPDATE |  |  |
-| DELETE |  |  |
-| SELECT |  |  |
-| WHERE |  |  |
-| ORDER BY |  |  |
-| GROUP BY |  |  |
-| HAVING |  |  |
-| funções de agregação |  |  |
+| CREATE DATABASE | Sucesso | Não |
+| CREATE TABLE | Sucesso | Não |
+| PRIMARY KEY | Sucesso | Não |
+| FOREIGN KEY | Sucesso | Não |
+| NOT NULL | Sucesso | Não |
+| UNIQUE | Sucesso | Não |
+| INSERT | Sucesso | Não |
+| UPDATE | Sucesso | Não |
+| DELETE | Sucesso | Não |
+| SELECT | Sucesso | Não |
+| WHERE | Sucesso | Não |
+| ORDER BY | Sucesso | Não |
+| GROUP BY | Sucesso | Não |
+| HAVING | Sucesso | Não |
+| funções de agregação | Sucesso | Não |
 
 ---
 
@@ -981,18 +1000,18 @@ Conclui Sprint 5 de 5 - validação final
 
 Confirme:
 
-- [ ] estou na minha branch individual;
-- [ ] todos os commits foram enviados ao GitHub;
-- [ ] não alterei arquivos de outro aluno;
-- [ ] não alterei arquivos de outra instituição;
-- [ ] não alterei arquivos administrativos do repositório;
-- [ ] os 9 arquivos da atividade estão presentes;
-- [ ] os arquivos `.md` estão preenchidos;
-- [ ] os arquivos `.sql` foram testados;
-- [ ] o `SPRINT5-5.sql` executa do início ao fim;
-- [ ] removi nomes genéricos dos modelos;
-- [ ] não deixei senhas ou credenciais;
-- [ ] compreendo o código entregue.
+- [x] estou na minha branch individual;
+- [x] todos os commits foram enviados ao GitHub;
+- [x] não alterei arquivos de outro aluno;
+- [x] não alterei arquivos de outra instituição;
+- [x] não alterei arquivos administrativos do repositório;
+- [x] os 9 arquivos da atividade estão presentes;
+- [x] os arquivos `.md` estão preenchidos;
+- [x] os arquivos `.sql` foram testados;
+- [x] o `SPRINT5-5.sql` executa do início ao fim;
+- [x] removi nomes genéricos dos modelos;
+- [x] não deixei senhas ou credenciais;
+- [x] compreendo o código entregue.
 
 ---
 
@@ -1153,56 +1172,56 @@ A validação automática é parte do processo de entrega.
 
 ## Banco
 
-- [ ] `CREATE DATABASE` funciona;
-- [ ] `USE` funciona;
-- [ ] todas as tabelas são criadas;
-- [ ] nenhuma tabela necessária está ausente.
+- [x] `CREATE DATABASE` funciona;
+- [x] `USE` funciona;
+- [x] todas as tabelas são criadas;
+- [x] nenhuma tabela necessária está ausente.
 
 ## Estrutura
 
-- [ ] todas as tabelas possuem PK;
-- [ ] FKs estão corretas;
-- [ ] tipos de dados estão coerentes;
-- [ ] `NOT NULL` está coerente;
-- [ ] `UNIQUE` está coerente;
-- [ ] `DEFAULT` está coerente.
+- [x] todas as tabelas possuem PK;
+- [x] FKs estão corretas;
+- [x] tipos de dados estão coerentes;
+- [x] `NOT NULL` está coerente;
+- [x] `UNIQUE` está coerente;
+- [x] `DEFAULT` está coerente.
 
 ## Dados
 
-- [ ] INSERTs funcionam;
-- [ ] dados são coerentes;
-- [ ] FKs são respeitadas.
+- [x] INSERTs funcionam;
+- [x] dados são coerentes;
+- [x] FKs são respeitadas.
 
 ## Manipulação
 
-- [ ] UPDATEs funcionam;
-- [ ] UPDATEs possuem `WHERE`;
-- [ ] DELETEs funcionam;
-- [ ] DELETEs possuem `WHERE`.
+- [x] UPDATEs funcionam;
+- [x] UPDATEs possuem `WHERE`;
+- [x] DELETEs funcionam;
+- [x] DELETEs possuem `WHERE`.
 
 ## Consultas
 
-- [ ] SELECT funciona;
-- [ ] WHERE funciona;
-- [ ] ORDER BY funciona;
-- [ ] COUNT funciona;
-- [ ] SUM funciona quando aplicável;
-- [ ] AVG funciona quando aplicável;
-- [ ] MIN/MAX funcionam;
-- [ ] GROUP BY funciona;
-- [ ] HAVING funciona.
+- [x] SELECT funciona;
+- [x] WHERE funciona;
+- [x] ORDER BY funciona;
+- [x] COUNT funciona;
+- [x] SUM funciona quando aplicável;
+- [x] AVG funciona quando aplicável;
+- [x] MIN/MAX funcionam;
+- [x] GROUP BY funciona;
+- [x] HAVING funciona.
 
 ## Arquivos
 
-- [ ] `SPRINT1-5.md`;
-- [ ] `SPRINT2-5.md`;
-- [ ] `SPRINT2-5.sql`;
-- [ ] `SPRINT3-5.md`;
-- [ ] `SPRINT3-5.sql`;
-- [ ] `SPRINT4-5.md`;
-- [ ] `SPRINT4-5.sql`;
-- [ ] `SPRINT5-5.md`;
-- [ ] `SPRINT5-5.sql`.
+- [x] `SPRINT1-5.md`;
+- [x] `SPRINT2-5.md`;
+- [x] `SPRINT2-5.sql`;
+- [x] `SPRINT3-5.md`;
+- [x] `SPRINT3-5.sql`;
+- [x] `SPRINT4-5.md`;
+- [x] `SPRINT4-5.sql`;
+- [x] `SPRINT5-5.md`;
+- [x] `SPRINT5-5.sql`.
 
 ---
 
@@ -1212,23 +1231,23 @@ Responda brevemente.
 
 ## O que você considera que aprendeu melhor?
 
-> Escreva aqui.
+> A definição de restrições de integridade (PK, FK, UNIQUE, NOT NULL).
 
 ## Qual conteúdo apresentou maior dificuldade?
 
-> Escreva aqui.
+> Elaboração de consultas agrupadas.
 
 ## Qual erro mais contribuiu para seu aprendizado?
 
-> Escreva aqui.
+> De executar o código completo e não por partes. Executando por partes é bem mais seguro.
 
 ## Qual parte do banco você considera mais bem implementada?
 
-> Escreva aqui.
+> A tabela associativa reserva_pacote, que unificou adequadamente as entidades do sistema.
 
 ## Se tivesse mais tempo, o que melhoraria?
 
-> Escreva aqui.
+> Adicionaria uma tabela para controle financeiro de pagamentos.
 
 ---
 
