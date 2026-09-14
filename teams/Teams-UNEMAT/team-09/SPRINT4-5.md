@@ -85,11 +85,11 @@ SPRINT4-5.sql
 
 Recupere as perguntas que você definiu anteriormente para o banco.
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Quais clientes estão cadastrados no sistema?
+2. Quais destinos turísticos estão cadastrados e em quais países estão localizados?
+3. Quais hospedagens estão disponíveis em cada destino?
+4. Quais são os valores das diárias das hospedagens cadastradas?
+5. Quais empresas e tipos de transporte estão cadastrados?
 
 Agora identifique quais delas exigem:
 
@@ -122,18 +122,19 @@ FROM nome_tabela;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais destinos turísticos estão cadastrados no sistema?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT *
+FROM destino;
 
 ```
 
 ### Explique o resultado
 
-> Escreva aqui.
+> Retorna todos os registros e colunas da tabela destino, exibindo o ID, nome, país, estado e descrição de cada localidade cadastrada no sistema.
 
 ---
 
@@ -185,18 +186,20 @@ WHERE preco > 100
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais hospedagens possuem valor de diária superior a R$ 1.000,00?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT *
+FROM hospedagem
+WHERE valor_diaria > 1000.00;
 
 ```
 
 ### Explique o filtro
 
-> Escreva aqui.
+> A condição WHERE valor_diaria > 1000.00 filtra a tabela de hospedagens para retornar somente os estabelecimentos cujo custo por diária seja estritamente maior que mil reais.
 
 ---
 
@@ -230,12 +233,14 @@ ORDER BY categoria ASC, preco DESC;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais são as hospedagens cadastradas ordenadas da diária mais cara para a mais barata?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT *
+FROM hospedagem
+ORDER BY valor_diaria DESC;
 
 ```
 
@@ -289,50 +294,59 @@ FROM nome_tabela;
 ## COUNT
 
 ```sql
--- Cole aqui.
+SELECT
+    COUNT(*) AS total_registros
+FROM cliente;
 
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Quantos clientes estão cadastrados no sistema?
 
 ## SUM
 
 ```sql
--- Cole aqui.
+SELECT
+    SUM(quantidade_pessoas) AS total
+FROM reserva_pacote;
 
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual é a quantidade total de pessoas contempladas em todas as reservas efetuadas?
 
 Caso não seja aplicável ao domínio, justifique.
 
 ## AVG
 
 ```sql
--- Cole aqui.
+SELECT
+    AVG(valor_diaria) AS media
+FROM hospedagem;
 
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual é o valor médio das diárias entre todas as hospedagens cadastradas?
 
 Caso não seja aplicável ao domínio, justifique.
 
 ## MIN ou MAX
 
 ```sql
--- Cole aqui.
+SELECT
+    MIN(valor_diaria) AS menor_valor,
+    MAX(valor_diaria) AS maior_valor
+FROM hospedagem;
 
 ```
 
 **Pergunta respondida:**
 
-> Escreva aqui.
+> Qual é a diária mais barata e a diária mais cara entre as hospedagens registradas?
 
 ---
 
@@ -362,18 +376,22 @@ GROUP BY status;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quantas opções de transporte existem para cada tipo de modal?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT
+    tipo,
+    COUNT(*) AS quantidade
+FROM transporte
+GROUP BY tipo;
 
 ```
 
 ### Explique o agrupamento
 
-> Escreva aqui.
+> O GROUP BY tipo consolida os dados da tabela transporte de acordo com a sua categoria (Aéreo, Rodoviário, etc.) e aplica a função COUNT(*) para contabilizar quantas opções cadastradas pertencem a cada tipo.
 
 ---
 
@@ -397,18 +415,23 @@ HAVING COUNT(*) > 5;
 
 ### Pergunta respondida
 
-> Escreva aqui.
+> Quais tipos de transporte possuem mais de 2 cadastros no sistema?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT
+    tipo,
+    COUNT(*) AS quantidade
+FROM transporte
+GROUP BY tipo
+HAVING COUNT(*) > 2;
 
 ```
 
 ### Por que HAVING foi necessário?
 
-> Escreva aqui.
+> A cláusula HAVING foi necessária porque o filtro precisa ser aplicado sobre o resultado de uma função agregada (COUNT(*)), o que só é possível de ser realizado após o agrupamento promovido pelo GROUP BY. O WHERE não pode ser utilizado para filtrar agregações.
 
 ---
 
@@ -437,13 +460,17 @@ FROM item_pedido;
 ## Consulta com expressão
 
 ```sql
--- Cole aqui.
+SELECT
+    nome,
+    valor_diaria,
+    valor_diaria * 1.10 AS valor_calculado
+FROM hospedagem;
 
 ```
 
 ### Explique o cálculo
 
-> Escreva aqui.
+> A expressão valor_diaria * 1.10 simula a adição de uma taxa de serviço de 10% sobre o valor original da diária de cada hospedagem, exibindo o resultado final na coluna valor_calculado.
 
 Caso não seja aplicável ao domínio, justifique.
 
@@ -695,14 +722,14 @@ SPRINT4-5.sql
 
 | Nº | Pergunta | Recursos SQL utilizados | Funcionou? |
 |---:|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
-| 5 |  |  |  |
-| 6 |  |  |  |
-| 7 |  |  |  |
-| 8 |  |  |  |
+| 1 | Quais destinos turísticos estão cadastrados no sistema? | SELECT * | Sim |
+| 2 | Quais são os nomes, e-mails e telefones de todos os clientes? | SELECT colunas específicas | Sim |
+| 3 | Quais hospedagens possuem diária superior a R$ 1.000,00? | WHERE | Sim |
+| 4 | Quais transportes aéreos são operados pela LATAM ou Azul? | WHERE, AND, OR | Sim |
+| 5 | Quais são as hospedagens ordenadas da diária mais cara para a mais barata? | ORDER BY DESC | Sim |
+| 6 | Quantos clientes estão cadastrados no sistema? | COUNT | Sim |
+| 7 | Qual é a quantidade total de pessoas contempladas em todas as reservas? | SUM | Sim |
+| 8 | Qual é o valor médio das diárias entre todas as hospedagens? | AVG | Sim |
 
 ---
 
@@ -710,18 +737,20 @@ SPRINT4-5.sql
 
 ### Pergunta
 
-> Escreva aqui.
+> Quais são todas as hospedagens cadastradas e seus respectivos valores organizados do mais caro para o mais barato?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT nome, tipo, valor_diaria
+FROM hospedagem
+ORDER BY valor_diaria DESC;
 
 ```
 
 ### Por que ela é útil?
 
-> Escreva aqui.
+> Permite identificar rapidamente a faixa de preços das opções de hospedagem, auxiliando na gestão de catálogo e na recomendação de acomodações aos clientes de acordo com o perfil financeiro.
 
 ---
 
@@ -729,18 +758,21 @@ SPRINT4-5.sql
 
 ### Pergunta
 
-> Escreva aqui.
+> Quais modalidades de transporte possuem mais de 2 registros após o agrupamento?
 
 ### SQL
 
 ```sql
--- Cole aqui.
+SELECT tipo, COUNT(*) AS quantidade
+FROM transporte
+GROUP BY tipo
+HAVING COUNT(*) > 2;
 
 ```
 
 ### Qual foi a dificuldade?
 
-> Escreva aqui.
+> Entender a diferença no fluxo de execução do MySQL entre filtrar linhas antes do agrupamento com WHERE e aplicar a condição sobre os resultados agregados usando HAVING.
 
 ---
 
@@ -812,26 +844,26 @@ Não exclua arquivos anteriores.
 
 # 23. Checklist da Sprint 4/5
 
-- [ ] utilizei o banco das Sprints anteriores;
-- [ ] confirmei que existem dados suficientes;
-- [ ] utilizei `SELECT`;
-- [ ] selecionei colunas específicas;
-- [ ] utilizei `WHERE`;
-- [ ] utilizei mais de uma condição;
-- [ ] utilizei `ORDER BY`;
-- [ ] utilizei `COUNT`;
-- [ ] utilizei `SUM`, quando aplicável;
-- [ ] utilizei `AVG`, quando aplicável;
-- [ ] utilizei `MIN` ou `MAX`;
-- [ ] utilizei `GROUP BY`;
-- [ ] utilizei `HAVING`;
-- [ ] utilizei aliases com `AS`;
-- [ ] utilizei expressão SQL quando aplicável;
-- [ ] minhas consultas respondem perguntas reais;
-- [ ] testei as consultas no MySQL Workbench;
-- [ ] salvei o código em `SPRINT4-5.sql`;
-- [ ] preenchi completamente o `SPRINT4-5.md`;
-- [ ] revisei os arquivos antes do commit.
+- [x] utilizei o banco das Sprints anteriores;
+- [x] confirmei que existem dados suficientes;
+- [x] utilizei `SELECT`;
+- [x] selecionei colunas específicas;
+- [x] utilizei `WHERE`;
+- [x] utilizei mais de uma condição;
+- [x] utilizei `ORDER BY`;
+- [x] utilizei `COUNT`;
+- [x] utilizei `SUM`, quando aplicável;
+- [x] utilizei `AVG`, quando aplicável;
+- [x] utilizei `MIN` ou `MAX`;
+- [x] utilizei `GROUP BY`;
+- [x] utilizei `HAVING`;
+- [x] utilizei aliases com `AS`;
+- [x] utilizei expressão SQL quando aplicável;
+- [x] minhas consultas respondem perguntas reais;
+- [x] testei as consultas no MySQL Workbench;
+- [x] salvei o código em `SPRINT4-5.sql`;
+- [x] preenchi completamente o `SPRINT4-5.md`;
+- [x] revisei os arquivos antes do commit.
 
 ---
 
