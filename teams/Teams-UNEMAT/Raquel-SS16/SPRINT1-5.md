@@ -1,7 +1,7 @@
 # SPRINT 1/5 — Planejamento do Banco de Dados
 
 **Disciplina:** Laboratório de Banco de Dados  
-**Data:** 31/08/2026  
+**Data:** 01/09/2026  
 **Modalidade:** Atividade individual  
 
 ---
@@ -35,13 +35,16 @@ Nesta Sprint 1/5, o foco é exclusivamente o **planejamento do banco de dados**.
 
 **Nome completo:**
 
-> Mariano Lino da Silva Neto.
+> RAQUEL SILVA DOS SANTOS
 
-**Nome escolhido para o banco de dados: BD_Conveniencia**
+**Nome escolhido para o banco de dados:**
 
 ```text
 
+series_watchlist_db
+
 ```
+
 ---
 
 # 2. Tema do banco de dados
@@ -72,7 +75,8 @@ Alguns exemplos:
 
 ### Tema escolhido
 
-> Vendas e Produtos (Loja de Conveniência).
+> Catálogo e lista pessoal de séries com notas e status de exibição (estilo Watchlist / Letterboxd de séries).
+
 ---
 
 # 3. Descrição do sistema
@@ -88,14 +92,24 @@ A descrição deve responder:
 
 ### Descrição
 
-> O Módulo de Produtos atua como o catalogo central da loja de conveniência. Ele vai ser responsável por armazenar todas as informações dos itens que a loja vende, desde a identificação e a categorização até o preço de venda e a quantidade disponível. 
+> Usuários precisam de uma forma fácil e centralizada de registrar quais séries estão assistindo, quais já terminaram, dar notas e salvar resenhas curtas.
+
+**Quem utilizaria:** Pessoas que assistem a séries e gostam de organizar suas maratonas e histórico.
+
+**Informações principais:** Dados dos usuários, catálogo de séries, plataformas de streaming onde as séries estão disponíveis e o registro de cada série assistida com nota e status.
+
+**Operações permitidas:** Cadastrar usuários, cadastrar séries e plataformas, adicionar séries à lista pessoal com nota/comentário.
+
 ---
 
 # 4. Objetivo do banco de dados
 
+Explique qual é o principal objetivo do banco de dados proposto.
+
 ### Objetivo
 
-> Recriar num banco de dados como funciona o controle de estoque de uma pequena loja de conveniência, pensei nessa ideia vendo os vídeos de Simulador de mercado do Roblox.
+> Gerenciar um catálogo simples de séries associado a plataformas de streaming e permitir que usuários controlem seu histórico e avaliações em uma única lista personalizada.
+
 ---
 
 # 5. Escopo inicial
@@ -106,13 +120,13 @@ Liste as principais funcionalidades ou informações que deverão ser contemplad
 
 ### O banco deverá permitir:
 
-1. Cadastrar e Classificar produtor por categorias.
-3. Manter um registro das empresas fornecedoras de cada mercadoria.
-4. Controlar a quantidade de produtos disponíveis no estoque.
-5. Regstrar as vendas realizadas no caixa(Data, Hora e Valor total.
-6. Armazenar Exatamente quais produots e quantas unidades sairam de cada venda(nota Fiscal)
+1. Cadastrar usuários com e-mails únicos.
+2. Cadastrar plataformas de streaming (Netflix, Prime Video, HBO Max, etc.).
+3. Cadastrar séries vinculadas à sua plataforma principal.
+4. Adicionar séries à lista do usuário com status ("Quero Ver", "Assistindo", "Finalizada").
+5. Registrar notas (0 a 10) e comentários na própria lista.
 
-### Objetivo
+---
 
 # 6. Identificação das entidades
 
@@ -144,12 +158,10 @@ Pagamento
 
 | Nº | Entidade | O que representa? |
 |---:|---|---|
-| 1 | Categoria  | Bebidas, Doces e outras coisas |
-| 2 | Produto | Coca Cola, basicamente os produtos que vão conter o ID e o codigo de barras |
-| 3 | Venda | que vai garantir a parte da nota fiscal |
-| 4 | item_venda | lista de tudo oq a gente vendeu |
-| 5 |  |  |
-| 6 |  |  |
+| 1 | Usuário | Pessoa cadastrada que possui uma lista de séries. |
+| 2 | Plataforma | Serviço de streaming onde a série é exibida (ex.: Netflix, Max). |
+| 3 | Serie | Série catalogada no sistema com título, ano e gênero. |
+| 4 | Item_watchlist | Registro que vincula o usuário à série com seu status, nota e comentário. |
 
 > Como referência para esta atividade, planeje **pelo menos 4 tabelas relacionadas**.
 
@@ -161,67 +173,67 @@ Para cada entidade, identifique os principais atributos que deverão ser armazen
 
 ## Entidade 1
 
-**Nome da entidade: Categoria**
+**Nome da entidade:**
 
 ```text
-
+USUÁRIO
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-| id_categoria | identificador unico numerico | INT | Sim |
-| nome_categoria | descrição | VARCHAR(50) | Sim |
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| id_usuario | Código identificador do usuário | INT | Sim |
+| nome | Nome completo do usuário | VARCHAR(100) | Sim |
+| email | E-mail de cadastro | VARCHAR(100) | Sim |
+| data_cadastro | Data de criação da conta | DATE | Sim |
+
 
 ## Entidade 2
 
-**Nome da entidade: Produto**
+**Nome da entidade:**
 
 ```text
+
+PLATAFORMA
 
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-| id_produto | identificador unico do sistema | INT | Sim |
-| id_categoria | referencia á categoria do item | INT | Sim |
-| codigo_barras | codigo lido pelo scanner do caixa | VARCHAR(50) | Sim |
-| nome_produto | descricao do item para o cliente | VARCHAR(100) | Sim |
-| preco_venda | o valor que será cobrado | DECIMAL(10,2) | Sim |
-| quantidade_estoque |quantidade atual nas prateleiras | INT | SIM |
+| Id_plataforma | Código da plataforma | INT| Sim |
+| Nome_plataforma | Nome do streaming (Netflix, Max, etc.) | VARCHAR(50) | Sim |
+
 ## Entidade 3
 
-**Nome da entidade: Venda**
+**Nome da entidade:**
 
 ```text
+SERIE
 
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-| id_venda | identificador da nota fiscal | INT | Sim |
-| data_venda | Dia e hora em que a compra ocorreu | DATETIME | Sim |
-| valor_total | Soma final cobrada do cliente | DECIMAL(10,2) | Sim |
-|  |  |  |  |
-|  |  |  |  |
+| Id_serie | Código identificador da série | INT | sim |
+| Titulo | Título da série | VARCHAR(100) | Sim |
+| Genero | Gênero da serie (Drama, Comédia, Sci-Fi) | VARCHAR(50) | Sim |
+| Ano_lancamento | Ano de estreia da serie | INT | Sim |
+| Id_plataforma | Plataforma onde é exibida (FK) | INT | Sim |
 
 ## Entidade 4
 
-**Nome da entidade: Item_Venda**
+**Nome da entidade:**
 
 ```text
-
+Item_watchlist
 ```
 
 | Atributo | Informação armazenada | Tipo de dado previsto | Obrigatório? |
 |---|---|---|---|
-| id_venda | referencia a qual venda pertence | INT | Sim |
-| id_produto | referencia a qual produto saiu | INT | Sim |
-| quantidade | Quantas unidades foram levadas | INT | Sim |
-|  |  |  |  |
-|  |  |  |  |
+| Id_usuário | Usuário dono da lista (FK) |  INT| Sim |
+| Id_serie | Série adicionada (FK) | INT | Sim |
+| Status_assistindo | Status ("Quero Ver", "Assistindo", "Finalizada") | VARCHAR(20) | Sim |
+| Nota | Nota atribuída pelo usuário (0 a 10) | DECIMAL(3,1) | Não |
+| Comentário | Breve resenha pessoal | VARCHAR(255) | Não |
 
 ## Outras entidades
 
@@ -241,10 +253,10 @@ Cada tabela deverá possuir uma forma de identificar unicamente seus registros.
 
 | Entidade/Tabela | Chave primária prevista | Justificativa |
 |---|---|---|
-| Categoria | id_categoria | valor unico inteiro e imutavel que vai ser gerenciado pelo sistema | 
-| Produto | id_produto | vamos usar ele pra não precisar usar o codigo de barras visto que ele não pode ser afetado pelo fabricante | 
-| Venda | id_venda | identifica unicamente cada cupom gerado no caixa | 
-| Item_Venda | id_venda, id_produto | Chave composta. Garante que o mesmo produto não se repita em linhas separadas no mesmo cupom | 
+| Usuario |  Id_usuario | Código numérico sequencial único gerado via AUTO_INCREMENT. |
+| Plataforma | Id_plataforma |Código numérico sequencial único via AUTO_INCREMENT.  |
+| Serie | Id_serie | Identificador numérico único para evitar duplicidade de títulos. |
+| Item_watchlist |(id_usuario, id_serie) | Chave primária composta pelas duas FKs, identificando unicamente a relação N:N sem necessidade de um ID surrogate. | |
 
 Considere:
 
@@ -271,11 +283,10 @@ Produto aparece em Item_Pedido
 
 | Entidade A | Relacionamento | Entidade B |
 |---|---|---|
-| Categoria | possui | produto |
-| Venda | contem | item_venda |
-| Produto | aparece em | item_Venda |
-|  |  |  |
-|  |  |  |
+| Plataforma | disponibiliza | serie |
+| usuário | adiciona na lista | item_watchlist |
+| serie | é registrada em | item_watchlist |
+
 
 ---
 
@@ -291,9 +302,9 @@ N:N  → muitos para muitos
 
 | Relacionamento | Cardinalidade prevista | Justificativa |
 |---|---|---|
-| Categoria/Produto | 1:N | uma categoria pode ter varios produtos mas um produto só pertence a uma categoria |
-| Venda/Item_venda | 1:N | Na mesma venda podemos ter diferentes itens no carrinho |
-| Produto/item_venda | 1:N | o mesmo produto pode estar sendo vendido em diferentes carrinhos |
+| Plataforma- serie | 1:N | Uma plataforma pode ter várias series cadastradas. |
+| Usuario - item_watchlist | 1:N | Um usuário pode ter vários registros na lista. |
+| Serie - Item_watchlist | 1:N | Uma serie pode estar na lista de vários usuários. |
 |  |  |  |
 
 ---
@@ -302,10 +313,9 @@ N:N  → muitos para muitos
 
 | Tabela | Atributo previsto como FK | Referencia qual tabela? |
 |---|---|---|
-| Produto | id_categoria | Categoria |
-| item_venda | id_venda | Venda |
-| item_venda | id_produto | Produto |
-|  |  |  |
+| SERIE | Id_plataforma | Plataforma (id_plataforma) |
+| ITEM_WATCHLIST | Id_usuario | Usuario (Id_usuário) |
+| ITEM_WATCHLIST | Id_serie | Serie (Id_serie) |
 
 > As `FOREIGN KEY` serão implementadas posteriormente. Nesta Sprint, apenas planeje os relacionamentos.
 
@@ -326,12 +336,11 @@ AUTO_INCREMENT
 
 | Tabela | Atributo | Restrição prevista | Motivo |
 |---|---|---|---|
-| Produto | codigo_barras | UNIQUE | não vai permitir que dois produtos diferentes tenham o mesmo codigo |
-| Produto | preco_venda | CHECK(>=0) | Vai garantir que a gente não tenha um valor com numero negativo |
-| Produto | quantidade_estoque | CHECK(>=0) | Evitar que alguém compre alguma coisa que não tenha no estoque |
-| Venda | data_venda | DEFAULT | isso vai manter a hora do caixa guardado automaticamente |
-|  |  |  |  |
-
+| USUARIO | email | UNIQUE, NOT NULL | Impede que existam dois usuários com o mesmo e-mail. |
+| PLATAFORMA | nome_plataforma | UNIQUE, NOT NULL | Evita duplicidade de cadastro da mesma plataforma de streaming. |
+| ITEM_WATCHLIST | (id_usuario, id_serie) | PRIMARY KEY | Identifica a linha de forma única e impede que o mesmo usuário repita a mesma série na lista. |
+| ITEM_WATCHLIST | status_assistindo | DEFAULT 'Quero Ver' | Caso o usuário não especifique, a série entra automaticamente como "Quero Ver". |
+| USUARIO, PLATAFORMA, SERIE | id_* | PRIMARY KEY, AUTO_INCREMENT | Garante a identificação única e o preenchimento automático das chaves primárias das entidades base. |
 ---
 
 # 13. Regras de negócio
@@ -350,11 +359,11 @@ Um empréstimo deve possuir uma data de realização.
 
 ### Regras do seu banco
 
-1. Um produto não pode ser cadastrado com preço de venda negativo.
-2. Dois Produtos diferentes não podem possuir o mesmo codigo de barras.
-3. A quantidade em estoque de um produto não pode ser negativa.
-4. Todo produto cadastrado deve pertencer obrigatoriamente a uma categoria valida.
-5. Uma categoria não pode ser excluida do sistema se ja possuir produtos vinculados a ela.
+1. Não é permitido cadastrar dois usuários com o mesmo endereço de e-mail.
+2. Cada série só pode ser adicionada uma única vez na lista de um mesmo usuário.
+3. A nota atribuída deve ser um número entre 0 e 10 (ou nula, se o usuário ainda não assistiu).
+4. O status de exibição deve assumir apenas os valores: "Quero Ver", "Assistindo" ou "Finalizada".
+5. Uma série obrigatoriamente deve estar vinculada a uma plataforma cadastrada.
 
 ---
 
@@ -381,26 +390,33 @@ CLIENTE 1 ───── N PEDIDO
 ### Esboço do seu banco
 
 ```text
-CATEGORIA
-|-- id_categoria(PK)
-|--- nome_categoria
+PLATAFORMA
+├── id_plataforma (PK)
+└── nome_plataforma
 
-PRODUTO
-|-- id_produto(PK)
-|-- id_categoria(FK)
-|-- codigo_barras
-|-- nome_produto
-|-- preco_venda
-|-- quantidade_estoque
+SERIE
+├── id_serie (PK)
+├── titulo
+├── genero
+├── ano_lancamento
+└── id_plataforma (FK)
 
-ITEM_VENDA
-|-- id_venda (PK/FK)
-|-- id_produto(PK/FK)
-|-- quantidade
+USUARIO
+├── id_usuario (PK)
+├── nome
+├── email
+└── data_cadastro
 
-CATEGORIA 1 ----- N PRODUTO
-VENDA 1 ---------- N ITEM_VENDA
-PRODUTO 1 --------- N ITEM_VENDA
+ITEM_WATCHLIST
+├── id_usuario (PK, FK)
+├── id_serie (PK, FK)
+├── status_assistindo
+├── nota
+└── comentario
+
+PLATAFORMA  1 ───── N  SERIE
+USUARIO     1 ───── N  ITEM_WATCHLIST
+SERIE       1 ───── N  ITEM_WATCHLIST
 ```
 
 ---
@@ -409,10 +425,10 @@ PRODUTO 1 --------- N ITEM_VENDA
 
 Descreva que tipos de registros deverão existir no banco quando ele for populado.
 
-1. Categorias da loja
-2. Produtos com Preços e codigos de barras validos
-3. Simulações de registros de vendas realizadas
-4. itens associando os produtos comprados a cada uma dessas vendas
+1. Plataformas de streaming: Netflix, Prime Video, HBO Max, Disney+.
+2. Séries: Títulos como Breaking Bad, Stranger Things, The Last of Us, com gênero e ano de estreia.
+3. Usuários: Perfis de exemplo com nome, e-mail e data de cadastro.
+4. Itens na watchlist: Associações com status (ex.: "Finalizada", "Assistindo"), notas (ex.: 9.5, 8.0) e pequenos comentários de resenha.
 
 ---
 
@@ -432,17 +448,17 @@ Quais categorias possuem mais de 5 produtos?
 
 ### Perguntas do seu projeto
 
-1. Quais categorias estão cadastradas no sistema?
-2. Quais produtos estão com a quantidade de estoque zerada no momento?
-3. Quais produtos custam mais de R$ 10,00?
-4. Quais produtos pertecem a categoria "bebidas"?
-5. Qual foi o valor total arrecadado em uma determinada venda
+1. Quais séries cadastradas pertencem à plataforma "Netflix"?
+2. Qual é a média das notas de cada série calculada a partir das avaliações dos usuários?
+3. Quantas séries cada usuário tem marcadas com o status "Finalizada"?
+4. Quais séries cadastradas são do gênero "Drama" e foram lançadas a partir de 2020?
+5. Qual é o top 3 de séries com as maiores notas médias entre os usuários?
 
 ---
 
 # 17. Decisões e dúvidas pendentes
 
-- Nenhuma dúvida pendente nesta Sprint.
+- 
 - 
 - 
 
@@ -454,24 +470,24 @@ Caso não existam dúvidas:
 
 # 18. Checklist da Sprint 1/5
 
-- [X] identifiquei o aluno responsável;
-- [X] defini o tema do banco de dados;
-- [X] descrevi o sistema;
-- [X] defini o objetivo do banco;
-- [X] defini o escopo inicial;
-- [X] identifiquei pelo menos 4 entidades;
-- [X] planejei os principais atributos;
-- [X] defini as chaves primárias previstas;
-- [X] identifiquei os relacionamentos;
-- [X] defini as cardinalidades iniciais;
-- [X] identifiquei possíveis chaves estrangeiras;
-- [X] planejei restrições de integridade;
-- [X] defini pelo menos 5 regras de negócio;
-- [X] fiz um esboço da estrutura do banco;
-- [X] defini os tipos de dados que futuramente serão cadastrados;
-- [X] defini pelo menos 5 perguntas que o banco deverá responder;
-- [X] registrei dúvidas ou decisões pendentes;
-- [X] revisei o arquivo antes de finalizar.
+- [x] identifiquei o aluno responsável;
+- [x] defini o tema do banco de dados;
+- [x] descrevi o sistema;
+- [x] defini o objetivo do banco;
+- [x] defini o escopo inicial;
+- [x] identifiquei pelo menos 4 entidades;
+- [x] planejei os principais atributos;
+- [x] defini as chaves primárias previstas;
+- [x] identifiquei os relacionamentos;
+- [x] defini as cardinalidades iniciais;
+- [x] identifiquei possíveis chaves estrangeiras;
+- [x] planejei restrições de integridade;
+- [x] defini pelo menos 5 regras de negócio;
+- [x] fiz um esboço da estrutura do banco;
+- [x] defini os tipos de dados que futuramente serão cadastrados;
+- [x] defini pelo menos 5 perguntas que o banco deverá responder;
+- [x] registrei dúvidas ou decisões pendentes;
+- [x] revisei o arquivo antes de finalizar.
 
 ---
 
