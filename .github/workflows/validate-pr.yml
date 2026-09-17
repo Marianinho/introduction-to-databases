@@ -12,57 +12,45 @@ on:
 
 jobs:
   validate-pr:
-    name: Validate Individual Database Project
+    name: validate-pr
     runs-on: ubuntu-latest
 
     steps:
-      # ============================================================
-      # 1. CHECKOUT
-      # ============================================================
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       # ============================================================
-      # 2. IDENTIFICAR O ALUNO PELO LOGIN DO GITHUB
-      #
-      # Exemplo:
-      # GitHub do aluno: joaosilva
-      #
-      # Pasta esperada:
-      # teams/Teams-UNEMAT/joaosilva/
-      # ou
-      # teams/Teams-UFR/joaosilva/
-      #
-      # Branch esperada:
-      # aluno-joaosilva-sprints-1-5
+      # 1. VALIDAR BRANCH team-XX
       # ============================================================
-      - name: Identify student
-        id: student
+      - name: Validate branch
+        id: branch
         shell: bash
         run: |
           set -euo pipefail
 
-          STUDENT_LOGIN="${{ github.event.pull_request.user.login }}"
-          EXPECTED_BRANCH="aluno-${STUDENT_LOGIN}-sprints-1-5"
           CURRENT_BRANCH="${{ github.head_ref }}"
 
-          echo "Aluno identificado pelo GitHub: $STUDENT_LOGIN"
           echo "Branch recebida: $CURRENT_BRANCH"
-          echo "Branch esperada: $EXPECTED_BRANCH"
 
-          if [[ "$CURRENT_BRANCH" != "$EXPECTED_BRANCH" ]]; then
+          if [[ ! "$CURRENT_BRANCH" =~ ^team-([0-9]{2})$ ]]; then
             echo "::error::Nome de branch inválido."
-            echo "::error::Use exatamente: $EXPECTED_BRANCH"
+            echo "::error::Use exatamente o padrão: team-XX"
+            echo "::error::Exemplos: team-01, team-09, team-15"
             exit 1
           fi
 
-          echo "student_login=$STUDENT_LOGIN" >> "$GITHUB_OUTPUT"
-          echo "expected_branch=$EXPECTED_BRANCH" >> "$GITHUB_OUTPUT"
+          TEAM_NUMBER="${BASH_REMATCH[1]}"
+          TEAM_NAME="team-${TEAM_NUMBER}"
+          TEAM_LABEL="Team ${TEAM_NUMBER}"
+
+          echo "team_number=$TEAM_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "team_name=$TEAM_NAME" >> "$GITHUB_OUTPUT"
+          echo "team_label=$TEAM_LABEL" >> "$GITHUB_OUTPUT"
 
       # ============================================================
-      # 3. IDENTIFICAR ARQUIVOS MODIFICADOS
+      # 2. IDENTIFICAR ARQUIVOS MODIFICADOS
       # ============================================================
       - name: Get changed files
         id: changed
@@ -90,26 +78,26 @@ jobs:
           } >> "$GITHUB_OUTPUT"
 
       # ============================================================
-      # 4. IDENTIFICAR A INSTITUIÇÃO E VALIDAR O DIRETÓRIO
+      # 3. IDENTIFICAR INSTITUIÇÃO E VALIDAR DIRETÓRIO
       #
-      # Estruturas válidas:
+      # Estruturas permitidas:
+      # teams/Teams-UNEMAT/team-XX/
+      # teams/Teams-UFR/team-XX/
       #
-      # teams/Teams-UNEMAT/<github-login>/
-      # teams/Teams-UFR/<github-login>/
-      #
-      # Um PR não pode:
-      # - misturar UNEMAT e UFR;
-      # - alterar a pasta de outro aluno;
-      # - alterar arquivos fora da própria pasta;
-      # - adicionar arquivos fora do padrão de entrega.
+      # Arquivos permitidos:
+      # SPRINT1-5.md
+      # SPRINT2-5.md / SPRINT2-5.sql
+      # SPRINT3-5.md / SPRINT3-5.sql
+      # SPRINT4-5.md / SPRINT4-5.sql
+      # SPRINT5-5.md / SPRINT5-5.sql
       # ============================================================
-      - name: Validate institution and student directory
+      - name: Validate institution and team directory
         id: context
         shell: bash
         run: |
           set -euo pipefail
 
-          STUDENT_LOGIN="${{ steps.student.outputs.student_login }}"
+          TEAM_NAME="${{ steps.branch.outputs.team_name }}"
           CHANGED_FILES="${{ steps.changed.outputs.files }}"
 
           DETECTED_INSTITUTION=""
@@ -120,23 +108,18 @@ jobs:
 
             echo "Validando arquivo: $file"
 
-            # Arquivos permitidos:
-            # SPRINT1-5.md
-            # SPRINT2-5.md / SPRINT2-5.sql
-            # SPRINT3-5.md / SPRINT3-5.sql
-            # SPRINT4-5.md / SPRINT4-5.sql
-            # SPRINT5-5.md / SPRINT5-5.sql
-
-            if [[ "$file" =~ ^teams/Teams-(UNEMAT|UFR)/${STUDENT_LOGIN}/SPRINT1-5\.md$ ]]; then
+            if [[ "$file" =~ ^teams/Teams-(UNEMAT|UFR)/${TEAM_NAME}/SPRINT1-5\.md$ ]]; then
               CURRENT_INSTITUTION="${BASH_REMATCH[1]}"
 
-            elif [[ "$file" =~ ^teams/Teams-(UNEMAT|UFR)/${STUDENT_LOGIN}/SPRINT[2-5]-5\.(md|sql)$ ]]; then
+            elif [[ "$file" =~ ^teams/Teams-(UNEMAT|UFR)/${TEAM_NAME}/SPRINT[2-5]-5\.(md|sql)$ ]]; then
               CURRENT_INSTITUTION="${BASH_REMATCH[1]}"
 
             else
               echo "::error file=$file::Arquivo não permitido."
-              echo "::error::O aluno só pode alterar os arquivos das Sprints dentro da própria pasta."
-              echo "::error::Pasta esperada: teams/Teams-UNEMAT/${STUDENT_LOGIN}/ ou teams/Teams-UFR/${STUDENT_LOGIN}/"
+              echo "::error::A branch ${TEAM_NAME} só pode alterar arquivos dentro de:"
+              echo "::error::teams/Teams-UNEMAT/${TEAM_NAME}/"
+              echo "::error::ou"
+              echo "::error::teams/Teams-UFR/${TEAM_NAME}/"
               INVALID=1
               continue
             fi
@@ -144,7 +127,7 @@ jobs:
             if [[ -z "$DETECTED_INSTITUTION" ]]; then
               DETECTED_INSTITUTION="$CURRENT_INSTITUTION"
             elif [[ "$DETECTED_INSTITUTION" != "$CURRENT_INSTITUTION" ]]; then
-              echo "::error file=$file::O mesmo Pull Request não pode misturar arquivos da UNEMAT e da UFR."
+              echo "::error file=$file::O mesmo Pull Request não pode misturar UNEMAT e UFR."
               INVALID=1
             fi
           done <<< "$CHANGED_FILES"
@@ -158,23 +141,19 @@ jobs:
             exit 1
           fi
 
-          STUDENT_DIR="teams/Teams-${DETECTED_INSTITUTION}/${STUDENT_LOGIN}"
+          TEAM_DIR="teams/Teams-${DETECTED_INSTITUTION}/${TEAM_NAME}"
 
           echo "institution=$DETECTED_INSTITUTION" >> "$GITHUB_OUTPUT"
-          echo "student_dir=$STUDENT_DIR" >> "$GITHUB_OUTPUT"
+          echo "team_dir=$TEAM_DIR" >> "$GITHUB_OUTPUT"
 
           echo "Instituição: $DETECTED_INSTITUTION"
-          echo "Aluno: $STUDENT_LOGIN"
-          echo "Diretório: $STUDENT_DIR"
+          echo "Diretório autorizado: $TEAM_DIR"
 
       # ============================================================
-      # 5. VALIDAR TÍTULO DO PULL REQUEST
+      # 4. VALIDAR TÍTULO DO PR
       #
-      # Formato obrigatório:
-      #
-      # [N1][UNEMAT][usuario] Sprints 1-5 - Nome do Banco
-      # ou
-      # [N1][UFR][usuario] Sprints 1-5 - Nome do Banco
+      # Exemplo:
+      # [N1][UNEMAT][Team 09] Sprints 1-5 - Sistema de Biblioteca
       # ============================================================
       - name: Validate Pull Request title
         shell: bash
@@ -182,10 +161,10 @@ jobs:
           set -euo pipefail
 
           TITLE="${{ github.event.pull_request.title }}"
-          STUDENT_LOGIN="${{ steps.student.outputs.student_login }}"
           INSTITUTION="${{ steps.context.outputs.institution }}"
+          TEAM_LABEL="${{ steps.branch.outputs.team_label }}"
 
-          EXPECTED_PREFIX="[N1][${INSTITUTION}][${STUDENT_LOGIN}] Sprints 1-5 - "
+          EXPECTED_PREFIX="[N1][${INSTITUTION}][${TEAM_LABEL}] Sprints 1-5 - "
 
           echo "Título recebido: $TITLE"
           echo "Prefixo esperado: $EXPECTED_PREFIX"
@@ -200,35 +179,19 @@ jobs:
           DATABASE_NAME="${TITLE#"$EXPECTED_PREFIX"}"
 
           if [[ -z "${DATABASE_NAME// }" ]]; then
-            echo "::error::Informe o nome do banco após o hífen no título do PR."
+            echo "::error::Informe o nome do banco após o hífen."
             exit 1
           fi
 
       # ============================================================
-      # 6. EXIGIR TODOS OS ARQUIVOS DA ENTREGA FINAL
-      #
-      # Estrutura final:
-      #
-      # SPRINT1-5.md
-      #
-      # SPRINT2-5.md
-      # SPRINT2-5.sql
-      #
-      # SPRINT3-5.md
-      # SPRINT3-5.sql
-      #
-      # SPRINT4-5.md
-      # SPRINT4-5.sql
-      #
-      # SPRINT5-5.md
-      # SPRINT5-5.sql
+      # 5. EXIGIR OS 9 ARQUIVOS FINAIS
       # ============================================================
       - name: Validate required Sprint files
         shell: bash
         run: |
           set -euo pipefail
 
-          DIR="${{ steps.context.outputs.student_dir }}"
+          DIR="${{ steps.context.outputs.team_dir }}"
           MISSING=0
 
           REQUIRED_FILES=(
@@ -260,14 +223,14 @@ jobs:
           fi
 
       # ============================================================
-      # 7. IMPEDIR ARQUIVOS VAZIOS
+      # 6. IMPEDIR ARQUIVOS VAZIOS
       # ============================================================
       - name: Validate files are not empty
         shell: bash
         run: |
           set -euo pipefail
 
-          DIR="${{ steps.context.outputs.student_dir }}"
+          DIR="${{ steps.context.outputs.team_dir }}"
 
           FILES=(
             "SPRINT1-5.md"
@@ -291,18 +254,17 @@ jobs:
           done
 
       # ============================================================
-      # 8. VALIDAR SPRINT 1/5 — PLANEJAMENTO INDIVIDUAL
+      # 7. VALIDAR SPRINT 1/5
       # ============================================================
       - name: Validate SPRINT1-5 planning
         shell: bash
         run: |
           set -euo pipefail
 
-          FILE="${{ steps.context.outputs.student_dir }}/SPRINT1-5.md"
+          FILE="${{ steps.context.outputs.team_dir }}/SPRINT1-5.md"
 
           require_text() {
             local text="$1"
-
             if ! grep -Fq "$text" "$FILE"; then
               echo "::error file=$FILE::Seção obrigatória ausente: $text"
               exit 1
@@ -325,14 +287,14 @@ jobs:
           require_text "# 18. Checklist da Sprint 1/5"
 
       # ============================================================
-      # 9. VALIDAR SPRINT 2/5 — DOCUMENTAÇÃO
+      # 8. VALIDAR SPRINT 2/5 — DOCUMENTAÇÃO
       # ============================================================
       - name: Validate SPRINT2-5 documentation
         shell: bash
         run: |
           set -euo pipefail
 
-          FILE="${{ steps.context.outputs.student_dir }}/SPRINT2-5.md"
+          FILE="${{ steps.context.outputs.team_dir }}/SPRINT2-5.md"
 
           for text in \
             "CREATE DATABASE" \
@@ -349,167 +311,148 @@ jobs:
           done
 
       # ============================================================
-      # 10. VALIDAR SPRINT 2/5 — ARQUIVO SQL REAL
-      #
-      # O SQL deve conter:
-      # - CREATE DATABASE
-      # - USE
-      # - pelo menos 4 CREATE TABLE
-      # - PRIMARY KEY
-      # - FOREIGN KEY
-      # - ALTER TABLE
-      #
-      # Também bloqueia os principais nomes genéricos do modelo.
+      # 9. VALIDAR SPRINT 2/5 — SQL
       # ============================================================
       - name: Validate SPRINT2-5 SQL
         shell: bash
         run: |
           set -euo pipefail
 
-          FILE="${{ steps.context.outputs.student_dir }}/SPRINT2-5.sql"
+          FILE="${{ steps.context.outputs.team_dir }}/SPRINT2-5.sql"
 
-          if ! grep -Eqi 'CREATE[[:space:]]+DATABASE' "$FILE"; then
+          grep -Eqi 'CREATE[[:space:]]+DATABASE' "$FILE" || {
             echo "::error file=$FILE::O arquivo deve conter CREATE DATABASE."
             exit 1
-          fi
+          }
 
-          if ! grep -Eqi '^[[:space:]]*USE[[:space:]]+' "$FILE"; then
+          grep -Eqi '^[[:space:]]*USE[[:space:]]+' "$FILE" || {
             echo "::error file=$FILE::O arquivo deve conter USE."
             exit 1
-          fi
+          }
 
           TABLE_COUNT=$(grep -Eic '^[[:space:]]*CREATE[[:space:]]+TABLE[[:space:]]+' "$FILE" || true)
-
-          echo "Quantidade de CREATE TABLE encontrados: $TABLE_COUNT"
 
           if [[ "$TABLE_COUNT" -lt 4 ]]; then
             echo "::error file=$FILE::O projeto deve possuir pelo menos 4 CREATE TABLE."
             exit 1
           fi
 
-          if ! grep -Eqi 'PRIMARY[[:space:]]+KEY' "$FILE"; then
+          grep -Eqi 'PRIMARY[[:space:]]+KEY' "$FILE" || {
             echo "::error file=$FILE::O arquivo deve conter PRIMARY KEY."
             exit 1
-          fi
+          }
 
-          if ! grep -Eqi 'FOREIGN[[:space:]]+KEY' "$FILE"; then
+          grep -Eqi 'FOREIGN[[:space:]]+KEY' "$FILE" || {
             echo "::error file=$FILE::O arquivo deve conter pelo menos uma FOREIGN KEY."
             exit 1
-          fi
+          }
 
-          if ! grep -Eqi 'ALTER[[:space:]]+TABLE' "$FILE"; then
+          grep -Eqi 'ALTER[[:space:]]+TABLE' "$FILE" || {
             echo "::error file=$FILE::O arquivo deve conter ALTER TABLE."
             exit 1
-          fi
+          }
 
-          # Impede a entrega direta do modelo genérico fornecido.
           if grep -Eqi '\bnome_do_banco\b|\btabela_a\b|\btabela_b\b|\btabela_c\b|\btabela_d\b|\bcampo_a1\b|\bcampo_b1\b' "$FILE"; then
-            echo "::error file=$FILE::O arquivo ainda contém nomes genéricos do modelo. Adapte o SQL ao seu próprio banco."
+            echo "::error file=$FILE::O arquivo ainda contém nomes genéricos do modelo."
             exit 1
           fi
 
       # ============================================================
-      # 11. VALIDAR SPRINT 3/5 — DML
+      # 10. VALIDAR SPRINT 3/5 — DML
       # ============================================================
       - name: Validate SPRINT3-5
         shell: bash
         run: |
           set -euo pipefail
 
-          MD="${{ steps.context.outputs.student_dir }}/SPRINT3-5.md"
-          SQL="${{ steps.context.outputs.student_dir }}/SPRINT3-5.sql"
+          MD="${{ steps.context.outputs.team_dir }}/SPRINT3-5.md"
+          SQL="${{ steps.context.outputs.team_dir }}/SPRINT3-5.sql"
 
           for keyword in INSERT UPDATE DELETE; do
-            if ! grep -Eqi "$keyword" "$MD"; then
+            grep -Eqi "$keyword" "$MD" || {
               echo "::error file=$MD::A documentação da Sprint 3/5 deve abordar ${keyword}."
               exit 1
-            fi
+            }
 
-            if ! grep -Eqi "^[[:space:]]*${keyword}[[:space:]]+" "$SQL"; then
-              echo "::error file=$SQL::O arquivo SQL da Sprint 3/5 deve conter ${keyword}."
+            grep -Eqi "^[[:space:]]*${keyword}[[:space:]]+" "$SQL" || {
+              echo "::error file=$SQL::O SQL da Sprint 3/5 deve conter ${keyword}."
               exit 1
-            fi
+            }
           done
 
       # ============================================================
-      # 12. VALIDAR SPRINT 4/5 — CONSULTAS
+      # 11. VALIDAR SPRINT 4/5 — CONSULTAS
       # ============================================================
       - name: Validate SPRINT4-5
         shell: bash
         run: |
           set -euo pipefail
 
-          MD="${{ steps.context.outputs.student_dir }}/SPRINT4-5.md"
-          SQL="${{ steps.context.outputs.student_dir }}/SPRINT4-5.sql"
+          MD="${{ steps.context.outputs.team_dir }}/SPRINT4-5.md"
+          SQL="${{ steps.context.outputs.team_dir }}/SPRINT4-5.sql"
 
           for keyword in "SELECT" "WHERE" "ORDER BY" "GROUP BY"; do
-            if ! grep -Eqi "$keyword" "$MD"; then
+            grep -Eqi "$keyword" "$MD" || {
               echo "::error file=$MD::A documentação da Sprint 4/5 deve abordar ${keyword}."
               exit 1
-            fi
+            }
 
-            if ! grep -Eqi "$keyword" "$SQL"; then
-              echo "::error file=$SQL::O arquivo SQL da Sprint 4/5 deve conter ${keyword}."
+            grep -Eqi "$keyword" "$SQL" || {
+              echo "::error file=$SQL::O SQL da Sprint 4/5 deve conter ${keyword}."
               exit 1
-            fi
+            }
           done
 
-          if ! grep -Eqi 'HAVING|COUNT[[:space:]]*\(|SUM[[:space:]]*\(|AVG[[:space:]]*\(|MIN[[:space:]]*\(|MAX[[:space:]]*\(' "$SQL"; then
-            echo "::error file=$SQL::O arquivo SQL da Sprint 4/5 deve conter HAVING e/ou funções de agregação."
+          grep -Eqi 'HAVING|COUNT[[:space:]]*\(|SUM[[:space:]]*\(|AVG[[:space:]]*\(|MIN[[:space:]]*\(|MAX[[:space:]]*\(' "$SQL" || {
+            echo "::error file=$SQL::A Sprint 4/5 deve conter HAVING e/ou funções de agregação."
             exit 1
-          fi
+          }
 
       # ============================================================
-      # 13. VALIDAR SPRINT 5/5 — ENTREGA FINAL
-      #
-      # O .md deve registrar revisão/validação.
-      # O .sql deve representar um banco completo e integrado.
+      # 12. VALIDAR SPRINT 5/5
       # ============================================================
       - name: Validate SPRINT5-5
         shell: bash
         run: |
           set -euo pipefail
 
-          MD="${{ steps.context.outputs.student_dir }}/SPRINT5-5.md"
-          SQL="${{ steps.context.outputs.student_dir }}/SPRINT5-5.sql"
+          MD="${{ steps.context.outputs.team_dir }}/SPRINT5-5.md"
+          SQL="${{ steps.context.outputs.team_dir }}/SPRINT5-5.sql"
 
-          if ! grep -Eqi 'checklist|valida|teste|revis' "$MD"; then
+          grep -Eqi 'checklist|valida|teste|revis' "$MD" || {
             echo "::error file=$MD::A Sprint 5/5 deve registrar revisão, validação ou testes finais."
             exit 1
-          fi
+          }
 
-          if ! grep -Eqi 'CREATE[[:space:]]+DATABASE' "$SQL"; then
+          grep -Eqi 'CREATE[[:space:]]+DATABASE' "$SQL" || {
             echo "::error file=$SQL::O SQL final deve conter CREATE DATABASE."
             exit 1
-          fi
+          }
 
-          if ! grep -Eqi 'CREATE[[:space:]]+TABLE' "$SQL"; then
+          grep -Eqi 'CREATE[[:space:]]+TABLE' "$SQL" || {
             echo "::error file=$SQL::O SQL final deve conter CREATE TABLE."
             exit 1
-          fi
+          }
 
-          if ! grep -Eqi 'INSERT[[:space:]]+INTO' "$SQL"; then
+          grep -Eqi 'INSERT[[:space:]]+INTO' "$SQL" || {
             echo "::error file=$SQL::O SQL final deve conter INSERT INTO."
             exit 1
-          fi
+          }
 
-          if ! grep -Eqi 'SELECT[[:space:]]+' "$SQL"; then
+          grep -Eqi 'SELECT[[:space:]]+' "$SQL" || {
             echo "::error file=$SQL::O SQL final deve conter SELECT."
             exit 1
-          fi
+          }
 
       # ============================================================
-      # 14. BLOQUEAR PLACEHOLDERS ÓBVIOS NOS ARQUIVOS .MD
-      #
-      # A validação ocorre apenas no PR final, portanto os arquivos
-      # devem estar efetivamente preenchidos.
+      # 13. BLOQUEAR PLACEHOLDERS ÓBVIOS NOS .MD
       # ============================================================
       - name: Validate documentation was filled
         shell: bash
         run: |
           set -euo pipefail
 
-          DIR="${{ steps.context.outputs.student_dir }}"
+          DIR="${{ steps.context.outputs.team_dir }}"
 
           for file in \
             "$DIR/SPRINT1-5.md" \
@@ -519,15 +462,13 @@ jobs:
             "$DIR/SPRINT5-5.md"
           do
             if grep -Eqi '>[[:space:]]*(Preencha aqui|Escreva aqui)[[:space:]]*$' "$file"; then
-              echo "::error file=$file::Ainda existem campos de preenchimento obrigatório sem resposta."
+              echo "::error file=$file::Ainda existem campos obrigatórios sem resposta."
               exit 1
             fi
           done
 
       # ============================================================
-      # 15. VALIDAR QUANTIDADE MÍNIMA DE COMMITS
-      #
-      # Pelo menos um commit por Sprint.
+      # 14. VALIDAR MÍNIMO DE 5 COMMITS
       # ============================================================
       - name: Validate commits
         shell: bash
@@ -545,14 +486,14 @@ jobs:
           fi
 
       # ============================================================
-      # 16. RESULTADO FINAL
+      # 15. RESULTADO FINAL
       # ============================================================
       - name: Validation completed
         run: |
           echo "=================================================="
           echo "PULL REQUEST VALIDADO COM SUCESSO"
           echo "Instituição: ${{ steps.context.outputs.institution }}"
-          echo "Aluno:       ${{ steps.student.outputs.student_login }}"
-          echo "Branch:      ${{ github.head_ref }}"
+          echo "Branch:      ${{ steps.branch.outputs.team_name }}"
+          echo "Autor PR:    ${{ github.event.pull_request.user.login }}"
           echo "Destino:     main"
           echo "=================================================="
