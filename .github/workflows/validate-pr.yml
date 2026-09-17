@@ -12,7 +12,7 @@ on:
 
 jobs:
   validate-pr:
-    name: Validate Individual Database Project
+    name: validate-pr
     runs-on: ubuntu-latest
 
     steps:
