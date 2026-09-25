@@ -122,16 +122,18 @@ INNER JOIN tabela_b AS b
 
 **Pergunta em linguagem natural:**
 
-> Quais os nomes dos produtos cadastrados e também das categorias que eles pertecem?
+> Quais os nomes dos produtos cadastrados e também das categorias que eles pertencem?
 
 **Tabelas utilizadas:**
 
-```Produto, Categoria
+```
+Produto, Categoria
 ```
 
 **PK/FK utilizadas:**
 
-```Categoria.id_categoria (PK) = Produto.id_categoria (FK)
+```
+Categoria.id_categoria (PK) = Produto.id_categoria (FK)
 ```
 
 **SQL:**
@@ -338,7 +340,7 @@ GROUP BY p.nome_produto;
 
 **Explique o agrupamento:**
 
-> Como o mesmo produto pode ser vendido em 10 cupons diferentes, a tabela Item_venda terá 10 linhas para ele O GROUP BY aglomeração todas as linhas que têm o mesmo nome_produto num bloco só, enquanto a agregação SUM soma os numeros da coluna de quantidade dentro desse bloco, revelando quantos itens daquele produto sairam da loja total
+> Como o mesmo produto pode ser vendido em 10 cupons diferentes, a tabela Item_venda terá 10 linhas para ele O GROUP BY aglomera todas as linhas que têm o mesmo nome_produto num bloco só, enquanto a agregação SUM soma os números da coluna de quantidade dentro desse bloco, revelando quantos itens daquele produto sairam da loja total
 
 ---
 
@@ -367,12 +369,7 @@ As consultas devem responder perguntas reais sobre o banco.
 > Qual é o faturamento total da loja dividido por categorias de produtos?
 
 ```sql
--- Cole aqui.
-```
-
-**Por que ela é útil?**
-
-> SELECT 
+SELECT 
     c.nome_categoria, 
     SUM(p.preco_venda * iv.quantidade) AS faturamento_por_categoria
 FROM Categoria AS c
@@ -381,7 +378,11 @@ INNER JOIN Produto AS p
 INNER JOIN Item_Venda AS iv
     ON p.id_produto = iv.id_produto
 GROUP BY c.nome_categoria;
+```
 
+**Por que ela é útil?**
+
+>  Ela permite entender de onde está vindo o lucro do estabelecimento enquanto ajuda na reposição inteligente do Estoque
 ---
 
 # 14. Validação prática obrigatória
@@ -405,8 +406,11 @@ Explique:
 4. o que a cláusula `ON` faz;
 5. o que ocorreria se a condição de relacionamento estivesse errada.
 
-> Escreva aqui.
-
+> Produto(p) e Categoria(c)
+id_categoria na tabela Categoria
+id_categoria na tabela Produto
+ela ensina o banco a verificar cada linha da tabela produto pegando o numero dentro do campo FK e parando na linha da categoria que possui o exato mesmo numero na PK
+Se por ventura eu fizesse burrice e erra-se então meu banco iria misturar cada produto com todas as categorias que existem ao mesmo tempo.
 ---
 
 # 15. Teste no MySQL Workbench
@@ -421,12 +425,11 @@ INNER JOIN Categoria AS c ON p.id_categoria = c.id_categoria;
 
 **Resultado esperado:**
 
-> Escreva aqui.
+> Uma tabela com duas colunas onde o pão frito esteja alinhado com pão fresco
 
 **Resultado obtido:**
 
-> Escreva aqui.
-
+> Faça o teste de mesa e você vai me dizer oq rolou meu nego.
 ---
 
 # 16. Problemas encontrados
@@ -489,20 +492,20 @@ USE nome_do_banco;
 
 # 19. Checklist
 
-- [ ] utilizei o mesmo banco do Module-1;
-- [ ] identifiquei PKs e FKs;
-- [ ] produzi 2 `INNER JOIN`;
-- [ ] produzi 1 `LEFT JOIN`;
-- [ ] produzi 1 `RIGHT JOIN`;
-- [ ] produzi consultas com 3 ou mais tabelas;
-- [ ] utilizei `WHERE`;
-- [ ] utilizei `ORDER BY`;
-- [ ] utilizei agregação e `GROUP BY`;
-- [ ] as consultas respondem perguntas reais;
-- [ ] testei tudo no MySQL Workbench;
-- [ ] consigo explicar as consultas;
-- [ ] salvei `SPRINT1-5.md`;
-- [ ] salvei `SPRINT1-5.sql`.
+- [x] utilizei o mesmo banco do Module-1;
+- [x] identifiquei PKs e FKs;
+- [x] produzi 2 `INNER JOIN`;
+- [x] produzi 1 `LEFT JOIN`;
+- [x] produzi 1 `RIGHT JOIN`;
+- [x] produzi consultas com 3 ou mais tabelas;
+- [x] utilizei `WHERE`;
+- [x] utilizei `ORDER BY`;
+- [x] utilizei agregação e `GROUP BY`;
+- [x] as consultas respondem perguntas reais;
+- [x] testei tudo no MySQL Workbench;
+- [x] consigo explicar as consultas;
+- [x] salvei `SPRINT1-5.md`;
+- [x] salvei `SPRINT1-5.sql`.
 
 ---
 
