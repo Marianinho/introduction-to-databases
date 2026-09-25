@@ -59,23 +59,22 @@ Não altere nem apague os arquivos do `Module-1`.
 
 **Nome completo:**
 
-> Escreva aqui.
+> Mariano Lino da Silva Neto
 
 **Branch:**
 
 ```text
-team-XX
+Team 06
 ```
 
 **Nome do banco:**
 
-```text
-
+```DB_Conveniencia
 ```
 
 **Tema do projeto:**
 
-> Escreva aqui.
+> Sistema de controle de estoque e vendas para uma loja de conveniência.
 
 ---
 
@@ -85,10 +84,10 @@ Liste as principais tabelas que serão utilizadas.
 
 | Nº | Tabela | PK | Principais FKs |
 |---:|---|---|---|
-| 1 |  |  |  |
-| 2 |  |  |  |
-| 3 |  |  |  |
-| 4 |  |  |  |
+| 1 | Categoria | id_categoria | Nenhuma |
+| 2 | Produto | id_produto | id_categoria |
+| 3 | Venda | id_venda | Nenhuma |
+| 4 | Item_venda | id_venda, Id_produto | id_venda, Id_produto |
 | 5 |  |  |  |
 
 ---
@@ -97,9 +96,9 @@ Liste as principais tabelas que serão utilizadas.
 
 | Tabela A | Cardinalidade | Tabela B | FK utilizada |
 |---|---|---|---|
-|  |  |  |  |
-|  |  |  |  |
-|  |  |  |  |
+| Categoria | 1:N | Produto | id_categoria |
+| Venda | 1:N | item_venda | id_venda |
+| Produto | 1:N | item_venda | id_produto |
 |  |  |  |  |
 
 ---
@@ -123,44 +122,55 @@ INNER JOIN tabela_b AS b
 
 **Pergunta em linguagem natural:**
 
-> Escreva aqui.
+> Quais os nomes dos produtos cadastrados e também das categorias que eles pertecem?
 
 **Tabelas utilizadas:**
 
-```text
-
+```Produto, Categoria
 ```
 
 **PK/FK utilizadas:**
 
-```text
-
+```Categoria.id_categoria (PK) = Produto.id_categoria (FK)
 ```
 
 **SQL:**
 
 ```sql
--- Cole aqui.
+SELECT
+p.nome_produto,
+c.nome_categoria,
+p.preco_venda
+FROM Produto AS p
+INNER JOIN Categoria as c
+ON p.id_categoria = c.id_categoria;
 ```
 
 **Explique o resultado:**
 
-> Escreva aqui.
+> A tabela INNER JOIN vai ir na tabela produto e pegar a chave estrangeira de cada item e vai criar uma ponte até a tabela Categoria procurando a chave primaria que corresponda, e o resultado vai ser o nome em forma de texto no lugar de mostrar os numeros de ID.
 
 ## Consulta INNER JOIN 2
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais produtos estão contidos dentro dos cupons de venda gerados no sistema?
 
 ```sql
--- Cole aqui.
+SELECT
+v.id_venda,
+v.data_venda,
+p.nome_produto
+FROM Item_venda as iv
+INNER JOIN Venda AS v
+ON iv.id_venda = v.id_venda
+INNER JOIN Produto AS p
+ON iv.id_produto = p.id_produto;
 ```
 
 **Explique:**
 
-> Escreva aqui.
-
+> O INNER JOIN vai traduzir a tabela item_venda e pegar os IDs conectando ela a tabela venda puxando a data e com isso a gente puxa a tabela produto para puxar o nome do item.
 ---
 
 # 6. LEFT JOIN
@@ -171,15 +181,20 @@ O `LEFT JOIN` mantém todos os registros da tabela à esquerda, mesmo quando nã
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais são todas as categorias da loja, mostrando todos os produtos que existem nelas.
 
-```sql
--- Cole aqui.
+```
+SELECT
+p.nome_produto,
+c.nome_categoria
+FROM Categoria AS c
+LEFT JOIN Produto AS p
+ON c.id_categoria = p.id_categoria;
 ```
 
 **O que o LEFT JOIN permite visualizar neste caso?**
 
-> Escreva aqui.
+> Ele ajuda a visualizar categorias que estão vazias pq elas vão aparecer NULL na tela no lugar da coluna de produto.
 
 ---
 
@@ -191,15 +206,20 @@ O `RIGHT JOIN` mantém todos os registros da tabela da direita, mesmo quando nã
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais são todos os produtos do catalogo e seus registros de venda?
 
 ```sql
--- Cole aqui.
+SELECT
+iv.id_venda,
+p.nome_produto
+FROM Item_venda AS iv
+RIGHT JOIN Produto AS p
+ON iv.id_produto = p.id_produto;
 ```
 
 **Explique o resultado:**
 
-> Escreva aqui.
+> Ele vai mostrar todos os registros da tabela produto e vai garantir que elas apareçam no resultado final, se existir algum produto que nunca foi comprado e passado pelo caixa ele vai aparecer na lista coluna id_venda preenchida como NULL, ajudando a gerência a ver o que está parado no estoque.
 
 ---
 
@@ -211,20 +231,43 @@ Crie duas consultas envolvendo pelo menos três tabelas.
 
 **Pergunta:**
 
-> Escreva aqui.
+> Para cada cupom de venda que foi gerado, quais foram as categorias e produtos vendidos, junto com a data de compra?
 
 ```sql
--- Cole aqui.
+SELECT
+v.id_venda,
+v.data_venda,
+c.nome_categoria,
+p.nome_produto
+FROM Venda AS v
+INNER JOIN Item_venda AS iv
+ON v.id_venda = iv.id_venda
+INNER JOIN Produto as p
+ON iv.id_produto = p.id_produto
+INNER JOIN Categoria as c
+ON p.id_categoria = c.id_categoria;
 ```
 
 ## Consulta 2
 
 **Pergunta:**
 
-> Escreva aqui.
+> Qual é o detalhe financeiro dos itens? compondo: Categoria, Produto e quantidade de venda na primeira transação.
 
 ```sql
--- Cole aqui.
+SELECT
+c.nome_categoria,
+p.nome_produto,
+iv.quantidade,
+v.valor_total
+FROM Categoria AS c
+INNER JOIN Produto as p
+ON c.id_categoria = p.id_categoria
+INNER JOIN Item_venda AS iv
+ON p.id_produto = iv.id_produto
+INNER JOIN Venda as v
+ON iv.id_venda = v.id_venda
+WHERE v.id_venda = 1;
 ```
 
 ---
@@ -233,15 +276,26 @@ Crie duas consultas envolvendo pelo menos três tabelas.
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais produtos da Categoria Cobras já foram vendidos?
 
 ```sql
--- Cole aqui.
+SELECT
+v.id_venda,
+p.nome_produto,
+c.nome_categoria
+FROM Item_venda AS iv
+INNER JOIN Produto as p
+ON iv.id_produto = p.id_produto
+INNER JOIN Categoria as c
+ON p.id_categoria = c.id_categoria
+INNER JOIN Venda AS v
+ON iv.id_venda = v.id_venda
+WHERE c.nome_categoria = 'Cobras';
 ```
 
 **Explique o filtro:**
 
-> Escreva aqui.
+> Dito isso temos uma logica onde o Banco constroi uma tabela temporaria unindo todos os cupons e os produtos e também as categorias do ON e em seguida o WHERE filtra e deixa tudo que não estiver com o nome_categoria = salgado fora da lista final.
 
 ---
 
@@ -249,10 +303,17 @@ Crie duas consultas envolvendo pelo menos três tabelas.
 
 **Pergunta:**
 
-> Escreva aqui.
+> Qual a Lista de todos os produtos com suas categorias, ordenada dos mais caros para os mais baratos?
 
 ```sql
--- Cole aqui.
+SELECT 
+    p.nome_produto, 
+    c.nome_categoria, 
+    p.preco_venda
+FROM Produto AS p
+INNER JOIN Categoria AS c
+    ON p.id_categoria = c.id_categoria
+ORDER BY p.preco_venda DESC;
 ```
 
 ---
@@ -263,15 +324,21 @@ Crie uma consulta que combine tabelas e utilize ao menos uma função de agrega�
 
 **Pergunta:**
 
-> Escreva aqui.
+> Qual foi a quantidade total vendida de cada produto registrado nos cupons?
 
 ```sql
--- Cole aqui.
+SELECT 
+    p.nome_produto, 
+    SUM(iv.quantidade) AS total_unidades_vendidas
+FROM Produto AS p
+INNER JOIN Item_Venda AS iv
+    ON p.id_produto = iv.id_produto
+GROUP BY p.nome_produto;
 ```
 
 **Explique o agrupamento:**
 
-> Escreva aqui.
+> Como o mesmo produto pode ser vendido em 10 cupons diferentes, a tabela Item_venda terá 10 linhas para ele O GROUP BY aglomeração todas as linhas que têm o mesmo nome_produto num bloco só, enquanto a agregação SUM soma os numeros da coluna de quantidade dentro desse bloco, revelando quantos itens daquele produto sairam da loja total
 
 ---
 
@@ -297,7 +364,7 @@ As consultas devem responder perguntas reais sobre o banco.
 
 **Pergunta:**
 
-> Escreva aqui.
+> Qual é o faturamento total da loja dividido por categorias de produtos?
 
 ```sql
 -- Cole aqui.
@@ -305,7 +372,15 @@ As consultas devem responder perguntas reais sobre o banco.
 
 **Por que ela é útil?**
 
-> Escreva aqui.
+> SELECT 
+    c.nome_categoria, 
+    SUM(p.preco_venda * iv.quantidade) AS faturamento_por_categoria
+FROM Categoria AS c
+INNER JOIN Produto AS p
+    ON c.id_categoria = p.id_categoria
+INNER JOIN Item_Venda AS iv
+    ON p.id_produto = iv.id_produto
+GROUP BY c.nome_categoria;
 
 ---
 
@@ -314,7 +389,12 @@ As consultas devem responder perguntas reais sobre o banco.
 Escolha uma consulta produzida nesta Sprint.
 
 ```sql
--- Cole aqui.
+SELECT 
+    p.nome_produto, 
+    c.nome_categoria 
+FROM Produto AS p
+INNER JOIN Categoria AS c
+    ON p.id_categoria = c.id_categoria;
 ```
 
 Explique:
@@ -333,8 +413,10 @@ Explique:
 
 **Consulta executada:**
 
-```sql
--- Cole aqui.
+```
+SELECT p.nome_produto, c.nome_categoria 
+FROM Produto AS p 
+INNER JOIN Categoria AS c ON p.id_categoria = c.id_categoria;
 ```
 
 **Resultado esperado:**
