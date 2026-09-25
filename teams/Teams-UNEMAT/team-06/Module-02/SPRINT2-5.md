@@ -36,12 +36,12 @@ O aluno deverá continuar utilizando o mesmo banco do `Module-1`.
 
 **Nome completo:**
 
-> Escreva aqui.
+> Mariano Lino da Silva Neto
 
 **Banco utilizado:**
 
-```text
-
+```
+BD_Conveniencia
 ```
 
 ---
@@ -72,11 +72,11 @@ Neste exemplo:
 
 Defina pelo menos cinco perguntas do seu domínio que possam ser resolvidas com subconsultas.
 
-1. 
-2. 
-3. 
-4. 
-5. 
+1. Quais produtos custam mais do que o preço médio de todos os produtos cadastrados na conveniência?
+2. Quais produtos do catalogo já foram comercializados em pelo menos um cupom fiscal?
+3. Quais produtos do catálogo nunca saíram no caixa?
+4. Quais categorias possuem ao menos um produto com valor de venda superior a R$20,00?
+5. Qual é o produto mais caro cadastrado na loja de conveniência? 
 
 ---
 
@@ -86,19 +86,26 @@ Crie uma consulta utilizando uma comparação com resultado agregado.
 
 **Pergunta:**
 
-> Escreva aqui.
+>  Quais produtos custam mais do que o preço médio de todos os produtos cadastrados na conveniência?
 
 ```sql
--- Cole aqui.
+SELECT 
+nome_produto,
+preco_venda
+FROM Produto
+WHERE preco_venda > (
+SELECT AVG(preco_venda)
+FROM Produto
+);
 ```
 
 **Explique primeiro a consulta interna:**
 
-> Escreva aqui.
+> A subconsulta é executada primeiro para fazer uma varredura na tabela produto pra ai ela calcular a media aritmética de todos os preços cadastrados e depois retornar um valor numérico
 
 **Depois explique a consulta externa:**
 
-> Escreva aqui.
+> e a consulta externa vai receber o valor numérico e vai utilizar como linha de corte no WHERE voltando apenas os produtos onde preco_venda seja maior que essa media calculada
 
 ---
 
@@ -119,15 +126,22 @@ WHERE id_cliente IN (
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais produtos do catalogo já foram comercializados em pelo menos um cupom fiscal?
 
 ```sql
--- Cole aqui.
+SELECT
+nome_produto,
+preco_venda
+FROM Produto
+WHERE id_produto IN (
+SELECT DISTINCT id_produto
+FROM Item_venda
+);
 ```
 
 **Explique:**
 
-> Escreva aqui.
+> nesse caso a Sub vai criar uma lista contendo todos os id_produto que vão aparecer na tabela Item_venda e em sequencia ela a consulta externa vai verificar produto por produto da tabela Produto e se o id_produto estiver na lista ele vai ser exibido no resultado.
 
 ---
 
@@ -135,15 +149,23 @@ WHERE id_cliente IN (
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais produtos do catálogo nunca saíram no caixa?
 
 ```sql
--- Cole aqui.
+SELECT
+nome_produto,
+preco_venda
+FROM Produto
+WHERE id_produto NOT IN (
+SELECT distinct id_produto
+FROM Item_venda
+WHERE id_produto is NOT NULL
+);
 ```
 
 **Que registros você está procurando?**
 
-> Escreva aqui.
+> Estamos procurando produtos que não tem saido do estoque, itens que estão no cadastro da tabela produto mas não possuem nenhum registro na tabela Item_venda 
 
 ---
 
@@ -155,10 +177,18 @@ WHERE id_cliente IN (
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais categorias possuem ao menos um produto com valor de venda superior a R$20,00?
 
 ```sql
--- Cole aqui.
+SELECT
+c.nome_categoria
+FROM Categoria AS c
+WHERE EXISTS (
+SELECT 1
+FROM Produto AS p
+WHERE p.id_categoria = c.id_categoria
+AND p.preco_venda > 20.00
+);
 ```
 
 ---
@@ -167,15 +197,22 @@ WHERE id_cliente IN (
 
 **Pergunta:**
 
-> Escreva aqui.
+> Qual é a categoria cadastrada no sistema que não possui nenhum produto associado a ele
 
 ```sql
--- Cole aqui.
+SELECT
+c.nome_categoria
+FROM Categoria AS c
+WHERE NOT EXISTS (
+SELECT 1
+FROM Produto AS p
+WHERE p.id_categoria = c.id_categoria
+);
 ```
 
 **Explique a diferença em relação a `EXISTS`:**
 
-> Escreva aqui.
+> a diferença base acaba sendo que o EXISTS valida se a nossa consulta retornou pelo menos um registro, já no NOT ele basicamente valida se a consulta voltou um conjunto vazio pra gente.
 
 ---
 
@@ -183,15 +220,22 @@ WHERE id_cliente IN (
 
 **Pergunta:**
 
-> Escreva aqui.
+> Qual é o Produto de maior valor cadastrado na loja?
 
 ```sql
--- Cole aqui.
+SELECT
+nome_produto,
+preco_venda
+FROM Produto
+WHERE preco_venda = (
+SELECT MAX(preco_venda)
+FROM Produto
+);
 ```
 
 **Explique:**
 
-> Escreva aqui.
+> a subconsulta descobre qual é valor maximo absoluto contido na coluna preco_venda do Produto e depois filtra esse valor pra descobrir qual o teto de preço.
 
 ---
 
@@ -203,15 +247,24 @@ Uma subconsulta correlacionada depende de valores da consulta externa.
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais produtos tem o preço de venda superior a media de preços da sua propria categoria
 
 ```sql
--- Cole aqui.
+SELECT
+p1.nome_produto,
+p1.preco_venda,
+p1.id_categoria
+FROM Produto as p1
+WHERE p1.preco_venda > (
+SELECT AVG(p2.preco_venda)
+FROM Produto AS p2
+WHERE p2.id_categoria = p1.id_categoria
+);
 ```
 
 **Qual coluna da consulta externa é utilizada pela subconsulta?**
 
-> Escreva aqui.
+> A coluna p1.id_categoria.
 
 ---
 
@@ -220,51 +273,75 @@ Uma subconsulta correlacionada depende de valores da consulta externa.
 Escolha duas perguntas e resolva cada uma utilizando:
 
 ```text
-a) JOIN
+a) JOIN 
 b) SUBQUERY
 ```
 
 ## Pergunta 1
 
-> Escreva aqui.
+> Quais são os produtos que pertecem a categoria salgados?
 
 ### JOIN
 
 ```sql
--- Cole aqui.
+SELECT
+p.nome_produto,
+c.nome_categoria
+FROM Produto AS p
+INNER JOIN Categoria AS c
+ON p.id_categoria = c.id_categoria
+WHERE c.nome_categoria = 'Salgados';
 ```
 
 ### SUBQUERY
 
 ```sql
--- Cole aqui.
+SELECT 
+nome_produto
+FROM Produto
+WHERE id_categoria IN (
+SELECT id_categoria
+FROM Categoria
+WHERE nome_categoria = 'Salgados'
 ```
 
 ### Qual abordagem ficou mais compreensível?
 
-> Escreva aqui e justifique.
+> Em termos de complexidade acho que a SUBQUERY fica bem mais simples da pessoa fazer, fora que deixa o Layout bem mais limpo, mas se formos querer o maximo de informações possiveis, acho que a JOIN fica bem melhor, então vai variar bastante para oq você está precisando naquele momento.
 
 ---
 
 ## Pergunta 2
 
-> Escreva aqui.
+> Quais Produtos nunca foram Vendidos?
 
 ### JOIN
 
 ```sql
--- Cole aqui.
+SELECT 
+p.nome_produto
+FROM Produto AS p
+LEFT JOIN Item_venda AS iv
+ON p.id_produto = iv.id_produto
+WHERE iv.id_produto is NULL;
 ```
 
 ### SUBQUERY
 
 ```sql
--- Cole aqui.
+SELECT
+p.nome_produto
+FROM Produto AS p
+WHERE NOT EXISTS (
+SELECT 1
+FROM Item_venda AS iv
+WHERE iv.id_produto = p.id_produto
+);
 ```
 
 ### Comparação
 
-> Escreva aqui.
+> NOT EXISTS deixa mais expressivo a mostra das informações e a LEFT JOIN você precisa ter um pouco de conhecimento a mais pra poder usar pq tem um raciocínio que você precisa fazer na hora da junção. 
 
 ---
 
@@ -290,7 +367,12 @@ O `SPRINT2-5.sql` deverá conter no mínimo:
 Escolha uma subconsulta.
 
 ```sql
--- Cole aqui.
+SELECT nome_produto, preco_venda
+FROM Produto
+WHERE preco_venda > (
+SELECT AVG(preco_venda)
+FROM Produto
+);
 ```
 
 Responda:
@@ -299,7 +381,9 @@ Responda:
 2. Qual valor ou conjunto de valores ela retorna?
 3. Como esse resultado é utilizado pela consulta externa?
 
-> Escreva aqui.
+> 1. A consulta interna: SELECT AVG(preco_venda) FROM Produto.
+2. ele volta um conjunto de valores medio da cada produto, no caso 25, 15 e 22
+3. Ela substitui o bloco da subconsulta pelo numero retornado e avalia a condição do WHERE para cada linha da tabela Produto, mostrando só quem tá acima dela. 
 
 ---
 
@@ -310,16 +394,20 @@ Execute uma consulta e altere temporariamente um valor de filtro.
 **Consulta original:**
 
 ```sql
--- Cole aqui.
+SELECT nome_produto, preco_venda
+FROM Produto
+WHERE preco_venda > (
+SELECT AVG(preco_venda) + 10.00 FROM Produto
+);
 ```
 
 **Alteração realizada:**
 
-> Escreva aqui.
+> Adicionamos mais 10 de valor medio na subconsulta
 
 **Mudança observada:**
 
-> Escreva aqui.
+> Com essa mudança tivemos menos produtos aparecendo, visto que agora tivemos uma nota de corte bem maior do que na primeira tentativa.
 
 ---
 
@@ -371,20 +459,20 @@ USE nome_do_banco;
 
 # 17. Checklist
 
-- [ ] utilizei o banco do projeto;
-- [ ] criei subconsulta com comparação;
-- [ ] utilizei `IN`;
-- [ ] utilizei `NOT IN`;
-- [ ] utilizei `EXISTS`;
-- [ ] utilizei `NOT EXISTS`;
-- [ ] utilizei `MAX` ou `MIN`;
-- [ ] criei subconsulta correlacionada;
-- [ ] resolvi duas perguntas usando JOIN e SUBQUERY;
-- [ ] expliquei o raciocínio;
-- [ ] testei no MySQL Workbench;
-- [ ] consigo explicar as consultas presencialmente;
-- [ ] salvei `SPRINT2-5.md`;
-- [ ] salvei `SPRINT2-5.sql`.
+- [x] utilizei o banco do projeto;
+- [x] criei subconsulta com comparação;
+- [x] utilizei `IN`;
+- [x] utilizei `NOT IN`;
+- [x] utilizei `EXISTS`;
+- [x] utilizei `NOT EXISTS`;
+- [X] utilizei `MAX` ou `MIN`;
+- [x] criei subconsulta correlacionada;
+- [X] resolvi duas perguntas usando JOIN e SUBQUERY;
+- [x] expliquei o raciocínio;
+- [x] testei no MySQL Workbench;
+- [x] consigo explicar as consultas presencialmente;
+- [X] salvei `SPRINT2-5.md`;
+- [X] salvei `SPRINT2-5.sql`.
 
 ---
 
