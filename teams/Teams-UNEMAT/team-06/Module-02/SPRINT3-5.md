@@ -29,12 +29,12 @@ O aluno deverá compreender que uma `VIEW` representa uma consulta armazenada qu
 
 **Nome completo:**
 
-> Escreva aqui.
+> Mariano Lino da Silva Neto
 
 **Banco utilizado:**
 
-```text
-
+```
+db_conveniencia
 ```
 
 ---
@@ -45,9 +45,9 @@ Identifique pelo menos três consultas das Sprints anteriores que são important
 
 | Consulta | Por que é útil? | Será transformada em VIEW? |
 |---|---|---|
-|  |  |  |
-|  |  |  |
-|  |  |  |
+| Detalhe do catalogo com nome dos produtos e também suas categorias | Evita ter que refazer o JOIN entre produto e Categoria | Sim |
+| Resumo de vendas e faturamento gerado por cada categoria | Permite acompanhar rapidamente quais categorias dão mais lucro para a loja | Sim |
+| Relatório de Produtos com estoque baixo | Permite que o repositor de estoque identifique rapidamente quais itens precisam de reposição | Sim |
 |  |  |  |
 
 ---
@@ -83,28 +83,43 @@ INNER JOIN pedido AS p
 
 **Nome da VIEW:**
 
-```text
-
+```
+vw_detalhes_produtos
 ```
 
 **Pergunta que ela representa:**
 
-> Escreva aqui.
+> Como listar todos os produtos do catalogo exibindo o nome de sua respectiva categoria no lugar do ID numérico?
 
 **SQL:**
 
 ```sql
--- Cole aqui.
+CREATE VIEW vw_detalhes_produtos AS
+SELECT
+p.id_produto,
+p.codigo_barras,
+p.nome_produto,
+p.preco_venda,
+p.quantidade_estoque,
+c.nome_categoria
+FROM Produto AS p
+INNER JOIN Categoria AS c
+ON p.id_categoria = c.id_categoria;
 ```
 
 **Tabelas utilizadas:**
 
-> Escreva aqui.
+> Produto e Categoria
 
 **Como consultar essa VIEW?**
 
 ```sql
--- Cole aqui.
+SELECT
+nome_produto,
+preco_venda,
+nome_categoria
+FROM vw_detalhes_produtos
+WHERE nome_categoria = 'Salgados';
 ```
 
 ---
@@ -119,15 +134,26 @@ Esta VIEW deverá possuir, quando aplicável:
 
 **Pergunta:**
 
-> Escreva aqui.
+> Qual é a quantidade total de itens vendidos e o faturamento total acumulado agrupado por categoria de produto?
 
 ```sql
--- Cole aqui.
+CREATE VIEW vw_resumo_vendas_categoria AS
+SELECT 
+    c.nome_categoria,
+    COUNT(DISTINCT p.id_produto) AS total_produtos_distintos,
+    COALESCE(SUM(iv.quantidade), 0) AS total_itens_vendidos,
+    COALESCE(SUM(iv.quantidade * p.preco_venda), 0.00) AS faturamento_total
+FROM Categoria AS c
+LEFT JOIN Produto AS p 
+    ON c.id_categoria = p.id_categoria
+LEFT JOIN Item_venda AS iv 
+    ON p.id_produto = iv.id_produto
+GROUP BY c.id_categoria, c.nome_categoria;
 ```
 
 **Explique:**
 
-> Escreva aqui.
+> nossa View vai juntar as tabelas Categoria com produto e Item_venda usando o LEFT JOIN garantindo que nenhuma categoria sem vendas apareça e em seguida ela vai agrupar por categorias usando a COUNT e a SUM multiplicando quantidade x preço para obter a receita bruta por setor
 
 ---
 
@@ -149,17 +175,26 @@ pagamentos pendentes
 
 **Nome da VIEW:**
 
-```text
-
+```
+vw_estoque_critico
 ```
 
 ```sql
--- Cole aqui.
+CREATE VIEW vw_estoque_critico AS
+SELECT
+p.id_produto,
+p.nome_produto,
+p.quantidade_estoque,
+c.nome_categoria
+FROM Produto AS p
+INNER JOIN Categoria AS c
+ON p.id_categoria = c.id_categoria
+WHERE p.quantidade_estoque < 20;
 ```
 
 **Por que essa VIEW é útil?**
 
-> Escreva aqui.
+> é uma ferramenta essencial para o gerenciamento operacional do estoque da conveniencia, assim o nosso gerente não vai precisar digitar comando complexos no sistema, ele só vai precisar saber dar um SELECT basico na view para ver instantaneamente quais produtos tem menos de 20 unidades. 
 
 ---
 
@@ -183,12 +218,19 @@ WHERE ...;
 **SQL executado:**
 
 ```sql
--- Cole aqui.
+-- Sem filtro --
+SELECT * FROM vw_detalhes_produtos;
+-- Com Filtro --
+SELECT
+nome_produto,
+quantidade_estoque
+FROM vw_detalhes_produtos
+wHERE quantidade_estoque >= 50;
 ```
 
 **Resultado observado:**
 
-> Escreva aqui.
+> O Workbench trata a view exatamente como se fosse uma tabela que já existia no banco, por isso a consulta retorna apenas os produtos com maior ou igual a 50 unidades.
 
 ---
 
@@ -207,18 +249,43 @@ Pode ser:
 **VIEW original:**
 
 ```sql
--- Cole aqui.
+CREATE VIEW vw_estoque_critico AS
+SELECT
+p.id_produto,
+p.nome_produto,
+p.quantidade_estoque,
+c.nome_categoria
+FROM Produto AS p
+INNER JOIN Categoria AS c
+ON p.id_categoria = c.id_categoria
+WHERE p.quantidade_estoque < 20;
 ```
 
 **Nova versão:**
 
 ```sql
-CREATE OR REPLACE VIEW ...
+CREATE OR REPLACE VIEW vw_estoque_critico AS
+SELECT
+p.id_produto,
+p.codigo_barras,
+p.nome_produto,
+p.preco_venda,
+p.quantidade_estoque,
+c.nome_categoria,
+CASE
+WHEN p.quantidade_estoque = 0 THEN 'SEM ESTOQUE'
+WHEN p.quantidade_estoque <= 10 THEN 'ALERTA VERMELHO'
+ELSE 'REPOSIÇÃO NECESSARIA'
+END AS situacao_estoque
+FROM Produto AS p
+INNER JOIN Categoria AS c
+ON p.id_categoria = c.id_categoria 
+WHERE p.quantidade_estoque <= 35;
 ```
 
 **O que mudou?**
 
-> Escreva aqui.
+> Mudei o limite de 20 para 35, coloquei as colunas codigo_barras e preco_venda e para finalizar colocamos CASE para indicar a colune situacao_estoque
 
 ---
 
@@ -240,13 +307,18 @@ DROP VIEW vw_teste;
 **Código utilizado:**
 
 ```sql
--- Cole aqui.
+-- view temporaria --
+CREATE VIEW vw_amor_temporario AS
+SELECT id_produto, nome_produto FROM Produto;
+
+-- removendo o amor --
+DROP VIEW vw_amor_temporario;
 ```
 
 **Qual a diferença entre `DROP VIEW` e `DROP TABLE`?**
 
-> Escreva aqui.
-
+> o VIEW apaga apenas a definição da tabela virtual sem perder nenhum dado fisico que seja real visto que esses dados estão na tabela base.
+e o TABLE é a tabela onde esses dados realmente estão armazenados na tabela do disco de forma permanente.
 ---
 
 # 10. Validando as Views
@@ -260,9 +332,9 @@ WHERE Table_type = 'VIEW';
 
 **Views encontradas:**
 
-1. 
-2. 
-3. 
+1. vw_detalhes_produtos
+2. vw_resumo_vendas_categoria
+3. vw_estoque_critico
 
 ---
 
@@ -276,19 +348,28 @@ Faça um teste:
 
 **VIEW testada:**
 
-```text
-
+```
+vw_detalhes_produtos
 ```
 
 **Alteração realizada:**
 
 ```sql
--- Cole aqui.
+-- consulta inicial --
+SELECT nome_produto, preco_venda FROM vw_detalhes_produtos WHERE id_produto = 1;
+
+-- update --
+UPDATE Produto
+set preco_venda = 10.50
+WHERE id_produto = 1;
+
+-- consulta final --
+SELECT nome_produto, preco_venda FROM vw_detalhes_produtos WHERE id_produto = 1;
 ```
 
 **Resultado observado:**
 
-> Escreva aqui.
+> A gente mudou o valor do produto que ficava no ID 1 de 8 para 10.50 e com isso a gente confirma que a view não guarda copias físicas dos dados só executa a consulta em tempo real na tabela base
 
 ---
 
@@ -297,7 +378,17 @@ Faça um teste:
 Escolha uma VIEW.
 
 ```sql
--- Cole aqui a definição.
+CREATE VIEW vw_detalhes_produtos AS
+SELECT
+p.id_produto,
+p.codigo_barras,
+p.nome_produto,
+p.preco_venda,
+p.quantidade_estoque,
+c.nome_categoria
+FROM Produto AS p
+INNER JOIN Categoria AS c
+ON p.id_categoria = c.id_categoria;
 ```
 
 Explique:
@@ -308,7 +399,11 @@ Explique:
 4. qual problema resolve;
 5. o que muda se os dados das tabelas originais forem alterados.
 
-> Escreva aqui.
+> 1. Depende das tabelas Produto e Categoria
+ 2. Ultiliza INNER JOIN ligando Produto.id_produto com Categoria.id_categoria
+ 3. Id do produto, codigo de barras, nome do produto, preco de venda, estoque e nome da categoria
+ 4. Tira a necessidade de ficar repetindo os comandos JOIN.
+ 5. Qualquer inserção que você fizer nas tabelas bases serão automaticamente refletidas nas respostas da VIEW.
 
 ---
 
@@ -384,18 +479,18 @@ COMPREENDER
 
 # 17. Checklist
 
-- [ ] utilizei o banco do projeto;
-- [ ] criei pelo menos 3 Views;
-- [ ] pelo menos uma View usa JOIN;
-- [ ] pelo menos uma View usa agregação ou resumo;
-- [ ] consultei as Views;
-- [ ] utilizei `CREATE OR REPLACE VIEW`;
-- [ ] pratiquei `DROP VIEW`;
-- [ ] validei as Views;
-- [ ] testei mudança em tabela base;
-- [ ] compreendo de onde vêm os dados de cada View;
-- [ ] salvei `SPRINT3-5.md`;
-- [ ] salvei `SPRINT3-5.sql`.
+- [x] utilizei o banco do projeto;
+- [x] criei pelo menos 3 Views;
+- [x] pelo menos uma View usa JOIN;
+- [X] pelo menos uma View usa agregação ou resumo;
+- [X] consultei as Views;
+- [X] utilizei `CREATE OR REPLACE VIEW`;
+- [X] pratiquei `DROP VIEW`;
+- [x] validei as Views;
+- [x] testei mudança em tabela base;
+- [x] compreendo de onde vêm os dados de cada View;
+- [x] salvei `SPRINT3-5.md`;
+- [x] salvei `SPRINT3-5.sql`.
 
 ---
 
