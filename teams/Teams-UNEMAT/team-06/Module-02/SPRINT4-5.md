@@ -41,12 +41,11 @@ O objetivo não é apenas criar rotinas que executem, mas entender:
 
 **Nome completo:**
 
-> Escreva aqui.
-
+> Mariano Lino da Silva Neto
 **Banco utilizado:**
 
-```text
-
+```
+DB_Conveniencia
 ```
 
 ---
@@ -57,10 +56,10 @@ Defina rotinas úteis ao seu sistema.
 
 | Rotina | Tipo | Entrada | Saída | Objetivo |
 |---|---|---|---|---|
-|  | Procedure |  |  |  |
-|  | Procedure |  |  |  |
-|  | Function |  |  |  |
-
+| sp_baixar_estoque | Procedure | p_id_produto, p_qtd_comprada | Sucesso ou mensagem de erro | Verificar se no estoque tem produtos suficientes |
+| sp_produtos_por_categoria | Procedure | p_nome_categoria | Lista de produtos | facilita a busca pelo produto filtrando com base no nome da categoria |
+| fn_aplicar_desconto | Function | p_valor, p_porcentagem | Valor numérico  | Calcular o preço final de um produto aplicando um percentual de desconto |
+|sp_total_vendas_periodo|Procedure|Nenhuma|p_total_arrecadado(OUT)|Somar e devolver o valor financeiro total de todas as vendas que foram realizadas|
 ---
 
 # 3. DELIMITER
@@ -82,7 +81,7 @@ DELIMITER ;
 
 **Explique por que o `DELIMITER` é utilizado:**
 
-> Escreva aqui.
+> Ele serve para alterar temporariamente o caractere que finaliza os comandos no MYSQL, como procedures e Functions possuem comandos internos finalizados pelo: ;, a gente precisa mudar o delimitador global para fazer o banco ler a rotina inteira de uma vez só, indo do Begin até o END sem interromper a criação na primeira linha.
 
 ---
 
@@ -92,29 +91,48 @@ Crie uma Procedure que receba pelo menos um parâmetro.
 
 **Objetivo:**
 
-> Escreva aqui.
+> Dar baixa no estoque de algum produto no momento da venda, se houver quantidade suficiente disponivel.
 
 **Parâmetro de entrada:**
 
-```text
+```
+p_id_produto (INT), p_qtd_comprada
 
 ```
 
 **SQL:**
 
 ```sql
--- Cole aqui.
+DELIMITER //
+CREATE PROCEDURE sp_baixar_estoque(IN p_id_produto INT, IN p_qtd_comprada INT)
+BEGIN
+DECLARE v_estoque_atual INT;
+
+SELECT quantidade_estoque INTO v_estoque_atual
+FROM Produto
+WHERE id_produto = p_id_produto;
+
+IF v_estoque_atual >= p_qtd_comprada THEN
+UPDATE Produto
+SET quantidade_estoque = quantidade_estoque - p_qtd_comprada
+WHERE id_produto = p_id_produto;
+SELECT 'Sucesso: Estoque atualizado!' AS Status_Operacao;
+ELSE
+SELECT 'Erro: Estoque insuficiente para realizar essa venda.' AS Status_Operacao;
+END IF;
+END //
+DELIMITER ;
 ```
 
 **Execução:**
 
 ```sql
-CALL ...
+CALL sp_baixar_estoque(1, 5); 
 ```
 
 **Resultado esperado:**
 
-> Escreva aqui.
+> Ele vai checar e subtrair produtos do estoque 1 e se tiver mais de 5 ele vai conseguir remover com sucesso, se tiver menos que 5 ele não vai tirar nada e vai dar erro.
 
 ---
 
@@ -135,16 +153,29 @@ listar produtos de determinada categoria
 
 **Objetivo:**
 
-> Escreva aqui.
+> Lista de forma eficiente todos os produtos que pertecem a uma determinada categoria apenas com o nome dela, sem usar o JOIN.
 
 ```sql
--- Cole aqui.
+DELIMITER //
+CREATE PROCEDURE sp_produtos_por_categoria(IN p_nome_categoria VARCHAR(50))
+BEGIN
+SELECT 
+p.id_produto,
+p.nome_produto,
+p.preco_venda,
+p.quantidade_estoque
+FROM Produto p
+INNER JOIN Categoria c ON p.id_categoria = c.id_categoria
+WHERE c.nome_categoria = p_nome_categoria;
+END //
+
+DELIMITER ;
 ```
 
 **Execução:**
 
 ```sql
-CALL ...
+CALL sp_produtos_por_categoria('Salgados');
 ```
 
 ---
@@ -175,7 +206,16 @@ SELECT @total;
 **SQL do seu projeto:**
 
 ```sql
--- Cole aqui.
+DELIMITER //
+CREATE PROCEDURE sp_total_vendas_periodo(OUT p_total_arrecadado DECIMAL(10,2))
+BEGIN
+SELECT SUM(valor_total) INTO p_total_arrecadado
+FROM Venda;
+END //
+DELIMITER ;
+
+CALL sp_total_vendas_periodo(@meu_faturamento);
+SELECT @meu_faturamento AS Faturamento_Total_Loja;
 ```
 
 Caso não seja aplicável, justifique:
@@ -203,30 +243,48 @@ END;
 
 **Objetivo:**
 
-> Escreva aqui.
+> Calcular de forma dinamica o valor de um produto caso a loja queira aplicar uma porcentagem de desconto
 
 **Parâmetro recebido:**
 
-```text
-
+```
+p_valor DECIMAL(10,2), p_porcentagem DECIMAL(5,2)
 ```
 
 **Valor retornado:**
 
-```text
-
+```
+DECIMAL(10,2) (o valor final após aplicar o desconto)
 ```
 
 **SQL:**
 
 ```sql
--- Cole aqui.
+DELIMITER //
+CREATE FUNCTION fn_aplicar_desconto(p_valor DECIMAL(10,2), p_porcentagem DECIMAL(5,2))
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+DECLARE v_valor_final DECIMAL(10,2);
+
+IF p_porcentagem > 0 THEN
+SET v_valor_final = p_valor - (p_valor *(p_porcentagem / 100));
+ELSE 
+SET v_valor_final = p_valor;
+END IF;
+RETURN v_valor_final;
+END //
+DELIMITER ;
 ```
 
 **Exemplo de uso:**
 
 ```sql
-SELECT nome_funcao(...);
+SELECT 
+nome_produto,
+preco_venda AS preco_original,
+fn_aplicar_desconto(preco_venda, 10.00) AS preco_com_10_porcento_desconto
+FROM Produto; 
 ```
 
 ---
@@ -247,10 +305,17 @@ END IF;
 
 **Regra de negócio implementada:**
 
-> Escreva aqui.
+> Vamos usar a procedure sp_baixar_estoque aqui pra isso então, essa regra de negocio vai proteger a integridade dos dados da loja, ou seja: O caixa não vai poder vender um produto que não tem na pratileira, já que não tem como deixar a coluna quantidade_estoque negativa.
 
 ```sql
--- Cole aqui.
+IF v_estoque_atual >= p_qtd_comprada THEN
+UPDATE Produto
+SET quantidade_estoque = quantidade_estoque - p_qtd_comprada
+WHERE id_produto = p_id_produto;
+SELECT 'Sucesso: Estoque atualizado!' AS Status_Operacao;
+ELSE
+SELECT 'Erro: Estoque insuficiente para realizar essa venda.' AS Status_Operacao;
+END IF;
 ```
 
 ---
@@ -261,15 +326,15 @@ Explique com suas palavras.
 
 ## Procedure
 
-> Escreva aqui.
+> Ele basicamente é um bloco de comandos onde o SQL armazena uma serie de ações, onde os procedures podem inserir, atualizar e consultar os dados, e ele não vão necessariamente retornar alguma coisa, e eles são utilizados usando o comando CALL.
 
 ## Function
 
-> Escreva aqui.
+> Ela é uma rotina que se foca exclusivamente em cálculos de dados de diferentes procedures, onde uma function tem que retornar um único valor obrigatório, ela não tem como ser chamada pela CALL mas sim pela WHERE e SELECT
 
 ## Quando você utilizaria cada uma no seu projeto?
 
-> Escreva aqui.
+> As procedures serão usadas para automatizar regras de negocio e também processos, já a FUNCTIOn vai ser usada para a facilidade na leitura dos dados, visto que é melhor automatizar esses processos do que deixar pra uma pessoa que talvez possa cometer erros.
 
 ---
 
@@ -280,35 +345,35 @@ Para cada rotina, execute pelo menos dois testes com parâmetros diferentes.
 ## Procedure 1
 
 ```sql
-CALL ...;
-CALL ...;
+CALL sp_baixar_estoque(1, 5);
+CALL sp_baixar_estoque(1, 99999);
 ```
 
 **Resultados:**
 
-> Escreva aqui.
+> O primeiro obviamente vai dar certo pq tem itens suficientes, mas o segundo CALL não vai dar certo por não ter estoque o suficiente para ser tirado.
 
 ## Procedure 2
 
 ```sql
-CALL ...;
-CALL ...;
+CALL sp_produtos_por_categoria('Salgados');
+CALL sp_produtos_por_categoria('Bebidas');
 ```
 
 **Resultados:**
 
-> Escreva aqui.
+> A primeira chamada me entrega todos os itens que são da categoria salgados de forma perfeita, onde vamos ter os itens Pão frito e Salgado assado, enquanto no segundo CALL vamos ter as bebidas que serão o Refrigerante de 2l e o Suco Natural.
 
 ## Function
 
 ```sql
-SELECT ...;
-SELECT ...;
+SELECT fn_aplicar_desconto(100.00,15.00) AS Teste_15_Porcento;
+SELECT fn_aplicar_desconto(50.00, 0.00) AS Teste_Zero_Porcento;
 ```
 
 **Resultados:**
 
-> Escreva aqui.
+> De modo pratico os dois descontos estão funcionando de forma perfeita, no primeiro ele de forma correta retira o desconto de 15 reais ficando apenas 85, enquanto no segundo teste ele deixa o valor original sem ser mexido, visto que nenhum desconto foi aplicado.
 
 ---
 
@@ -324,12 +389,30 @@ Escolha uma rotina e prepare-se para:
 
 **Rotina escolhida:**
 
-```text
-
+```
+sp_baixar_estoque
 ```
 
 ```sql
--- Cole aqui.
+DELIMITER //
+CREATE PROCEDURE sp_baixar_estoque(IN p_id_produto INT, IN p_qtd_comprada INT)
+BEGIN
+DECLARE v_estoque_atual INT;
+
+SELECT quantidade_estoque INTO v_estoque_atual
+FROM Produto
+WHERE id_produto = p_id_produto;
+
+IF v_estoque_atual >= p_qtd_comprada THEN
+UPDATE Produto
+SET quantidade_estoque = quantidade_estoque - p_qtd_comprada
+WHERE id_produto = p_id_produto;
+SELECT 'Sucesso: Estoque atualizado!' AS Status_Operacao;
+ELSE
+SELECT 'Erro: Estoque insuficiente para realizar essa venda.' AS Status_Operacao;
+END IF;
+END //
+DELIMITER ;
 ```
 
 ---
@@ -407,18 +490,18 @@ COMPREENDER
 
 # 16. Checklist
 
-- [ ] utilizei o banco do projeto;
-- [ ] compreendi o uso do `DELIMITER`;
-- [ ] criei pelo menos 2 Procedures;
-- [ ] criei uma Function;
-- [ ] utilizei parâmetro `IN`;
-- [ ] utilizei `OUT` quando aplicável;
-- [ ] utilizei `IF/ELSE`;
-- [ ] testei cada rotina;
-- [ ] executei parâmetros diferentes;
-- [ ] consigo explicar todas as rotinas;
-- [ ] salvei `SPRINT4-5.md`;
-- [ ] salvei `SPRINT4-5.sql`.
+- [x] utilizei o banco do projeto;
+- [x] compreendi o uso do `DELIMITER`;
+- [x] criei pelo menos 2 Procedures;
+- [x] criei uma Function;
+- [x] utilizei parâmetro `IN`;
+- [x] utilizei `OUT` quando aplicável;
+- [x] utilizei `IF/ELSE`;
+- [x] testei cada rotina;
+- [x] executei parâmetros diferentes;
+- [x] consigo explicar todas as rotinas;
+- [x] salvei `SPRINT4-5.md`;
+- [x] salvei `SPRINT4-5.sql`.
 
 ---
 
