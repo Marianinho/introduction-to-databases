@@ -42,7 +42,8 @@ ROLLBACK
 
 **Banco utilizado:**
 
-```DB_Conveniencia
+```
+DB_Conveniencia
 ```
 
 ---
@@ -88,7 +89,8 @@ registrar data de modificação
 
 **Tabela envolvida:**
 
-```Item_venda
+```
+Item_venda
 ```
 
 ---
@@ -323,7 +325,8 @@ WHERE preco_venda > (SELECT AVG(preco_venda) FROM Produto)
 
 **Nome:**
 
-```vw_estoque_critico
+```
+vw_estoque_critico
 ```
 
 **Por que é importante?**
@@ -336,13 +339,15 @@ WHERE preco_venda > (SELECT AVG(preco_venda) FROM Produto)
 
 **Nome:**
 
-```sp_produtos_por_categoria
+```
+sp_produtos_por_categoria
 
 ```
 
 **Entrada:**
 
-```p_nome_categoria VARCHAR(50)
+```
+p_nome_categoria VARCHAR(50)
 ```
 
 **Resultado:**
@@ -355,7 +360,8 @@ WHERE preco_venda > (SELECT AVG(preco_venda) FROM Produto)
 
 **Nome:**
 
-```fn_aplicar_desconto
+```
+fn_aplicar_desconto
 
 ```
 
@@ -369,7 +375,8 @@ WHERE preco_venda > (SELECT AVG(preco_venda) FROM Produto)
 
 **Nome:**
 
-```trg_atualiza_estoque_venda
+```
+trg_atualiza_estoque_venda
 
 ```
 
