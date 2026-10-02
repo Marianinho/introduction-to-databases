@@ -38,12 +38,11 @@ ROLLBACK
 
 **Nome completo:**
 
-> Escreva aqui.
+> Mariano Lino da Silva Neto
 
 **Banco utilizado:**
 
-```text
-
+```DB_Conveniencia
 ```
 
 ---
@@ -77,20 +76,19 @@ registrar data de modificação
 
 **Regra escolhida:**
 
-> Escreva aqui.
+> Atualizar o estoque automaticamente dando baixa na quantidade de um produto sempre que um novo registro de venda for inserido na tabela Item_venda.
 
 **Evento:**
 
 - [ ] BEFORE INSERT
-- [ ] AFTER INSERT
+- [x] AFTER INSERT
 - [ ] BEFORE UPDATE
 - [ ] AFTER UPDATE
 - [ ] Outro
 
 **Tabela envolvida:**
 
-```text
-
+```Item_venda
 ```
 
 ---
@@ -115,12 +113,22 @@ DELIMITER ;
 **SQL do seu Trigger:**
 
 ```sql
--- Cole aqui.
+DELIMITER //
+CREATE TRIGGER trg_atualiza_estoque_venda
+AFTER INSERT ON Item_venda
+FOR EACH ROW
+BEGIN
+UPDATE Produto
+SET quantidade_estoque = quantidade_estoque - NEW.quantidade
+WHERE id_produto = NEW.id_produto;
+END //
+
+DELIMITER ;
 ```
 
 **Explique linha por linha:**
 
-> Escreva aqui.
+> Delimiter vai mudar o cacactere de encerramento temporario, ai o TRIGER vai criar o gatilho com um nome descritivo, em sequencia o INSERT ON vai definir o gatilho que só vai disparar depois de uma nova linha for inserida na tabela, no EACH ROW ele vai garantir que a regra seja executada para cada linha inserida, caso um INSERT adicione Multiplos registros de uma vez, o BEGIN vai começar o bloco de comandos, UPDATE vai chamar a tabela que vai acontecer a alteração, o SET quantidade vai pegar o estado atual e subtrai pelo valor da coluna quantidade que acabou de ser inserida pelo prefixo NEW, o WHERE do new.id_produto vai garantir que a baixa do estoque será feita apenas no produto correto, e por fim o END Finaliza o bloco do trigger,
 
 ---
 
@@ -129,24 +137,24 @@ DELIMITER ;
 **Estado antes do teste:**
 
 ```sql
--- SELECT utilizado.
+SELECT nome_produto, quantidade_estoque FROM Produto WHERE id_produto = 1;
 ```
 
 **Operação executada:**
 
 ```sql
--- INSERT ou UPDATE utilizado.
+INSERT INTO Item_venda(quantidade, id_venda, id_produto) VALUES (3, 2, 1);
 ```
 
 **Estado depois do teste:**
 
 ```sql
--- SELECT utilizado.
+SELECT nome_produto, quantidade_estoque FROM Produto WHERE id_produto = 1;
 ```
 
 **Resultado observado:**
 
-> Escreva aqui.
+> Sem a gente precisar executar nenhum UPDATE manual o banco de dados sozinha vai notar o INSERT na tabela Item_venda e o trigger vai disparar sozinho reduzindo as 3 unidades do pão frito, indo de 40 para 37
 
 ---
 
@@ -173,19 +181,23 @@ Crie uma transação coerente com o domínio.
 
 **Objetivo:**
 
-> Escreva aqui.
+> Registrar o cabeçalho de uma venda e seus itens em um bloco seguro, se os dois funcionarem a gente confirma a gravação de tudo junto.
 
 ```sql
 START TRANSACTION;
 
--- operações
+INSERT INTO Venda(valor_total) VALUES(20.00);
+
+SET @id_nova_venda = LAST_INSERT_ID();
+
+INSERT INTO Item_venda(quantidade, id_venda, id_produto) VALUES(2,@id_nova_venda,4);
 
 COMMIT;
 ```
 
 **O que aconteceu após o COMMIT?**
 
-> Escreva aqui.
+> Todas as operações que estavam pendentes na memoria durante a transação foram oficializadas e gravadas fisicamente no banco de dados. A venda e o item foram registrados permanentemente. 
 
 ---
 
@@ -196,7 +208,8 @@ Execute uma transação que será desfeita.
 ```sql
 START TRANSACTION;
 
--- operações
+INSERT INTO Venda(valor_total) VALUES(150.00);
+SET @id_venda_cancelada = LAST_INSERT_ID();
 
 ROLLBACK;
 ```
@@ -210,12 +223,12 @@ ROLLBACK;
 **Verificação depois:**
 
 ```sql
--- SELECT
+SELECT MAX(id_venda) AS ultima_venda FROM Venda;
 ```
 
 **O que o ROLLBACK fez?**
 
-> Escreva aqui.
+> O ROLLBACK desfaz o INSERT da venda de 150 que estava temporariamente na memoria, na verificação retornou o mesmo id_venda de antes do inicio da transação, comprovando que o banco de dados abortou a inserção e voltou ao seu estado anterior.
 
 ---
 
@@ -223,15 +236,15 @@ ROLLBACK;
 
 ## COMMIT
 
-> Explique com suas palavras.
+> Ele basicamente salva, ele diz ao banco de dados que todas as etapas da transação deram certo e que ele pode confirmar e gravar os dados definitvamente no disco.
 
 ## ROLLBACK
 
-> Explique com suas palavras.
+> Ele cancela as coisas basicamente, ele diz ao banco de dados que aconteceu um erro no meio de alguma ação e que ele pode jogar fora todas as alterações que foram feitas desde o START TRANSACTION e que ele pode voltar como estava antes.
 
 ## Por que transações são importantes?
 
-> Escreva aqui.
+> São importantes no meu sistema visto que uma venda pode depender de inserir dados na tabela Venda e em Item_venda e caso aconteça alguma queda de energia ou erro de rede entre algumas das duas inserções, a gente acabaria ficando com uma Venda sem Itens ou Itens sem vendas associadas e acabaria gerando no Banco dados sem valor, e então por isso a transação garante que tudo vá ser salvo no COMMIT ou nada ser salvo no ROLLBACK.
 
 ---
 
@@ -262,15 +275,25 @@ Estrutura esperada:
 
 **Pergunta:**
 
-> Escreva aqui.
+> Como exibir o historico de todas as vendas detalhando o nome do produto, o nome de sua categoria e a data exata da venda?
 
 ```sql
--- Cole aqui.
+SELECT 
+v.id_venda,
+v.data_venda,
+c.nome_categoria,
+p.nome_produto,
+iv.quantidade
+FROM Venda AS v
+INNER JOIN Item_venda AS iv ON v.id_venda = iv.id_venda
+INNER JOIN Produto AS p ON iv.id_produto = p.id_produto
+INNER JOIN Categoria AS c ON p.id_categoria = c.id_categoria
+ORDER BY v.data_venda DESC;
 ```
 
 **Explique:**
 
-> Escreva aqui.
+> Em poucas palavras essa consulta vai conectar as quatro tabelas simultaneamente usando as chaves primarias e estrangeiras para transformar o ID numerido cru de todo mundo em informações legiveis e gerenciais para o dono do Negocio.
 
 ---
 
@@ -278,15 +301,21 @@ Estrutura esperada:
 
 **Pergunta:**
 
-> Escreva aqui.
+> Quais Categorias possuem produtos com preços acima da media geral de todos os produtos da loja? 
 
 ```sql
--- Cole aqui.
+SELECT nome_categoria
+FROM Categoria
+WHERE id_categoria IN (
+SELECT DISTINCT id_categoria
+FROM Produto
+WHERE preco_venda > (SELECT AVG(preco_venda) FROM Produto)
+);
 ```
 
 **Explique:**
 
-> Escreva aqui.
+> Ele cria uma Subconsulta aninhada, a mais interna vai calcula a media geral dos preços e a intermediaria vai buscar as categorias com os produtos mais caros que essa media, e a consulta principal vai trazer o nome descritivo dessas categorias usando o operador IN
 
 ---
 
@@ -294,13 +323,12 @@ Estrutura esperada:
 
 **Nome:**
 
-```text
-
+```vw_estoque_critico
 ```
 
 **Por que é importante?**
 
-> Escreva aqui.
+> Porque ele tira a complexidade de regras e relacionamentos para o dia a dia operacional, o repositor na conveniencia só vai precisar de um SELECT simples para saber o que vai precisar repor nas prateleiras, sem risco e errar digitações complexas.
 
 ---
 
@@ -308,19 +336,18 @@ Estrutura esperada:
 
 **Nome:**
 
-```text
+```sp_produtos_por_categoria
 
 ```
 
 **Entrada:**
 
-```text
-
+```p_nome_categoria VARCHAR(50)
 ```
 
 **Resultado:**
 
-> Escreva aqui.
+> Retorna de forma rápida e parametrizada uma tabela com o catálogo de produtos inteiros de apenas um setor(ex:"bebidas") simplificando integrações com o backend da aplicação
 
 ---
 
@@ -328,13 +355,13 @@ Estrutura esperada:
 
 **Nome:**
 
-```text
+```fn_aplicar_desconto
 
 ```
 
 **O que retorna?**
 
-> Escreva aqui.
+> Retorna o valor numérico recalculado(DECIMAL 10,2) de um produto ou de uma compra após a aplicação de um percentual de desconto fornecido.
 
 ---
 
@@ -342,13 +369,13 @@ Estrutura esperada:
 
 **Nome:**
 
-```text
+```trg_atualiza_estoque_venda
 
 ```
 
 **Regra automatizada:**
 
-> Escreva aqui.
+> Controle de inventario invisivel para o usuario final: abate o estoque sempre que uma venda ocorre com sucesso na tabela de itens
 
 ---
 
@@ -356,14 +383,14 @@ Estrutura esperada:
 
 O aluno deverá executar o projeto no MySQL Workbench e verificar:
 
-- [ ] JOINs funcionam;
-- [ ] subconsultas funcionam;
-- [ ] Views funcionam;
-- [ ] Procedures funcionam;
-- [ ] Function funciona;
-- [ ] Trigger funciona;
-- [ ] COMMIT funciona;
-- [ ] ROLLBACK funciona.
+- [X] JOINs funcionam;
+- [x] subconsultas funcionam;
+- [x] Views funcionam;
+- [x] Procedures funcionam;
+- [x] Function funciona;
+- [x] Trigger funciona;
+- [X] COMMIT funciona;
+- [x] ROLLBACK funciona.
 
 ---
 
@@ -405,19 +432,19 @@ O aluno deverá ser capaz de:
 
 **Conteúdo que compreendi melhor:**
 
-> Escreva aqui.
+> JOINS E VIEW são os mais de boas para poder ficar entendendo pq são bem simples.
 
 **Conteúdo mais difícil:**
 
-> Escreva aqui.
+> Aqui não tem outro né, tem que ser a bomba do TRIGGER, acho que não tem nada mais chato do que esse conteudo embora seja muito util.
 
 **Código do Module-2 que considero mais importante:**
 
-> Escreva aqui.
+> Com toda certeza o sistema de segurança composto por: START TRANSACTION, COMMIT e ROLLBACK, são basicamente necessarios e fundamentais para quando você for mexer com dinheiro e como você não quer tomar um processo ferrado e perder dinheiro, eles são de extrema importancia.
 
 **O que eu conseguiria explicar presencialmente sem consultar material?**
 
-> Escreva aqui.
+> Inner e LEFT Join, acho que são os mais de boas pra explicar
 
 ---
 
@@ -479,21 +506,21 @@ Total esperado:
 
 # 23. Checklist final
 
-- [ ] mantive os arquivos do Module-1;
-- [ ] utilizei a mesma branch `team-XX`;
-- [ ] concluí as cinco Sprints do Module-2;
-- [ ] todos os `.md` estão preenchidos;
-- [ ] todos os `.sql` foram testados;
-- [ ] JOINs funcionam;
-- [ ] subconsultas funcionam;
-- [ ] Views funcionam;
-- [ ] Procedures funcionam;
-- [ ] Function funciona;
-- [ ] Trigger funciona;
-- [ ] COMMIT e ROLLBACK foram demonstrados;
-- [ ] compreendo o código entregue;
-- [ ] revisei os nomes dos arquivos;
-- [ ] nenhum arquivo foi colocado fora de `Module-2`.
+- [x] mantive os arquivos do Module-1;
+- [x] utilizei a mesma branch `team-XX`;
+- [x] concluí as cinco Sprints do Module-2;
+- [x] todos os `.md` estão preenchidos;
+- [x] todos os `.sql` foram testados;
+- [x] JOINs funcionam;
+- [X] subconsultas funcionam;
+- [X] Views funcionam;
+- [x] Procedures funcionam;
+- [X] Function funciona;
+- [x] Trigger funciona;
+- [x] COMMIT e ROLLBACK foram demonstrados;
+- [x] compreendo o código entregue;
+- [X] revisei os nomes dos arquivos;
+- [x] nenhum arquivo foi colocado fora de `Module-2`.
 
 ---
 
